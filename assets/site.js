@@ -804,9 +804,12 @@
       }
     }
 
+    /* coalesce a burst of keystrokes into one render. setTimeout rather than
+       requestAnimationFrame: rAF never fires while the tab is hidden, which
+       would leave a restored tab showing results for an older query. */
     function schedule() {
-      if (frame) { window.cancelAnimationFrame(frame); }
-      frame = window.requestAnimationFrame(function () { frame = null; run(); });
+      if (frame) { window.clearTimeout(frame); }
+      frame = window.setTimeout(function () { frame = null; run(); }, 0);
     }
 
     function fromHash(quiet) {
