@@ -10,9 +10,6 @@
   "generated": "2026-08-08",
   "icons": {
     "aspects": {
-      "KNTEST_StormArmor_Affix": {
-        "missing": true
-      },
       "LTE_Hibernal_legendary_generic_001": {
         "path": "aspects/LTE_Hibernal_legendary_generic_001.webp"
       },
@@ -66,27 +63,6 @@
       },
       "Legendary_Sorc_134": {
         "path": "aspects/Legendary_Sorc_134.webp"
-      },
-      "Pal_OathTest_Angel_DONOTSHIP": {
-        "missing": true
-      },
-      "Pal_OathTest_Judgement_DONOTSHIP": {
-        "missing": true
-      },
-      "Pal_OathTest_Jug_DONOTSHIP": {
-        "missing": true
-      },
-      "Pal_OathTest_Zealot_DONOTSHIP": {
-        "missing": true
-      },
-      "Pal_Perm_Arbiter_DONOTSHIP": {
-        "missing": true
-      },
-      "Pal_SubTest_Spear_DONOTSHIP": {
-        "missing": true
-      },
-      "Paladin_RETTEST_DONOTSHIP": {
-        "missing": true
       },
       "S05_BSK_Barbarian_001": {
         "path": "aspects/S05_BSK_Barbarian_001.webp"
@@ -212,9 +188,6 @@
         "missing": true
       },
       "Season_Socketable_Generic_01": {
-        "missing": true
-      },
-      "TESTstephen_unique_barbarian_mace2h": {
         "missing": true
       },
       "Talisman_SealAffix_Legendary_Might_01": {
@@ -1081,15 +1054,6 @@
       "legendary_paladin_001": {
         "path": "aspects/legendary_paladin_001.webp"
       },
-      "legendary_paladin_002": {
-        "path": "aspects/legendary_paladin_002.webp"
-      },
-      "legendary_paladin_003": {
-        "path": "aspects/legendary_paladin_003.webp"
-      },
-      "legendary_paladin_004": {
-        "path": "aspects/legendary_paladin_004.webp"
-      },
       "legendary_paladin_005": {
         "path": "aspects/legendary_paladin_005.webp"
       },
@@ -1111,26 +1075,11 @@
       "legendary_paladin_009_x2": {
         "path": "aspects/legendary_paladin_009_x2.webp"
       },
-      "legendary_paladin_010": {
-        "path": "aspects/legendary_paladin_010.webp"
-      },
       "legendary_paladin_011": {
         "path": "aspects/legendary_paladin_011.webp"
       },
       "legendary_paladin_012": {
         "path": "aspects/legendary_paladin_012.webp"
-      },
-      "legendary_paladin_013": {
-        "path": "aspects/legendary_paladin_013.webp"
-      },
-      "legendary_paladin_014": {
-        "path": "aspects/legendary_paladin_014.webp"
-      },
-      "legendary_paladin_015": {
-        "path": "aspects/legendary_paladin_015.webp"
-      },
-      "legendary_paladin_016": {
-        "path": "aspects/legendary_paladin_016.webp"
       },
       "legendary_paladin_017": {
         "path": "aspects/legendary_paladin_017.webp"
@@ -1144,29 +1093,14 @@
       "legendary_paladin_020": {
         "path": "aspects/legendary_paladin_020.webp"
       },
-      "legendary_paladin_021": {
-        "path": "aspects/legendary_paladin_021.webp"
-      },
       "legendary_paladin_022": {
         "path": "aspects/legendary_paladin_022.webp"
-      },
-      "legendary_paladin_023": {
-        "path": "aspects/legendary_paladin_023.webp"
       },
       "legendary_paladin_031": {
         "path": "aspects/legendary_paladin_031.webp"
       },
-      "legendary_paladin_032": {
-        "path": "aspects/legendary_paladin_032.webp"
-      },
       "legendary_paladin_033": {
         "path": "aspects/legendary_paladin_033.webp"
-      },
-      "legendary_paladin_034": {
-        "path": "aspects/legendary_paladin_034.webp"
-      },
-      "legendary_paladin_035": {
-        "path": "aspects/legendary_paladin_035.webp"
       },
       "legendary_paladin_036": {
         "path": "aspects/legendary_paladin_036.webp"
@@ -1189,17 +1123,8 @@
       "legendary_paladin_042": {
         "path": "aspects/legendary_paladin_042.webp"
       },
-      "legendary_paladin_043": {
-        "path": "aspects/legendary_paladin_043.webp"
-      },
-      "legendary_paladin_044": {
-        "path": "aspects/legendary_paladin_044.webp"
-      },
       "legendary_paladin_045": {
         "path": "aspects/legendary_paladin_045.webp"
-      },
-      "legendary_paladin_046": {
-        "path": "aspects/legendary_paladin_046.webp"
       },
       "legendary_paladin_047": {
         "path": "aspects/legendary_paladin_047.webp"
@@ -1231,9 +1156,6 @@
       "legendary_paladin_056": {
         "path": "aspects/legendary_paladin_056.webp"
       },
-      "legendary_paladin_057": {
-        "path": "aspects/legendary_paladin_057.webp"
-      },
       "legendary_paladin_058": {
         "path": "aspects/legendary_paladin_058.webp"
       },
@@ -1242,9 +1164,6 @@
       },
       "legendary_paladin_059_x2": {
         "path": "aspects/legendary_paladin_059_x2.webp"
-      },
-      "legendary_paladin_060": {
-        "path": "aspects/legendary_paladin_060.webp"
       },
       "legendary_paladin_061": {
         "path": "aspects/legendary_paladin_061.webp"
@@ -1291,9 +1210,6 @@
       "legendary_paladin_076_x2": {
         "path": "aspects/legendary_paladin_076_x2.webp"
       },
-      "legendary_paladin_077": {
-        "path": "aspects/legendary_paladin_077.webp"
-      },
       "legendary_paladin_079": {
         "path": "aspects/legendary_paladin_079.webp"
       },
@@ -1305,9 +1221,6 @@
       },
       "legendary_paladin_082": {
         "path": "aspects/legendary_paladin_082.webp"
-      },
-      "legendary_paladin_083": {
-        "path": "aspects/legendary_paladin_083.webp"
       },
       "legendary_paladin_084": {
         "path": "aspects/legendary_paladin_084.webp"
@@ -2566,12 +2479,6 @@
       "Amulet_Unique_Warlock_004": {
         "path": "items/Amulet_Unique_Warlock_004.webp"
       },
-      "Boots_053_TestLook": {
-        "path": "items/Boots_053_TestLook.webp"
-      },
-      "Boots_054_TestLook": {
-        "path": "items/Boots_054_TestLook.webp"
-      },
       "Boots_Cosmetic_Druid_194_stor": {
         "path": "items/Boots_Cosmetic_Druid_194_stor.webp"
       },
@@ -2626,9 +2533,6 @@
       "Boots_Unique_Paladin_001": {
         "path": "items/Boots_Unique_Paladin_001.webp"
       },
-      "Boots_Unique_Paladin_95": {
-        "missing": true
-      },
       "Boots_Unique_Rogue_001_x2": {
         "path": "items/Boots_Unique_Rogue_001_x2.webp"
       },
@@ -2673,12 +2577,6 @@
       },
       "Boots_Unique_Warlock_95": {
         "path": "items/Boots_Unique_Warlock_95.webp"
-      },
-      "Chest_053_TestLook": {
-        "path": "items/Chest_053_TestLook.webp"
-      },
-      "Chest_054_TestLook": {
-        "path": "items/Chest_054_TestLook.webp"
       },
       "Chest_Cosmetic_Druid_194_stor": {
         "path": "items/Chest_Cosmetic_Druid_194_stor.webp"
@@ -2740,9 +2638,6 @@
       "Chest_Unique_Paladin_001": {
         "path": "items/Chest_Unique_Paladin_001.webp"
       },
-      "Chest_Unique_Paladin_95": {
-        "missing": true
-      },
       "Chest_Unique_Rogue_100": {
         "path": "items/Chest_Unique_Rogue_100.webp"
       },
@@ -2791,9 +2686,6 @@
       "Glove_Unique_Druid_99": {
         "path": "items/Glove_Unique_Druid_99.webp"
       },
-      "Glove_Unique_Paladin_95": {
-        "missing": true
-      },
       "Glove_Unique_Rogue_96": {
         "path": "items/Glove_Unique_Rogue_96.webp"
       },
@@ -2802,12 +2694,6 @@
       },
       "Glove_Unique_Warlock_95": {
         "path": "items/Glove_Unique_Warlock_95.webp"
-      },
-      "Gloves_053_TestLook": {
-        "path": "items/Gloves_053_TestLook.webp"
-      },
-      "Gloves_054_TestLook": {
-        "path": "items/Gloves_054_TestLook.webp"
       },
       "Gloves_Cosmetic_Druid_194_stor": {
         "path": "items/Gloves_Cosmetic_Druid_194_stor.webp"
@@ -2935,12 +2821,6 @@
       "Gloves_Unique_Warlock_004": {
         "path": "items/Gloves_Unique_Warlock_004.webp"
       },
-      "Helm_053_TestLook": {
-        "path": "items/Helm_053_TestLook.webp"
-      },
-      "Helm_054_TestLook": {
-        "path": "items/Helm_054_TestLook.webp"
-      },
       "Helm_Cosmetic_Druid_194_stor": {
         "path": "items/Helm_Cosmetic_Druid_194_stor.webp"
       },
@@ -3016,9 +2896,6 @@
       "Helm_Unique_Paladin_002": {
         "path": "items/Helm_Unique_Paladin_002.webp"
       },
-      "Helm_Unique_Paladin_95": {
-        "missing": true
-      },
       "Helm_Unique_Rogue_001": {
         "path": "items/Helm_Unique_Rogue_001.webp"
       },
@@ -3076,15 +2953,6 @@
       "OWCSMP_Crown": {
         "path": "items/OWCSMP_Crown.webp"
       },
-      "PACTTEST_Amulet_Unique": {
-        "path": "items/PACTTEST_Amulet_Unique.webp"
-      },
-      "Pants_053_TestLook": {
-        "path": "items/Pants_053_TestLook.webp"
-      },
-      "Pants_054_TestLook": {
-        "path": "items/Pants_054_TestLook.webp"
-      },
       "Pants_Cosmetic_Druid_194_stor": {
         "path": "items/Pants_Cosmetic_Druid_194_stor.webp"
       },
@@ -3135,9 +3003,6 @@
       },
       "Pants_Unique_Paladin_002": {
         "path": "items/Pants_Unique_Paladin_002.webp"
-      },
-      "Pants_Unique_Paladin_95": {
-        "missing": true
       },
       "Pants_Unique_Rogue_001_x2": {
         "path": "items/Pants_Unique_Rogue_001_x2.webp"
@@ -5247,9 +5112,6 @@
       },
       "rogM_uniq95_trs": {
         "path": "items/rogM_uniq95_trs.webp"
-      },
-      "twoHandMace_uniq16": {
-        "path": "items/twoHandMace_uniq16.webp"
       },
       "twoHandMace_uniq19": {
         "path": "items/twoHandMace_uniq19.webp"
