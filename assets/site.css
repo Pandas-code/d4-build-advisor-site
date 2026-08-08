@@ -1660,24 +1660,12 @@ a.build-card { text-decoration: none; }
   overflow: hidden;
 }
 .pnode img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* a node the icon manifest has no art for stays a blank plate */
 .pnode.ph {
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  font-size: 0.5rem;
-  color: var(--fg-dim);
-}
-/* normal/magic filler nodes are plain plates, as in the reference */
-.pnode.plain {
   background:
-    radial-gradient(60% 60% at 50% 50%, var(--fg-dim) 0%, transparent 62%),
+    radial-gradient(58% 58% at 50% 50%, var(--fg-dim) 0%, transparent 62%),
     var(--surface-2);
-  opacity: 0.85;
-}
-.pnode.plain.r-magic {
-  background:
-    radial-gradient(62% 62% at 50% 50%, hsl(var(--t-b)) 0%, transparent 64%),
-    var(--surface-2);
+  opacity: 0.8;
 }
 .pnode.r-magic { border-color: hsl(var(--t-b) / 0.6); }
 .pnode.r-rare { border-color: hsl(var(--t-s) / 0.65); }
