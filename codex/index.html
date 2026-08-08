@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Codex — Diablo IV Build Advisor</title>
-<meta name="description" content="A searchable index of the whole game database this site is already built on: every skill and skill upgrade, every paragon board and glyph, every affix, aspect, and piece of gear.">
+<meta name="description" content="Search every skill, paragon node, glyph, affix, aspect and item in the Diablo 4 game database.">
 <meta name="color-scheme" content="light dark">
 <!-- inline SVG favicon: crossed swords, no network request -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.92em%22 font-size=%2292%22>&#9876;&#65039;</text></svg>">
@@ -42,7 +42,7 @@
         </ul>
       </div>
       <a class="nav-link" role="menuitem" href="../codex/index.html" aria-current="page">Codex</a>
-      <a class="nav-link" role="menuitem" href="../bosses/index.html">Bosses</a>
+      <a class="nav-link" role="menuitem" href="../bosses/index.html">Boss Loot</a>
     </div>
 
     <span id="nav-season" class="nav-season">Season 14</span>
@@ -50,23 +50,86 @@
 </nav>
 
 
-<main id="main" class="frame">
-<section class="stub" aria-labelledby="stub-h">
+<main id="main" class="frame wide">
+<header class="page-head">
   <div class="sigil" aria-hidden="true">&#128220;</div>
-  <h1 id="stub-h">Codex</h1>
-  <p class="soon">Coming in the next update</p>
-  <p>A searchable index of the whole game database this site is already built on: every skill and skill upgrade, every paragon board and glyph, every affix, aspect, and piece of gear.</p>
-  <ul>
-    <li>Skills and their upgrades, with icons and rank scaling</li>
-    <li>Paragon boards, nodes, thresholds and glyphs</li>
-    <li>Gear affixes by slot, plus legendary aspects</li>
-    <li>Uniques and mythics with the powers they carry</li>
-  </ul>
-  <p class="foot">game database 3.1.0.72698 already imported: 4305 affixes, 714 aspects, 247 boss uniques, 19 bosses, 8 classes, 45 item sets, 6808 items, 33 mythics, 79 paragon boards, 160 paragon glyphs, 561 paragon nodes, 2228 skill tree nodes, 313 skills, 943 uniques</p>
+  <h1>Codex</h1>
+  <p class="lede">The whole game database this advisor is built on, searchable.
+    Skills and their tree upgrades, paragon boards, nodes, thresholds and
+    glyphs, every affix, every aspect, every item.</p>
+  <p class="meta-line">14394 entries &#183; searched in the browser &#183; nothing
+    leaves this origin</p>
+</header>
+
+<section class="filters" aria-label="Search the codex">
+  <div class="field grow">
+    <label for="q">Search</label>
+    <input id="q" type="search" autocomplete="off" spellcheck="false"
+           placeholder="frozen orb, whirlwind, harlequin, of the crowded sage&#8230;">
+  </div>
+  <div class="field">
+    <label for="c-domain">Domain</label>
+    <div class="sel">
+      <select id="c-domain">
+        <option value="">Everything</option>
+          <option value="skills">Skills (1715)</option>
+          <option value="paragon">Paragon (852)</option>
+          <option value="items">Items (6808)</option>
+          <option value="aspects">Aspects (714)</option>
+          <option value="affixes">Affixes (4305)</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="c-class">Class</label>
+    <div class="sel">
+      <select id="c-class">
+        <option value="">Any class</option>
+          <option value="barbarian">Barbarian</option>
+          <option value="druid">Druid</option>
+          <option value="necromancer">Necromancer</option>
+          <option value="paladin">Paladin</option>
+          <option value="rogue">Rogue</option>
+          <option value="sorcerer">Sorcerer</option>
+          <option value="spiritborn">Spiritborn</option>
+          <option value="warlock">Warlock</option>
+      </select>
+    </div>
+  </div>
+  <button id="c-reset" class="back" type="button">Reset</button>
 </section>
+
+<p id="c-status" class="filter-status" role="status">Loading the index&#8230;</p>
+
+<article id="c-detail" class="codex-detail" aria-live="polite" hidden></article>
+
+<div id="c-results" class="codex-results"></div>
+
+<section id="c-intro" class="codex-intro">
+  <h2 class="rule"><span>What is in here</span></h2>
+  <ul class="domain-cards">
+    <li class="dcard"><button class="dbtn" type="button" data-domain="skills"><span class="dn">Skills</span><span class="dc">1715 entries</span></button><span class="db">Active and passive skills, and every tree upgrade.</span></li>
+    <li class="dcard"><button class="dbtn" type="button" data-domain="paragon"><span class="dn">Paragon</span><span class="dc">852 entries</span></button><span class="db">Boards, nodes, thresholds and glyphs.</span></li>
+    <li class="dcard"><button class="dbtn" type="button" data-domain="items"><span class="dn">Items</span><span class="dc">6808 entries</span></button><span class="db">Uniques, mythics, sets, legendaries and base gear.</span></li>
+    <li class="dcard"><button class="dbtn" type="button" data-domain="aspects"><span class="dn">Aspects</span><span class="dc">714 entries</span></button><span class="db">Legendary aspects and the powers they imprint.</span></li>
+    <li class="dcard"><button class="dbtn" type="button" data-domain="affixes"><span class="dn">Affixes</span><span class="dc">4305 entries</span></button><span class="db">Gear, tempering, talisman and seasonal affix pools.</span></li>
+  </ul>
+  <p class="prose">Every entry keeps the game database&#8217;s own wording. Where
+    the feed writes a runtime value it ships a placeholder, shown here as
+    <span class="vslot">{x}</span> &#8212; this site never invents the number
+    behind it.</p>
+</section>
+
+<noscript>
+  <p class="empty">The codex search runs in your browser. With JavaScript off,
+    the game database is still published next to this page as JSON under
+    <code>codex/data/</code>.</p>
+</noscript>
+
+<p class="foot" id="foot">game database 3.1.0.72698 already imported: 4305 affixes, 714 aspects, 247 boss uniques, 19 bosses, 8 classes, 45 item sets, 6808 items, 33 mythics, 79 paragon boards, 160 paragon glyphs, 561 paragon nodes, 2228 skill tree nodes, 313 skills, 943 uniques</p>
 
 </main>
 
-<script id="page-data" type="application/json">{"kind": "stub", "last_success_date": "2026-08-08", "page": "codex"}</script>
+<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-08-08", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 852, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6808, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 714, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 4305, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}], "total": 14394}</script>
 <script src="../assets/site.js"></script>
 </html>

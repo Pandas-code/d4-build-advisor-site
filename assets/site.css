@@ -1718,58 +1718,482 @@ a.build-card { text-decoration: none; }
   color: var(--fg-dim);
 }
 
-/* ------------------------------ stub pages ------------------------------ */
-.stub {
-  max-width: 40rem;
-  margin: clamp(2rem, 8vw, 5rem) auto;
-  padding: clamp(1.5rem, 5vw, 2.75rem);
+/* ==========================================================================
+   Task 25: the Codex explorer and the Boss Loot browser.
+
+   Both pages are "the field manual's index pages": a control rail in mono
+   small-caps, then dense parchment cards. Nothing here loads a font, an
+   image or a request from anywhere but this origin.
+   ========================================================================== */
+
+/* --------------------------- shared page head --------------------------- */
+.page-head {
+  position: relative;
+  padding: clamp(1rem, 3vw, 1.9rem) 0 clamp(0.9rem, 2.5vw, 1.4rem);
+  border-bottom: 1px solid var(--line);
   text-align: center;
-  background: linear-gradient(180deg, var(--raised), var(--surface));
-  border: 1px solid var(--line);
-  border-top: 2px solid var(--gold);
-  box-shadow: var(--shadow-lift);
 }
-.stub .sigil { margin-bottom: 0.75rem; }
-.stub h1 {
+.page-head::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: min(22rem, 70%);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  box-shadow: 0 0 14px 1px var(--gold-soft);
+}
+.page-head h1 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.4rem, 5vw, 2.1rem);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-.stub .soon {
-  display: inline-block;
-  margin: 1rem 0 0;
-  padding: 0.3rem 0.8rem;
-  border: 1px solid color-mix(in srgb, var(--ember) 55%, transparent);
-  background: color-mix(in srgb, var(--ember) 12%, transparent);
-  color: var(--ember);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: clamp(1.5rem, 5.5vw, 2.5rem);
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
-.stub p { color: var(--fg-soft); }
-.stub ul {
-  margin: 1.2rem 0 0;
+.page-head .lede {
+  max-width: 46rem;
+  margin: 0.85rem auto 0;
+  color: var(--fg-soft);
+  font-size: 0.96rem;
+}
+.page-head .meta-line {
+  margin: 0.8rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+/* ------------------------------ control rail ---------------------------- */
+.filters {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem;
+  margin: 1.1rem 0 0;
+  padding: 0.75rem 0.85rem;
+  background: linear-gradient(180deg, var(--raised), var(--surface));
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--gold);
+  box-shadow: var(--shadow);
+}
+.filters .field { display: grid; gap: 0.25rem; min-width: 9rem; }
+.filters .field.grow { flex: 1 1 14rem; }
+.filters label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.filters input[type="search"],
+.filters select {
+  appearance: none;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+.filters input[type="search"]::placeholder { color: var(--fg-dim); opacity: 0.8; }
+.filters input[type="search"]:focus,
+.filters select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.filters .sel { position: relative; }
+.filters .sel::after {
+  content: "\25be";
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--gold);
+  font-size: 0.7rem;
+}
+.filters .sel select { padding-right: 1.7rem; }
+.filters .back { align-self: flex-end; margin-bottom: 0.05rem; }
+
+.filter-status {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  min-height: 1.1em;
+}
+
+/* ------------------------- boss loot: item focus ------------------------ */
+.item-focus {
+  margin: 1rem 0 0;
+  padding: 0.85rem 0.95rem 1rem;
+  background:
+    radial-gradient(120% 90% at 0% 0%, var(--gold-soft), transparent 60%),
+    linear-gradient(180deg, var(--raised), var(--surface));
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--gold);
+  box-shadow: var(--shadow-lift);
+  animation: rise 300ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.focus-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.focus-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.focus-head { display: flex; align-items: center; gap: 0.7rem; }
+.focus-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+}
+.focus-head .chips { margin-top: 0.3rem; }
+.focus-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.9rem;
+  margin-top: 0.85rem;
+}
+.focus-cols h4 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.xref { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
+.xref li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--surface-2);
+  border-left: 2px solid var(--line-strong);
+  font-size: 0.9rem;
+}
+.xref a { color: var(--gold); text-decoration: none; text-underline-offset: 3px; }
+.xref a:hover { color: var(--ember); text-decoration: underline; }
+.xref .note {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+/* ----------------------------- boss loot cards -------------------------- */
+.boss-list { display: grid; gap: 0.8rem; margin-top: 1.1rem; }
+.boss {
+  --boss: var(--c-unknown);
+  position: relative;
+  padding: 0.95rem 1rem 1.05rem;
+  background: linear-gradient(180deg, var(--raised), var(--surface));
+  border: 1px solid var(--line);
+  border-left: 3px solid hsl(var(--boss));
+  box-shadow: var(--shadow);
+  scroll-margin-top: calc(var(--nav-h) + 6.5rem);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.boss[data-tier="lair-initiate"] { --boss: var(--t-b); }
+.boss[data-tier="lair-greater"] { --boss: var(--t-s); }
+.boss[data-tier="lair-escalation"] { --boss: var(--c-spiritborn); }
+.boss[data-tier="lair-infernal-hordes"] { --boss: var(--c-barbarian); }
+.boss[data-tier="lair-mirror"] { --boss: var(--c-necromancer); }
+.boss[data-tier="lair-superior-seasonal"] { --boss: var(--c-warlock); }
+.boss[data-tier="pinnacle"] { --boss: var(--t-d); }
+.boss[data-tier="pinnacle-prestige"] { --boss: var(--c-paladin); }
+.boss[data-tier="world-boss"] { --boss: var(--t-a); }
+.boss[data-tier="pool"] { --boss: var(--t-c); }
+.boss.pool { border-style: dashed; border-left-style: solid; }
+.boss.hit {
+  border-color: hsl(var(--boss) / 0.6);
+  box-shadow: var(--shadow-lift), 0 0 0 1px hsl(var(--boss) / 0.35);
+}
+.boss.flash { animation: flash 900ms ease both; }
+@keyframes flash {
+  0% { background-color: hsl(var(--boss) / 0.22); }
+  100% { background-color: transparent; }
+}
+
+.bhead { display: flex; align-items: center; gap: 0.7rem; }
+.bhead .bt { min-width: 0; }
+.bhead h3 {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: hsl(var(--boss));
+}
+/* Bosses have no icon art in any source (Task 22), so the plate is a
+   deliberate monogram sigil rather than a stand-in for a missing file. */
+.icon.crest {
+  --icon-size: 2.9rem;
+  border-color: hsl(var(--boss) / 0.55);
+  color: hsl(var(--boss));
+  background-image:
+    repeating-linear-gradient(135deg, hsl(var(--boss) / 0.14) 0 2px, transparent 2px 8px),
+    radial-gradient(120% 120% at 30% 0%, hsl(var(--boss) / 0.22), transparent 70%),
+    linear-gradient(160deg, var(--raised), var(--surface-2));
+  box-shadow: inset 0 0 18px -8px hsl(var(--boss) / 0.9);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0;
+}
+.chip.tier { color: hsl(var(--boss)); border-color: hsl(var(--boss) / 0.5); }
+.chip.myth {
+  color: var(--ember);
+  border-color: color-mix(in srgb, var(--ember) 55%, transparent);
+  background: color-mix(in srgb, var(--ember) 12%, transparent);
+}
+.chip.r-mythic { color: var(--ember); border-color: color-mix(in srgb, var(--ember) 55%, transparent); }
+.chip.r-unique { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
+.chip.r-set { color: hsl(var(--t-a)); border-color: hsl(var(--t-a) / 0.5); }
+
+.boss .blurb { margin: 0.7rem 0 0; font-size: 0.9rem; color: var(--fg-soft); }
+.bfacts {
+  margin: 0.75rem 0 0;
+  display: grid;
+  gap: 0.3rem;
+}
+.bfacts .bf {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+.bfacts dt {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.bfacts dd { margin: 0; font-size: 0.89rem; color: var(--fg-soft); }
+
+.loot-grid {
+  margin: 0.85rem 0 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 0.4rem;
-  text-align: left;
-  font-size: 0.9rem;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.3rem;
+}
+.loot-btn {
+  appearance: none;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-left: 2px solid var(--line);
   color: var(--fg-soft);
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  cursor: pointer;
+  transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
 }
-.stub ul li { padding-left: 1.2rem; position: relative; }
-.stub ul li::before {
-  content: "\25c6";
-  position: absolute;
-  left: 0;
+.loot-btn .ln { min-width: 0; overflow-wrap: anywhere; }
+.loot-btn:hover { color: var(--fg); border-left-color: var(--gold); background: var(--gold-soft); }
+.loot.hit .loot-btn {
   color: var(--gold);
-  font-size: 0.7em;
-  top: 0.35em;
+  border-color: var(--line-strong);
+  border-left-color: var(--gold);
+  background: var(--gold-soft);
+  box-shadow: inset 0 0 22px -12px var(--gold);
 }
+.loot.hit .loot-btn .icon { border-color: color-mix(in srgb, var(--gold) 60%, transparent); }
+.no-hits {
+  margin: 0.7rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--fg-dim);
+}
+.bsrc { margin-top: 0.8rem; }
+.bsrc summary {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  cursor: pointer;
+}
+.bsrc summary:hover { color: var(--gold); }
+.bsrc .log { margin-top: 0.5rem; }
+
+/* -------------------------------- codex --------------------------------- */
+.codex-results { display: grid; gap: 0.25rem; margin-top: 1rem; }
+.cx-row {
+  display: grid;
+  grid-template-columns: auto minmax(9rem, 18rem) 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.55rem;
+  background: var(--surface);
+  border: 1px solid transparent;
+  border-left: 2px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.cx-row:hover, .cx-row:focus-visible {
+  background: var(--gold-soft);
+  border-left-color: var(--gold);
+}
+.cx-body { min-width: 0; display: grid; }
+.cx-name {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.cx-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.cx-blurb {
+  min-width: 0;
+  font-size: 0.84rem;
+  color: var(--fg-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cx-blurb br { display: none; }
+
+.codex-detail {
+  margin: 1rem 0 0;
+  padding: 0.95rem 1.05rem 1.1rem;
+  background:
+    radial-gradient(120% 90% at 0% 0%, var(--gold-soft), transparent 60%),
+    linear-gradient(180deg, var(--raised), var(--surface));
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--gold);
+  box-shadow: var(--shadow-lift);
+  scroll-margin-top: calc(var(--nav-h) + 6rem);
+  animation: rise 300ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.cx-dhead { display: flex; align-items: flex-start; gap: 0.75rem; }
+.cx-dhead > div { flex: 1 1 auto; min-width: 0; }
+.cx-dhead h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  letter-spacing: 0.08em;
+}
+.chip.dom { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
+.cx-line { margin-top: 0.85rem; }
+.cx-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 0.15rem;
+}
+.cx-text { font-size: 0.94rem; color: var(--fg-soft); }
+.cx-id {
+  margin: 1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+}
+
+/* the feed's runtime placeholder, shown as a slot rather than a made-up number */
+.vslot {
+  display: inline-block;
+  padding: 0 0.3em;
+  border: 1px dashed color-mix(in srgb, var(--gold) 55%, transparent);
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  letter-spacing: 0.02em;
+}
+
+.codex-intro { margin-top: 2rem; }
+.domain-cards {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.5rem;
+}
+.dcard {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.7rem 0.8rem 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--gold);
+  box-shadow: var(--shadow);
+}
+.dbtn {
+  appearance: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  cursor: pointer;
+  text-align: left;
+}
+.dbtn .dn {
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.dbtn:hover .dn { color: var(--gold); }
+.dbtn .dc {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+.dcard .db { font-size: 0.85rem; color: var(--fg-soft); }
+.codex-intro .prose { margin-top: 1rem; }
 
 /* ------------------------------ responsive ------------------------------ */
 @media (max-width: 56rem) {
@@ -1808,4 +2232,18 @@ a.build-card { text-decoration: none; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+@media (max-width: 56rem) {
+  .cx-row { grid-template-columns: auto 1fr; }
+  .cx-blurb { display: none; }
+}
+
+@media (max-width: 44rem) {
+  .filters { position: static; padding: 0.65rem 0.7rem; }
+  .filters .field { min-width: 0; flex: 1 1 100%; }
+  .filters .back { width: 100%; }
+  .bfacts .bf { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .loot-grid { grid-template-columns: minmax(0, 1fr); }
+  .page-head .lede { font-size: 0.92rem; }
 }
