@@ -573,11 +573,17 @@
 
     function key(domain, id) { return domain + "/" + id; }
 
-    function prepare(entry) {
+    /* `di`/`pos` keep the generator's own ordering (domains in the order the
+       shard list declares them, entries in the order it wrote them, so items
+       still lead with mythics and uniques). That is what an empty search box
+       shows; a typed query sorts by match quality instead. */
+    function prepare(entry, position, shardIndex) {
       var text = [entry.name, entry.kind].concat(entry.chips || []);
       (entry.detail || []).forEach(function (pair) { text.push(pair[1]); });
       entry.lname = String(entry.name || "").toLowerCase();
       entry.hay = text.join(" \u2014 ").toLowerCase();
+      entry.pos = position;
+      entry.di = shardIndex;
       entries.push(entry);
       index[key(entry.domain, entry.id)] = entry;
     }
@@ -653,7 +659,9 @@
       body.className = "cx-body";
       var name = document.createElement("span");
       name.className = "cx-name";
-      name.textContent = entry.name;
+      /* an affix with no prefix/suffix is named by its own rolled attribute,
+         so a name can carry a value slot too */
+      withSlots(name, entry.name);
       body.appendChild(name);
 
       var meta = document.createElement("span");
@@ -666,7 +674,7 @@
       if (entry.detail && entry.detail.length) {
         var blurb = document.createElement("span");
         blurb.className = "cx-blurb";
-        withSlots(blurb, entry.detail[0][1]);
+        withSlots(blurb, String(entry.detail[0][1]).replace(/\s*\n+\s*/g, " "));
         row.appendChild(blurb);
       }
       return row;
@@ -680,7 +688,7 @@
 
       var titles = document.createElement("div");
       var title = document.createElement("h2");
-      title.textContent = entry.name;
+      withSlots(title, entry.name);
       titles.appendChild(title);
       var chips = document.createElement("div");
       chips.className = "chips";
@@ -765,7 +773,12 @@
         var rank = matches(entries[i], tokens, domain, cls);
         if (rank >= 0) { hits.push([rank, entries[i]]); }
       }
+      var browsing = !tokens.length;
       hits.sort(function (a, b) {
+        if (browsing) {
+          if (a[1].di !== b[1].di) { return a[1].di - b[1].di; }
+          return a[1].pos - b[1].pos;
+        }
         if (a[0] !== b[0]) { return a[0] - b[0]; }
         return a[1].lname < b[1].lname ? -1 : a[1].lname > b[1].lname ? 1 : 0;
       });
@@ -841,14 +854,16 @@
       if (!fromHash(true)) { show(null, true); }
     });
 
-    shards.forEach(function (shard) {
+    shards.forEach(function (shard, shardIndex) {
       window.fetch(shard.file, { credentials: "same-origin" })
         .then(function (response) {
           if (!response.ok) { throw new Error(String(response.status)); }
           return response.json();
         })
         .then(function (payload) {
-          (payload.entries || []).forEach(prepare);
+          (payload.entries || []).forEach(function (entry, position) {
+            prepare(entry, position, shardIndex);
+          });
           done++;
           run();
           fromHash(true);
