@@ -337,9 +337,41 @@
     var sections = all(".stage-section");
     var triggers = all(".stage-trigger");
 
+    /* The skill-tree map is a canvas far wider and taller than its box, so a
+       fresh stage would otherwise open on an empty corner of the tree. Park
+       the scroll on the middle of what this stage allocates. Nothing is built
+       or measured from data here: it reads the laid-out DOM. */
+    function centreMap(section) {
+      all(".tmap-scroll", section).forEach(function (box) {
+        var canvas = box.querySelector(".tcanvas");
+        /* a box inside a hidden tab panel has no layout yet: leave it alone
+           and centre it when its tab is opened */
+        if (!canvas || !box.clientWidth) { return; }
+        if (box.getAttribute("data-centred") === "1") { return; }
+        var lit = all(".tn.lit", canvas);
+        var x = canvas.offsetWidth / 2;
+        var y = canvas.offsetHeight / 2;
+        if (lit.length) {
+          var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+          lit.forEach(function (node) {
+            minX = Math.min(minX, node.offsetLeft);
+            maxX = Math.max(maxX, node.offsetLeft);
+            minY = Math.min(minY, node.offsetTop);
+            maxY = Math.max(maxY, node.offsetTop);
+          });
+          x = (minX + maxX) / 2;
+          y = (minY + maxY) / 2;
+        }
+        box.scrollLeft = Math.max(0, x - box.clientWidth / 2);
+        box.scrollTop = Math.max(0, y - box.clientHeight / 2);
+        box.setAttribute("data-centred", "1");
+      });
+    }
+
     function applyStage(key) {
       sections.forEach(function (section) {
         section.hidden = section.getAttribute("data-stage") !== key;
+        if (!section.hidden) { centreMap(section); }
       });
       triggers.forEach(function (trigger) {
         trigger.hidden = trigger.getAttribute("data-stage") !== key;
@@ -348,7 +380,31 @@
 
     if (select) {
       select.addEventListener("change", function () { applyStage(select.value); });
+
+      /* the page opens on its endgame stage (the generator marks that option
+         `selected`); an explicit ?stage= still wins when it names a real one */
+      var wantedStage = new URLSearchParams(window.location.search).get("stage");
+      if (wantedStage) {
+        all("option", select).forEach(function (option) {
+          if (option.value === wantedStage) { select.value = wantedStage; }
+        });
+      }
       applyStage(select.value);
+
+      /* "Paragon opens at endgame" -> switch the select and fire its handler */
+      all(".stage-jump").forEach(function (button) {
+        button.addEventListener("click", function () {
+          var key = button.getAttribute("data-jump");
+          if (!key) { return; }
+          select.value = key;
+          if (typeof window.Event === "function") {
+            select.dispatchEvent(new window.Event("change", { bubbles: true }));
+          } else {
+            applyStage(key);
+          }
+          select.focus();
+        });
+      });
     }
 
     var tabs = all(".btab");
@@ -362,6 +418,11 @@
       });
       panels.forEach(function (panel) {
         panel.hidden = panel.getAttribute("data-tab") !== tabs[index].getAttribute("data-tab");
+        if (!panel.hidden) {
+          all(".stage-section", panel).forEach(function (section) {
+            if (!section.hidden) { centreMap(section); }
+          });
+        }
       });
       var scroller = tabs[index].parentNode.parentNode;
       if (scroller && scroller.getBoundingClientRect) {

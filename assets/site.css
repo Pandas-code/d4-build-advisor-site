@@ -1611,6 +1611,130 @@ a.build-card { text-decoration: none; }
 .slot-card .slot-head > div { min-width: 0; }
 .slot-card .item { margin: 0.05rem 0 0; }
 
+/* ------------- the class skill tree, drawn the way the game lays it out --- */
+/* Nodes sit at their gamedata coordinates inside a scrollable canvas, with
+   the connections as SVG lines underneath. Allocation uses exactly the same
+   language as a paragon path: lit + class-tinted, everything else dimmed. */
+.tmap-scroll {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: min(70vh, 38rem);
+  padding: 0.4rem;
+  background:
+    radial-gradient(90% 70% at 50% 0%, hsl(var(--cls) / 0.10), transparent 72%),
+    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 64px),
+    var(--bg-deep);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 0 60px -18px rgba(0, 0, 0, 0.85);
+  overscroll-behavior: contain;
+}
+.tmap-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+/* --tw/--th/--x/--y are unitless numbers from the generator; --tz zooms the
+   whole map so a narrow screen sees more of the tree at once */
+.tcanvas {
+  --tz: 1;
+  position: relative;
+  width: calc(var(--tw) * var(--tz) * 1px);
+  height: calc(var(--th) * var(--tz) * 1px);
+  margin: 0 auto;
+}
+.tlinks { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.tlinks line {
+  stroke: var(--line-strong);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.tcanvas.has-path .tlinks line { stroke: var(--line); }
+.tcanvas.has-path .tlinks line.on {
+  stroke: hsl(var(--cls) / 0.9);
+  stroke-width: 4;
+}
+
+.tn {
+  --tn: 2.1rem;
+  position: absolute;
+  left: calc(var(--x) * var(--tz, 1) * 1px);
+  top: calc(var(--y) * var(--tz, 1) * 1px);
+  width: var(--tn);
+  height: var(--tn);
+  display: block;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  transform: translate(-50%, -50%);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.tn img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.tn.k-skill { --tn: 2.5rem; border-color: var(--line-strong); }
+.tn.k-upgrade { --tn: 1.9rem; border-radius: 50%; overflow: hidden; }
+.tn.k-root, .tn.k-cluster {
+  --tn: 0.62rem;
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+/* a node the icon manifest has no art for stays a plate, never a broken img */
+.tn.ph {
+  background:
+    radial-gradient(58% 58% at 50% 50%, var(--fg-dim) 0%, transparent 62%),
+    var(--surface-2);
+}
+.tcanvas.has-path .tn { opacity: 0.26; filter: grayscale(1); }
+.tcanvas.has-path .tn.lit {
+  opacity: 1;
+  filter: none;
+  border-color: hsl(var(--cls));
+  box-shadow: 0 0 14px -3px hsl(var(--cls) / 0.95);
+}
+.tn:hover { z-index: 4; transform: translate(-50%, -50%) scale(1.18); }
+.tn.k-root:hover, .tn.k-cluster:hover {
+  transform: translate(-50%, -50%) rotate(45deg) scale(1.3);
+}
+.tb {
+  position: absolute;
+  right: -0.15rem;
+  bottom: -0.42rem;
+  padding: 0 0.2rem;
+  border: 1px solid hsl(var(--cls) / 0.7);
+  background: var(--bg-deep);
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.56rem;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: hsl(var(--cls));
+  white-space: nowrap;
+}
+.tmap-legend .sw.upgrade { border-radius: 50%; }
+.tmap-legend .sw.junction {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: rotate(45deg);
+}
+
+/* "Paragon opens at endgame" -- the empty tab says where the plan lives ---- */
+.stage-hint > span:not(.label) { display: block; }
+.stage-hint .stage-jump {
+  appearance: none;
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid hsl(var(--cls) / 0.55);
+  background: hsl(var(--cls) / 0.1);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.stage-hint .stage-jump:hover {
+  background: hsl(var(--cls) / 0.2);
+  border-color: hsl(var(--cls));
+}
+.stage-hint .stage-jump:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
 /* ---------------------- visual paragon board grids ---------------------- */
 .pboard {
   min-width: 0;
@@ -2215,6 +2339,15 @@ a.build-card { text-decoration: none; }
 @media (max-width: 44rem) {
   .pgrid { --cell: 1.15rem; }
   .skill-row.upgrade { margin-left: 0.9rem; }
+  /* the map keeps its gamedata geometry, zoomed out with matching plates so
+     a phone screen sees more of the tree per pan */
+  .tmap-scroll { max-height: min(62vh, 26rem); }
+  .tcanvas { --tz: 0.75; }
+  .tn { --tn: 1.5rem; }
+  .tn.k-skill { --tn: 1.85rem; }
+  .tn.k-upgrade { --tn: 1.15rem; }
+  .tn.k-root, .tn.k-cluster { --tn: 0.5rem; }
+  .tb { font-size: 0.5rem; bottom: -0.36rem; }
 }
 
 @media (max-width: 34rem) {
