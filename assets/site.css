@@ -1083,6 +1083,77 @@ body::before {
   box-shadow: 0 0 10px -2px var(--gold-soft);
 }
 
+/* the full loadout of one finished item: every affix the planner records, in
+   its order, greater affixes starred, tempering rows marked as their own kind
+   of line, and the guide's priority list kept underneath as a footnote */
+.loadout { margin: 0; padding: 0; list-style: none; }
+.loadout li {
+  position: relative;
+  padding: 0.2rem 0 0.2rem 1.75rem;
+  font-size: 0.86rem;
+  color: var(--fg-soft);
+  border-top: 1px dotted var(--line);
+  overflow-wrap: anywhere;
+}
+.loadout li:first-child { border-top: none; }
+.loadout li::before {
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid hsl(var(--cls) / 0.5);
+  background: hsl(var(--cls) / 0.10);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1;
+  color: hsl(var(--cls));
+}
+.loadout li.af::before { content: "\25CF"; }
+.loadout li.greater { color: var(--fg); }
+.loadout li.greater::before {
+  content: "\2605";
+  top: 0.25rem;
+  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-size: 0.7rem;
+  box-shadow: 0 0 10px -2px var(--gold-soft);
+}
+.loadout li.temper::before {
+  content: "\2692";
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--fg-dim) 60%, transparent);
+  background: transparent;
+  color: var(--fg-dim);
+  font-size: 0.7rem;
+}
+.loadout li.temper { color: var(--fg-dim); font-style: italic; }
+.slot-card .slot-note {
+  margin: 0.45rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--fg-dim);
+}
+.slot-card .slot-prio {
+  margin: 0.45rem 0 0;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.74rem;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+}
+.slot-card .slot-prio span {
+  margin-right: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: hsl(var(--cls));
+}
+
 /* skill bar: six labeled slots, like the in-game action bar */
 .skillbar {
   display: grid;
