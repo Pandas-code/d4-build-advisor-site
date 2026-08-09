@@ -2,6 +2,7 @@
   "domains": [
     "skills",
     "mercenaries",
+    "warplans",
     "items",
     "aspects",
     "paragon",
@@ -13036,6 +13037,350 @@
       },
       "Rune_Effect_Warlock_ChainPrison": {
         "path": "socketables/Rune_Effect_Warlock_ChainPrison.webp"
+      }
+    },
+    "warplans": {
+      "Warplans_BSK_BossBoost": {
+        "path": "warplans/Warplans_BSK_BossBoost.webp"
+      },
+      "Warplans_BSK_Challenges": {
+        "path": "warplans/Warplans_BSK_Challenges.webp"
+      },
+      "Warplans_BSK_Chaos1": {
+        "path": "warplans/Warplans_BSK_Chaos1.webp"
+      },
+      "Warplans_BSK_Chaos2": {
+        "path": "warplans/Warplans_BSK_Chaos2.webp"
+      },
+      "Warplans_BSK_EventRush": {
+        "path": "warplans/Warplans_BSK_EventRush.webp"
+      },
+      "Warplans_BSK_GemBoost": {
+        "path": "warplans/Warplans_BSK_GemBoost.webp"
+      },
+      "Warplans_BSK_KillCommand": {
+        "path": "warplans/Warplans_BSK_KillCommand.webp"
+      },
+      "Warplans_BSK_LikeBargains": {
+        "path": "warplans/Warplans_BSK_LikeBargains.webp"
+      },
+      "Warplans_BSK_ObduciteBoost": {
+        "path": "warplans/Warplans_BSK_ObduciteBoost.webp"
+      },
+      "Warplans_BSK_Omens": {
+        "path": "warplans/Warplans_BSK_Omens.webp"
+      },
+      "Warplans_BSK_Order1": {
+        "path": "warplans/Warplans_BSK_Order1.webp"
+      },
+      "Warplans_BSK_Order2": {
+        "path": "warplans/Warplans_BSK_Order2.webp"
+      },
+      "Warplans_BSK_Replicator": {
+        "path": "warplans/Warplans_BSK_Replicator.webp"
+      },
+      "Warplans_BSK_RuneChest": {
+        "path": "warplans/Warplans_BSK_RuneChest.webp"
+      },
+      "Warplans_BSK_SuperChest": {
+        "path": "warplans/Warplans_BSK_SuperChest.webp"
+      },
+      "Warplans_BossLair": {
+        "path": "warplans/Warplans_BossLair.webp"
+      },
+      "Warplans_BossLair_1": {
+        "path": "warplans/Warplans_BossLair_1.webp"
+      },
+      "Warplans_BossLair_10": {
+        "path": "warplans/Warplans_BossLair_10.webp"
+      },
+      "Warplans_BossLair_11": {
+        "path": "warplans/Warplans_BossLair_11.webp"
+      },
+      "Warplans_BossLair_12": {
+        "path": "warplans/Warplans_BossLair_12.webp"
+      },
+      "Warplans_BossLair_13": {
+        "path": "warplans/Warplans_BossLair_13.webp"
+      },
+      "Warplans_BossLair_14": {
+        "path": "warplans/Warplans_BossLair_14.webp"
+      },
+      "Warplans_BossLair_15": {
+        "path": "warplans/Warplans_BossLair_15.webp"
+      },
+      "Warplans_BossLair_16": {
+        "path": "warplans/Warplans_BossLair_16.webp"
+      },
+      "Warplans_BossLair_1A": {
+        "path": "warplans/Warplans_BossLair_1A.webp"
+      },
+      "Warplans_BossLair_2": {
+        "path": "warplans/Warplans_BossLair_2.webp"
+      },
+      "Warplans_BossLair_2B": {
+        "path": "warplans/Warplans_BossLair_2B.webp"
+      },
+      "Warplans_BossLair_3A": {
+        "path": "warplans/Warplans_BossLair_3A.webp"
+      },
+      "Warplans_BossLair_3B": {
+        "path": "warplans/Warplans_BossLair_3B.webp"
+      },
+      "Warplans_BossLair_4": {
+        "path": "warplans/Warplans_BossLair_4.webp"
+      },
+      "Warplans_BossLair_7": {
+        "path": "warplans/Warplans_BossLair_7.webp"
+      },
+      "Warplans_BossLair_8": {
+        "path": "warplans/Warplans_BossLair_8.webp"
+      },
+      "Warplans_BossLair_9": {
+        "path": "warplans/Warplans_BossLair_9.webp"
+      },
+      "Warplans_BossLair__root": {
+        "path": "warplans/Warplans_BossLair__root.webp"
+      },
+      "Warplans_Helltide": {
+        "path": "warplans/Warplans_Helltide.webp"
+      },
+      "Warplans_Helltide_0": {
+        "path": "warplans/Warplans_Helltide_0.webp"
+      },
+      "Warplans_Helltide_1": {
+        "path": "warplans/Warplans_Helltide_1.webp"
+      },
+      "Warplans_Helltide_10": {
+        "path": "warplans/Warplans_Helltide_10.webp"
+      },
+      "Warplans_Helltide_1A": {
+        "path": "warplans/Warplans_Helltide_1A.webp"
+      },
+      "Warplans_Helltide_1B": {
+        "path": "warplans/Warplans_Helltide_1B.webp"
+      },
+      "Warplans_Helltide_2": {
+        "path": "warplans/Warplans_Helltide_2.webp"
+      },
+      "Warplans_Helltide_2A": {
+        "path": "warplans/Warplans_Helltide_2A.webp"
+      },
+      "Warplans_Helltide_2B": {
+        "path": "warplans/Warplans_Helltide_2B.webp"
+      },
+      "Warplans_Helltide_3": {
+        "path": "warplans/Warplans_Helltide_3.webp"
+      },
+      "Warplans_Helltide_3A": {
+        "path": "warplans/Warplans_Helltide_3A.webp"
+      },
+      "Warplans_Helltide_3B": {
+        "path": "warplans/Warplans_Helltide_3B.webp"
+      },
+      "Warplans_Helltide_4": {
+        "path": "warplans/Warplans_Helltide_4.webp"
+      },
+      "Warplans_Helltide_5": {
+        "path": "warplans/Warplans_Helltide_5.webp"
+      },
+      "Warplans_Helltide_6": {
+        "path": "warplans/Warplans_Helltide_6.webp"
+      },
+      "Warplans_Helltide_7": {
+        "path": "warplans/Warplans_Helltide_7.webp"
+      },
+      "Warplans_Helltide_8": {
+        "path": "warplans/Warplans_Helltide_8.webp"
+      },
+      "Warplans_Helltide_9": {
+        "path": "warplans/Warplans_Helltide_9.webp"
+      },
+      "Warplans_Helltide__root": {
+        "path": "warplans/Warplans_Helltide__root.webp"
+      },
+      "Warplans_InfernalHordes": {
+        "path": "warplans/Warplans_InfernalHordes.webp"
+      },
+      "Warplans_InfernalHordes__root": {
+        "path": "warplans/Warplans_InfernalHordes__root.webp"
+      },
+      "Warplans_NMD_0": {
+        "path": "warplans/Warplans_NMD_0.webp"
+      },
+      "Warplans_NMD_1": {
+        "path": "warplans/Warplans_NMD_1.webp"
+      },
+      "Warplans_NMD_1A": {
+        "path": "warplans/Warplans_NMD_1A.webp"
+      },
+      "Warplans_NMD_1B": {
+        "path": "warplans/Warplans_NMD_1B.webp"
+      },
+      "Warplans_NMD_2": {
+        "path": "warplans/Warplans_NMD_2.webp"
+      },
+      "Warplans_NMD_2A": {
+        "path": "warplans/Warplans_NMD_2A.webp"
+      },
+      "Warplans_NMD_2B": {
+        "path": "warplans/Warplans_NMD_2B.webp"
+      },
+      "Warplans_NMD_3": {
+        "path": "warplans/Warplans_NMD_3.webp"
+      },
+      "Warplans_NMD_3A": {
+        "path": "warplans/Warplans_NMD_3A.webp"
+      },
+      "Warplans_NMD_3B": {
+        "path": "warplans/Warplans_NMD_3B.webp"
+      },
+      "Warplans_NMD_3C": {
+        "path": "warplans/Warplans_NMD_3C.webp"
+      },
+      "Warplans_NMD_4": {
+        "path": "warplans/Warplans_NMD_4.webp"
+      },
+      "Warplans_NMD_5": {
+        "path": "warplans/Warplans_NMD_5.webp"
+      },
+      "Warplans_NightmareDungeons": {
+        "path": "warplans/Warplans_NightmareDungeons.webp"
+      },
+      "Warplans_NightmareDungeons__root": {
+        "path": "warplans/Warplans_NightmareDungeons__root.webp"
+      },
+      "Warplans_Pit": {
+        "path": "warplans/Warplans_Pit.webp"
+      },
+      "Warplans_Pit_0": {
+        "path": "warplans/Warplans_Pit_0.webp"
+      },
+      "Warplans_Pit_1": {
+        "path": "warplans/Warplans_Pit_1.webp"
+      },
+      "Warplans_Pit_10": {
+        "path": "warplans/Warplans_Pit_10.webp"
+      },
+      "Warplans_Pit_12": {
+        "path": "warplans/Warplans_Pit_12.webp"
+      },
+      "Warplans_Pit_13": {
+        "path": "warplans/Warplans_Pit_13.webp"
+      },
+      "Warplans_Pit_14": {
+        "path": "warplans/Warplans_Pit_14.webp"
+      },
+      "Warplans_Pit_2": {
+        "path": "warplans/Warplans_Pit_2.webp"
+      },
+      "Warplans_Pit_3": {
+        "path": "warplans/Warplans_Pit_3.webp"
+      },
+      "Warplans_Pit_4": {
+        "path": "warplans/Warplans_Pit_4.webp"
+      },
+      "Warplans_Pit_5": {
+        "path": "warplans/Warplans_Pit_5.webp"
+      },
+      "Warplans_Pit_6": {
+        "path": "warplans/Warplans_Pit_6.webp"
+      },
+      "Warplans_Pit_8": {
+        "path": "warplans/Warplans_Pit_8.webp"
+      },
+      "Warplans_Pit_9": {
+        "path": "warplans/Warplans_Pit_9.webp"
+      },
+      "Warplans_Pit__root": {
+        "path": "warplans/Warplans_Pit__root.webp"
+      },
+      "Warplans_Undercity": {
+        "path": "warplans/Warplans_Undercity.webp"
+      },
+      "Warplans_Undercity_0": {
+        "path": "warplans/Warplans_Undercity_0.webp"
+      },
+      "Warplans_Undercity_1": {
+        "path": "warplans/Warplans_Undercity_1.webp"
+      },
+      "Warplans_Undercity_10": {
+        "path": "warplans/Warplans_Undercity_10.webp"
+      },
+      "Warplans_Undercity_2": {
+        "path": "warplans/Warplans_Undercity_2.webp"
+      },
+      "Warplans_Undercity_3": {
+        "path": "warplans/Warplans_Undercity_3.webp"
+      },
+      "Warplans_Undercity_4": {
+        "path": "warplans/Warplans_Undercity_4.webp"
+      },
+      "Warplans_Undercity_5": {
+        "path": "warplans/Warplans_Undercity_5.webp"
+      },
+      "Warplans_Undercity_6": {
+        "path": "warplans/Warplans_Undercity_6.webp"
+      },
+      "Warplans_Undercity_7": {
+        "path": "warplans/Warplans_Undercity_7.webp"
+      },
+      "Warplans_Undercity_8": {
+        "path": "warplans/Warplans_Undercity_8.webp"
+      },
+      "Warplans_Undercity_9": {
+        "path": "warplans/Warplans_Undercity_9.webp"
+      },
+      "Warplans_Undercity__root": {
+        "path": "warplans/Warplans_Undercity__root.webp"
+      },
+      "Warplans_Whispers": {
+        "path": "warplans/Warplans_Whispers.webp"
+      },
+      "Warplans_Whispers_0": {
+        "path": "warplans/Warplans_Whispers_0.webp"
+      },
+      "Warplans_Whispers_1": {
+        "path": "warplans/Warplans_Whispers_1.webp"
+      },
+      "Warplans_Whispers_1A": {
+        "path": "warplans/Warplans_Whispers_1A.webp"
+      },
+      "Warplans_Whispers_1B": {
+        "path": "warplans/Warplans_Whispers_1B.webp"
+      },
+      "Warplans_Whispers_2": {
+        "path": "warplans/Warplans_Whispers_2.webp"
+      },
+      "Warplans_Whispers_2B": {
+        "path": "warplans/Warplans_Whispers_2B.webp"
+      },
+      "Warplans_Whispers_3": {
+        "path": "warplans/Warplans_Whispers_3.webp"
+      },
+      "Warplans_Whispers_3A": {
+        "path": "warplans/Warplans_Whispers_3A.webp"
+      },
+      "Warplans_Whispers_3B": {
+        "path": "warplans/Warplans_Whispers_3B.webp"
+      },
+      "Warplans_Whispers_3C": {
+        "path": "warplans/Warplans_Whispers_3C.webp"
+      },
+      "Warplans_Whispers_4": {
+        "path": "warplans/Warplans_Whispers_4.webp"
+      },
+      "Warplans_Whispers_5": {
+        "path": "warplans/Warplans_Whispers_5.webp"
+      },
+      "Warplans_Whispers_6": {
+        "path": "warplans/Warplans_Whispers_6.webp"
+      },
+      "Warplans_Whispers_7": {
+        "path": "warplans/Warplans_Whispers_7.webp"
+      },
+      "Warplans_Whispers__root": {
+        "path": "warplans/Warplans_Whispers__root.webp"
       }
     }
   },

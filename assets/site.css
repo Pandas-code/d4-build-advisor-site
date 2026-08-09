@@ -2060,6 +2060,36 @@ a.build-card { text-decoration: none; }
   transform: rotate(45deg);
 }
 
+/* ------------- War Plans: the same tree language, seven times ------------- */
+/* One tree per endgame activity. The activity's root node is the only node
+   that is not a choice, so it reads as gold rather than as a pick, and it is
+   the one tree node that keeps its art even when the rest of the tree is
+   dimmed -- it names which tree you are looking at. */
+.tn.wp-root {
+  --tn: 2.1rem;
+  border-color: var(--gold);
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--gold-soft);
+}
+.tcanvas.has-path .tn.wp-root { opacity: 0.72; filter: none; }
+.tmap-legend .sw.root {
+  border-color: var(--gold);
+  border-radius: 50%;
+  background: var(--gold-soft);
+}
+.wp-picks { margin-top: var(--s-3); }
+.wp-picks .kind { color: hsl(var(--cls)); }
+.wp-picks .effect {
+  margin: var(--s-1) 0 0;
+  font-size: 0.85rem;
+  color: var(--fg-soft);
+}
+.wp-picks .note {
+  padding-top: var(--s-1);
+  border-top: 1px solid var(--line);
+}
+
 /* "Paragon opens at endgame" -- the empty tab says where the plan lives ---- */
 .stage-hint > span:not(.label) { display: block; }
 .stage-hint .stage-jump {
