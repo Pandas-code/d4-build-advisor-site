@@ -35,7 +35,21 @@
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
                "Liberation Mono", monospace;
 
-  /* --- space: one 4px ramp. Gaps, padding and margins come from here. --- */
+  /* --- space: one 4px ramp. Gaps, padding and margins come from here. ---
+         Two sub-steps sit below the ramp on purpose, and there are only two:
+         optical work that a full 4px step would visibly break - the vertical
+         padding of a micro pill, a 1px baseline nudge, the gutter between
+         paragon cells. Reach for --s-1 first; a third sub-step is a bug.
+         Nine declarations sit off the ramp on purpose and stay off it: the
+         fluid frame, nav, hero and section gutters, which are clamp() ramps -
+         a viewport-continuous gutter cannot be a step. Three more carry a
+         raw length and each says why at the site (.vh, the select caret
+         clearance, the zoom-scaled paragon gutter). Everything else in this
+         file - 294 of 382 gaps, paddings and margins, with the rest at 0 or
+         a keyword - resolves to this ramp. */
+  --s-hair: 1px;
+  --s-micro: 2px;
+
   --s-1: 0.25rem;   /*  4px */
   --s-2: 0.5rem;    /*  8px */
   --s-3: 0.75rem;   /* 12px */
@@ -58,9 +72,9 @@
   --fs-xl: 1.25rem;      /* 20px */
   --fs-2xl: 1.5rem;      /* 24px */
 
-  /* --- radius: chiselled, not bubbly. The site was 100{'accents_light': '\n  /* class accents as HSL triples so tints derive from one value */\n  --c-barbarian: 12 64% 36%;\n  --c-druid: 92 40% 27%;\n  --c-necromancer: 268 40% 44%;\n  --c-paladin: 232 48% 40%;\n  --c-rogue: 176 62% 25%;\n  --c-sorcerer: 212 64% 38%;\n  --c-spiritborn: 36 76% 31%;\n  --c-warlock: 322 46% 38%;\n  --c-unknown: 36 14% 34%;\n\n  --t-s: 36 78% 34%;\n  --t-a: 96 34% 28%;\n  --t-b: 210 40% 36%;\n  --t-c: 30 12% 40%;\n  --t-d: 0 30% 36%;\n', 'dark': '  color-scheme: dark;\n\n  --bg: #0c0a08;\n  --bg-deep: #060505;\n  --surface: #17120e;\n  --surface-2: #1d1712;\n  --raised: #241c16;\n  --nav-bg: rgba(10, 8, 6, 0.86);\n  --fg: #ece1cb;\n  --fg-soft: #c8b89e;\n  --fg-dim: #9a8871;\n  --line: rgba(201, 162, 84, 0.20);\n  --line-strong: rgba(201, 162, 84, 0.44);\n  --gold: #d9af52;\n  --gold-soft: rgba(217, 175, 82, 0.12);\n  --ember: #e5873f;\n  --blood: #cf3f31;\n  --ptr: #b490ec;\n  --ptr-soft: rgba(180, 144, 236, 0.14);\n\n  --e-1: 0 1px 0 rgba(255, 220, 160, 0.04),\n         0 1px 2px rgba(0, 0, 0, 0.55),\n         0 8px 20px -14px rgba(0, 0, 0, 0.9);\n  --e-2: 0 1px 0 rgba(255, 220, 160, 0.07),\n         0 2px 8px rgba(0, 0, 0, 0.6),\n         0 18px 34px -18px rgba(0, 0, 0, 0.95);\n  --e-3: 0 1px 0 rgba(255, 220, 160, 0.10),\n         0 6px 16px rgba(0, 0, 0, 0.7),\n         0 32px 56px -22px rgba(0, 0, 0, 1);\n  --shadow: var(--e-1);\n  --shadow-lift: var(--e-2);\n\n  --grain-opacity: 0.42;\n  --halo-1: rgba(224, 128, 58, 0.16);\n  --halo-2: rgba(120, 60, 200, 0.10);\n', 'accents_dark': '\n  --c-barbarian: 14 68% 58%;\n  --c-druid: 90 44% 54%;\n  --c-necromancer: 268 54% 71%;\n  --c-paladin: 230 64% 70%;\n  --c-rogue: 174 54% 50%;\n  --c-sorcerer: 208 74% 65%;\n  --c-spiritborn: 40 84% 58%;\n  --c-warlock: 320 62% 66%;\n  --c-unknown: 38 14% 64%;\n\n  --t-s: 40 86% 60%;\n  --t-a: 96 40% 56%;\n  --t-b: 208 52% 62%;\n  --t-c: 34 12% 58%;\n  --t-d: 2 46% 58%;\n'}quare before
-         Task 37; a hair of softening is the biggest "modern" signal there
-         is, and stopping at 9px is what keeps it Diablo. ---------------- */
+  /* --- radius: chiselled, not bubbly. Every corner on this site was
+         square before Task 37; a hair of softening is the biggest "modern"
+         signal there is, and stopping at 9px is what keeps it Diablo. -- */
   --r-sm: 3px;
   --r-md: 5px;
   --r-lg: 9px;
@@ -388,7 +402,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 }
 .brand:hover .brand-name { color: var(--gold); }
 
-.menubar { display: flex; align-items: center; gap: 0.15rem; }
+.menubar { display: flex; align-items: center; gap: var(--s-micro); }
 .menu-wrap { position: relative; }
 .menu-btn {
   appearance: none;
@@ -495,7 +509,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 
 .badge-ptr {
   display: inline-block;
-  padding: 0.12rem var(--s-2);
+  padding: var(--s-micro) var(--s-2);
   border: 1px solid color-mix(in srgb, var(--ptr) 60%, transparent);
   border-radius: var(--r-full);
   background: var(--ptr-soft);
@@ -614,7 +628,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   text-transform: none;
   box-shadow: var(--shadow);
 }
-.stale-warning.in-history { margin: 0 0 0.9rem; }
+.stale-warning.in-history { margin: 0 0 var(--s-4); }
 
 /* ----------------------------- section rules ---------------------------- */
 .rule {
@@ -645,7 +659,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 }
 
 /* ------------------------------ tier list ------------------------------- */
-.tiers { display: grid; gap: 0.55rem; }
+.tiers { display: grid; gap: var(--s-2); }
 .tier-row {
   display: grid;
   grid-template-columns: 3.6rem 1fr;
@@ -699,7 +713,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: hsl(var(--cls));
 }
 .class-row .why {
-  margin-top: 0.15rem;
+  margin-top: var(--s-micro);
   font-size: 0.86rem;
   color: var(--fg-dim);
 }
@@ -830,7 +844,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 }
 
 /* -------------------------------- chips --------------------------------- */
-.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s-1); align-items: center; }
 .chip {
   display: inline-flex;
   align-items: center;
@@ -881,6 +895,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   position: absolute;
   width: 1px;
   height: 1px;
+  /* off-ramp on purpose: this is not spacing, it is the clip-rect idiom.
+     The -1px must cancel the 1px box exactly or the node stops being hidden. */
   margin: -1px;
   padding: 0;
   overflow: hidden;
@@ -962,7 +978,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: var(--fg-dim);
   font-size: 0.92rem;
 }
-.hero .chips { margin-top: 0.85rem; }
+.hero .chips { margin-top: var(--s-3); }
 .hero .verified {
   margin: var(--s-3) 0 0;
   font-family: var(--font-mono);
@@ -1128,7 +1144,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   text-transform: uppercase;
   color: var(--gold);
 }
-.gear-list { display: grid; gap: 0.45rem; }
+.gear-list { display: grid; gap: var(--s-2); }
 .gear-row {
   min-width: 0;
   padding: var(--s-2) var(--s-3) var(--s-2);
@@ -1179,7 +1195,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   gap: var(--s-1);
 }
 .g-aspects li {
-  padding: 0.12rem var(--s-2);
+  padding: var(--s-micro) var(--s-2);
   border: 1px solid var(--line);
   background: var(--surface-2);
   font-size: 0.78rem;
@@ -1216,7 +1232,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: hsl(var(--cls));
 }
 .slot-card .item {
-  margin: 0.15rem 0 var(--s-2);
+  margin: var(--s-micro) 0 var(--s-2);
   font-size: 0.95rem;
   color: var(--gold);
   overflow-wrap: anywhere;
@@ -1375,10 +1391,10 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: hsl(var(--cls));
 }
 
-.callout + .prio { margin-top: 0.75rem; }
+.callout + .prio { margin-top: var(--s-3); }
 
 /* allocation rows: skill-tree point spend and war-plan picks share one shape */
-.alloc { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+.alloc { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-2); }
 .alloc li {
   display: flex;
   flex-wrap: wrap;
@@ -1413,13 +1429,13 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 }
 .alloc .note {
   flex: 1 1 100%;
-  margin: 0.1rem 0 0;
+  margin: var(--s-micro) 0 0;
   font-size: 0.84rem;
   color: var(--fg-dim);
 }
 .pts {
   display: inline-block;
-  padding: 0.15rem var(--s-2);
+  padding: var(--s-micro) var(--s-2);
   border: 1px solid hsl(var(--cls) / 0.5);
   border-radius: var(--r-full);
   background: hsl(var(--cls) / 0.12);
@@ -1453,7 +1469,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: var(--fg-dim);
 }
 .board .b-name {
-  margin: 0.1rem 0 var(--s-2);
+  margin: var(--s-micro) 0 var(--s-2);
   font-family: var(--font-display);
   font-size: 0.98rem;
   letter-spacing: 0.04em;
@@ -1468,7 +1484,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   text-transform: none;
   letter-spacing: 0.04em;
 }
-.board .b-note { margin: 0.4rem 0 0; font-size: 0.86rem; color: var(--fg-soft); }
+.board .b-note { margin: var(--s-2) 0 0; font-size: 0.86rem; color: var(--fg-soft); }
 
 /* mercenary + reinforcement pair */
 .merc-grid {
@@ -1493,7 +1509,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: hsl(var(--cls));
 }
 .merc .nm {
-  margin: 0.15rem 0 0;
+  margin: var(--s-micro) 0 0;
   font-family: var(--font-display);
   font-size: 1.02rem;
   letter-spacing: 0.04em;
@@ -1521,7 +1537,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 }
 .merc .mline .icon { width: 1.5rem; height: 1.5rem; flex: 0 0 auto; }
 .merc .mline .nm { margin: 0; font-size: 0.95rem; }
-.merc .note { margin: 0.45rem 0 0; font-size: 0.82rem; color: var(--fg-dim); }
+.merc .note { margin: var(--s-2) 0 0; font-size: 0.82rem; color: var(--fg-dim); }
 
 /* the mercenary's chosen skills, one card each */
 .mskills {
@@ -1561,12 +1577,12 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   text-transform: uppercase;
   color: var(--fg-dim);
 }
-.mskill .note { margin: 0.35rem 0 0; font-size: 0.82rem; color: var(--fg-soft); }
+.mskill .note { margin: var(--s-1) 0 0; font-size: 0.82rem; color: var(--fg-soft); }
 
 .prose { margin: 0; font-size: 0.92rem; color: var(--fg-soft); }
-.prose + .prose { margin-top: 0.6rem; }
+.prose + .prose { margin-top: var(--s-2); }
 
-.block { margin-top: 1.25rem; }
+.block { margin-top: var(--s-5); }
 .block:first-child { margin-top: 0; }
 .block > h3 {
   margin: 0 0 var(--s-2);
@@ -1626,8 +1642,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 }
 
 /* changelog + sources */
-.log { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
-.log li { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.87rem; }
+.log { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-2); }
+.log li { display: flex; flex-wrap: wrap; gap: var(--s-2); font-size: 0.87rem; }
 .log .date {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -1647,7 +1663,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-style: italic;
   grid-column: 1 / -1;
 }
-.empty.small { padding: 1rem; font-size: 0.88rem; }
+.empty.small { padding: var(--s-4); font-size: 0.88rem; }
 
 /* ------------------------------- history -------------------------------- */
 .history-wrap { margin-top: clamp(2.5rem, 6vw, 4rem); border-top: 1px solid var(--line); }
@@ -1680,7 +1696,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   letter-spacing: 0.08em;
   opacity: 0.8;
 }
-.runs { margin: 0 0 1.5rem; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+.runs { margin: 0 0 var(--s-6); padding: 0; list-style: none; display: grid; gap: var(--s-2); }
 .runs li {
   display: grid;
   grid-template-columns: auto 6.5rem 1fr;
@@ -1712,7 +1728,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   text-transform: uppercase;
   color: var(--fg-dim);
 }
-.run-details-wrap { grid-column: 1 / -1; margin-top: 0.3rem; }
+.run-details-wrap { grid-column: 1 / -1; margin-top: var(--s-1); }
 .run-details-toggle {
   appearance: none;
   margin: 0;
@@ -1798,7 +1814,7 @@ a.build-card { text-decoration: none; }
 }
 .build-card .card-head .icon { --icon-size: 1.9rem; }
 .build-card .card-head h3 { min-width: 0; }
-.hero .kicker { display: flex; align-items: center; gap: 0.45rem; }
+.hero .kicker { display: flex; align-items: center; gap: var(--s-2); }
 .hero .kicker .icon { --icon-size: 1.5rem; }
 .class-row .name { align-items: center; }
 .class-row .name .icon { --icon-size: 1.4rem; }
@@ -1846,7 +1862,7 @@ a.build-card { text-decoration: none; }
 /* ------------------- skill rows, in the reference's format --------------- */
 /* icon + name + rank badge; upgrades sit indented under their skill with
    their own icons (manifest ids are namespaced "<skill_id>__<upgrade_id>") */
-.skill-rows { display: grid; gap: 0.35rem; }
+.skill-rows { display: grid; gap: var(--s-1); }
 .skill-row {
   display: flex;
   align-items: center;
@@ -1883,13 +1899,13 @@ a.build-card { text-decoration: none; }
 .skill-row.upgrade .nm { font-size: 0.87rem; color: var(--fg-soft); }
 .skill-row .note {
   flex: 1 1 100%;
-  margin: 0.15rem 0 0;
+  margin: var(--s-micro) 0 0;
   font-size: 0.83rem;
   color: var(--fg-dim);
 }
 .rank {
   flex: 0 0 auto;
-  padding: 0.15rem var(--s-2);
+  padding: var(--s-micro) var(--s-2);
   border: 1px solid hsl(var(--cls) / 0.5);
   border-radius: var(--r-full);
   background: hsl(var(--cls) / 0.12);
@@ -1921,8 +1937,8 @@ a.build-card { text-decoration: none; }
 .skillbar .slot .nm { font-size: 0.82rem; line-height: 1.25; overflow-wrap: anywhere; }
 
 /* --------------------- gear paperdoll rows with icons -------------------- */
-.gear-row { display: flex; align-items: flex-start; gap: 0.65rem; }
-.gear-row > .icon { margin-top: 0.1rem; }
+.gear-row { display: flex; align-items: flex-start; gap: var(--s-3); }
+.gear-row > .icon { margin-top: var(--s-micro); }
 .gear-row .g-body { flex: 1 1 auto; min-width: 0; }
 .g-aspects li {
   display: inline-flex;
@@ -1940,7 +1956,7 @@ a.build-card { text-decoration: none; }
 }
 .slot-card .slot-head .icon { --icon-size: 2rem; }
 .slot-card .slot-head > div { min-width: 0; }
-.slot-card .item { margin: 0.05rem 0 0; }
+.slot-card .item { margin: var(--s-hair) 0 0; }
 
 /* ------------- the class skill tree, drawn the way the game lays it out --- */
 /* Nodes sit at their gamedata coordinates inside a scrollable canvas, with
@@ -2079,7 +2095,7 @@ a.build-card { text-decoration: none; }
   border-radius: var(--r-lg);
   box-shadow: var(--e-1);
 }
-.pboard + .pboard { margin-top: 0.7rem; }
+.pboard + .pboard { margin-top: var(--s-3); }
 .pboard .b-head {
   display: flex;
   flex-wrap: wrap;
@@ -2090,12 +2106,12 @@ a.build-card { text-decoration: none; }
 .pboard .b-head .b-ord { flex: 0 0 auto; }
 .pboard .b-head .b-name { margin: 0; flex: 1 1 8rem; min-width: 0; }
 .chip.glyph .icon { --icon-size: 1.25rem; }
-.chip.glyph { padding-left: 0.3rem; }
+.chip.glyph { padding-left: var(--s-1); }
 
 .pgrid-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding: var(--s-1) 0.1rem var(--s-2);
+  padding: var(--s-1) var(--s-micro) var(--s-2);
   background:
     radial-gradient(120% 90% at 50% 0%, hsl(var(--cls) / 0.09), transparent 70%),
     var(--bg-deep);
@@ -2108,7 +2124,7 @@ a.build-card { text-decoration: none; }
   display: grid;
   grid-template-columns: repeat(var(--w), var(--cell));
   grid-auto-rows: var(--cell);
-  gap: 2px;
+  gap: var(--s-micro);
   width: max-content;
   margin: 0 auto;
 }
@@ -2160,7 +2176,7 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   color: var(--fg-dim);
 }
-.pgrid-legend li { display: inline-flex; align-items: center; gap: 0.35rem; }
+.pgrid-legend li { display: inline-flex; align-items: center; gap: var(--s-1); }
 .pgrid-legend .sw {
   width: 0.7rem;
   height: 0.7rem;
@@ -2170,7 +2186,7 @@ a.build-card { text-decoration: none; }
 .pgrid-legend .sw.taken { border-color: hsl(var(--cls)); box-shadow: 0 0 8px -2px hsl(var(--cls)); }
 .pgrid-legend .sw.socket { border-color: var(--gold); box-shadow: 0 0 8px -2px var(--gold); }
 .pgrid-legend .sw.legendary { border-color: var(--ember); box-shadow: 0 0 8px -2px var(--ember); }
-.pboard .b-note { margin: 0.5rem 0 0; font-size: 0.86rem; color: var(--fg-soft); }
+.pboard .b-note { margin: var(--s-2) 0 0; font-size: 0.86rem; color: var(--fg-soft); }
 .pboard .b-unmapped {
   margin: var(--s-2) 0 0;
   font-family: var(--font-mono);
@@ -2245,7 +2261,7 @@ a.build-card { text-decoration: none; }
   border-radius: var(--r-lg);
   box-shadow: var(--e-1);
 }
-.filters .field { display: grid; gap: 0.25rem; min-width: 9rem; }
+.filters .field { display: grid; gap: var(--s-1); min-width: 9rem; }
 .filters .field.grow { flex: 1 1 14rem; }
 .filters label {
   font-family: var(--font-mono);
@@ -2286,8 +2302,11 @@ a.build-card { text-decoration: none; }
   color: var(--gold);
   font-size: 0.7rem;
 }
+/* off-ramp on purpose: clearance for the caret .sel::after draws at
+   right: 0.55rem, which is placed optically, not on the ramp. --s-6 collides
+   with the glyph; --s-7 leaves a visible hole between value and caret. */
 .filters .sel select { padding-right: 1.7rem; }
-.filters .back { align-self: flex-end; margin-bottom: 0.05rem; }
+.filters .back { align-self: flex-end; margin-bottom: var(--s-hair); }
 
 .filter-status {
   margin: var(--s-2) 0 0;
@@ -2326,7 +2345,7 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   color: var(--gold);
 }
-.focus-head { display: flex; align-items: center; gap: 0.7rem; }
+.focus-head { display: flex; align-items: center; gap: var(--s-3); }
 .focus-head h3 {
   margin: 0;
   font-family: var(--font-display);
@@ -2334,7 +2353,7 @@ a.build-card { text-decoration: none; }
   font-size: 1.15rem;
   letter-spacing: 0.08em;
 }
-.focus-head .chips { margin-top: 0.3rem; }
+.focus-head .chips { margin-top: var(--s-1); }
 .focus-cols {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -2349,7 +2368,7 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   color: var(--fg-dim);
 }
-.xref { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.3rem; }
+.xref { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-1); }
 .xref li {
   display: flex;
   flex-wrap: wrap;
@@ -2371,7 +2390,7 @@ a.build-card { text-decoration: none; }
 }
 
 /* ----------------------------- boss loot cards -------------------------- */
-.boss-list { display: grid; gap: 0.8rem; margin-top: 1.1rem; }
+.boss-list { display: grid; gap: var(--s-3); margin-top: var(--s-4); }
 .boss {
   --boss: var(--c-unknown);
   position: relative;
@@ -2405,7 +2424,7 @@ a.build-card { text-decoration: none; }
   100% { background-color: transparent; }
 }
 
-.bhead { display: flex; align-items: center; gap: 0.7rem; }
+.bhead { display: flex; align-items: center; gap: var(--s-3); }
 .bhead .bt { min-width: 0; }
 .bhead h3 {
   margin: 0 0 var(--s-1);
@@ -2440,7 +2459,7 @@ a.build-card { text-decoration: none; }
 .chip.r-unique { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
 .chip.r-set { color: hsl(var(--t-a)); border-color: hsl(var(--t-a) / 0.5); }
 
-.boss .blurb { margin: 0.7rem 0 0; font-size: 0.9rem; color: var(--fg-soft); }
+.boss .blurb { margin: var(--s-3) 0 0; font-size: 0.9rem; color: var(--fg-soft); }
 .bfacts {
   margin: var(--s-3) 0 0;
   display: grid;
@@ -2509,7 +2528,7 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.1em;
   color: var(--fg-dim);
 }
-.bsrc { margin-top: 0.8rem; }
+.bsrc { margin-top: var(--s-3); }
 .bsrc summary {
   font-family: var(--font-mono);
   font-size: 0.64rem;
@@ -2519,10 +2538,10 @@ a.build-card { text-decoration: none; }
   cursor: pointer;
 }
 .bsrc summary:hover { color: var(--gold); }
-.bsrc .log { margin-top: 0.5rem; }
+.bsrc .log { margin-top: var(--s-2); }
 
 /* -------------------------------- codex --------------------------------- */
-.codex-results { display: grid; gap: 0.25rem; margin-top: 1rem; }
+.codex-results { display: grid; gap: var(--s-1); margin-top: var(--s-4); }
 .cx-row {
   display: grid;
   grid-template-columns: auto minmax(9rem, 18rem) 1fr;
@@ -2582,7 +2601,7 @@ a.build-card { text-decoration: none; }
   scroll-margin-top: calc(var(--nav-h) + 6rem);
   animation: rise var(--dur-3) var(--ease-out) both;
 }
-.cx-dhead { display: flex; align-items: flex-start; gap: 0.75rem; }
+.cx-dhead { display: flex; align-items: flex-start; gap: var(--s-3); }
 .cx-dhead > div { flex: 1 1 auto; min-width: 0; }
 .cx-dhead h2 {
   margin: 0 0 var(--s-1);
@@ -2592,7 +2611,7 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.08em;
 }
 .chip.dom { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
-.cx-line { margin-top: 0.85rem; }
+.cx-line { margin-top: var(--s-3); }
 .cx-label {
   display: block;
   font-family: var(--font-mono);
@@ -2600,7 +2619,7 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--fg-dim);
-  margin-bottom: 0.15rem;
+  margin-bottom: var(--s-micro);
 }
 .cx-text { font-size: 0.94rem; color: var(--fg-soft); }
 .cx-id {
@@ -2624,7 +2643,7 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.02em;
 }
 
-.codex-intro { margin-top: 2rem; }
+.codex-intro { margin-top: var(--s-7); }
 .domain-cards {
   margin: 0;
   padding: 0;
@@ -2672,7 +2691,7 @@ a.build-card { text-decoration: none; }
   white-space: nowrap;
 }
 .dcard .db { font-size: 0.85rem; color: var(--fg-soft); }
-.codex-intro .prose { margin-top: 1rem; }
+.codex-intro .prose { margin-top: var(--s-4); }
 
 /* ------------------------------ responsive ------------------------------ */
 @media (max-width: 56rem) {
@@ -2682,18 +2701,18 @@ a.build-card { text-decoration: none; }
 
 @media (max-width: 44rem) {
   .skillbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .btab { padding: 0.6rem 0.8rem; letter-spacing: 0.12em; font-size: 0.74rem; }
+  .btab { padding: var(--s-2) var(--s-3); letter-spacing: 0.12em; font-size: 0.74rem; }
   .stage-trigger { flex-basis: 100%; }
   .tier-row { grid-template-columns: 2.8rem 1fr; }
   .tier-badge { font-size: 1.2rem; }
   .runs li { grid-template-columns: auto 1fr; }
   .runs .what { grid-column: 1 / -1; }
-  .tabs button { flex: 1 1 auto; padding: 0.6rem 0.5rem; letter-spacing: 0.14em; }
+  .tabs button { flex: 1 1 auto; padding: var(--s-2) var(--s-2); letter-spacing: 0.14em; }
 }
 
 @media (max-width: 44rem) {
   .pgrid { --cell: 1.15rem; }
-  .skill-row.upgrade { margin-left: 0.9rem; }
+  .skill-row.upgrade { margin-left: var(--s-4); }
   /* the map keeps its gamedata geometry, zoomed out with matching plates so
      a phone screen sees more of the tree per pan */
   .tmap-scroll { max-height: min(62vh, 26rem); }
@@ -2707,8 +2726,8 @@ a.build-card { text-decoration: none; }
 
 @media (max-width: 34rem) {
   .brand-name { display: none; }
-  .menu-btn, .nav-link { padding: 0.5rem 0.4rem; font-size: 0.68rem; letter-spacing: 0.1em; }
-  .topnav-in { gap: 0.3rem; }
+  .menu-btn, .nav-link { padding: var(--s-2) var(--s-2); font-size: 0.68rem; letter-spacing: 0.1em; }
+  .topnav-in { gap: var(--s-1); }
   .nav-season { font-size: 0.6rem; letter-spacing: 0.06em; }
   .hero h1 { max-width: none; }
   .skillbar .slot .icon { --icon-size: 2.1rem; }
@@ -2731,7 +2750,7 @@ a.build-card { text-decoration: none; }
 }
 
 @media (max-width: 44rem) {
-  .filters { position: static; padding: 0.65rem 0.7rem; }
+  .filters { position: static; padding: var(--s-3) var(--s-3); }
   .filters .field { min-width: 0; flex: 1 1 100%; }
   .filters .back { width: 100%; }
   .bfacts .bf { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -2790,7 +2809,7 @@ a.build-card { text-decoration: none; }
 .pv-hits {
   flex: 0 0 auto;
   min-width: 0;
-  padding: 0 0.15rem;
+  padding: 0 var(--s-micro);
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.08em;
@@ -2801,7 +2820,7 @@ a.build-card { text-decoration: none; }
 .pv-group {
   display: inline-flex;
   align-items: center;
-  gap: 0.15rem;
+  gap: var(--s-micro);
   flex: 0 0 auto;
 }
 .pv-zoom {
@@ -2876,7 +2895,8 @@ a.build-card { text-decoration: none; }
 /* --pz is the board's zoom. It scales the cell *size* rather than applying a
    transform, so the grid keeps its layout box and the scroll container keeps
    working -- and the icons stay crisp because they are re-laid-out, not
-   stretched. */
+   stretched. Cell and gutter are off-ramp on purpose for the same reason:
+   both are multiplied by --pz, so they are a ratio of the cell, not a step. */
 .pgrid { --pz: 1; --cell: calc(2.3rem * var(--pz)); gap: calc(0.16rem * var(--pz)); }
 .pgrid-scroll { overflow: auto; max-height: min(78vh, 44rem); }
 .pgrid-rot {
@@ -2998,9 +3018,9 @@ a.build-card { text-decoration: none; }
 @media (max-width: 44rem) {
   /* phones get the rail wrapped and the canvas shorter; panning is plain
      scrolling here, so nothing depends on a pinch gesture */
-  .pv-controls { gap: 0.3rem; padding: 0.35rem; }
+  .pv-controls { gap: var(--s-1); padding: var(--s-1); }
   .pv-find { flex: 1 1 100%; }
-  .pv-btn { padding: 0.45rem 0.5rem; font-size: 0.6rem; }
+  .pv-btn { padding: var(--s-2) var(--s-2); font-size: 0.6rem; }
   .pgrid { --cell: calc(1.6rem * var(--pz)); }
   .pgrid-scroll { max-height: min(60vh, 26rem); }
 }
@@ -3034,7 +3054,7 @@ a.build-card { text-decoration: none; }
 }
 .sock-head .s-label { color: hsl(var(--cls)); }
 .sock-head .s-count { color: var(--fg-dim); }
-.socketed { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+.socketed { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-1); }
 .sock {
   display: flex;
   align-items: flex-start;
@@ -3077,7 +3097,7 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   color: hsl(var(--cls));
 }
-.sock .note { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--fg-dim); }
+.sock .note { margin: var(--s-1) 0 0; font-size: 0.76rem; color: var(--fg-dim); }
 /* a socket the build records nothing for: stated, never quietly dropped */
 .sock.empty { border-left-style: dashed; border-left-color: var(--line-strong); }
 .sock.empty .nm { color: var(--fg-dim); font-style: italic; }
@@ -3103,7 +3123,7 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   color: var(--gold);
 }
-.chip.sock { margin-left: 0.4rem; color: var(--fg-soft); }
+.chip.sock { margin-left: var(--s-2); color: var(--fg-soft); }
 .g-sockets {
   margin-left: var(--s-2);
   font-family: var(--font-mono);
@@ -3192,14 +3212,14 @@ a.build-card { text-decoration: none; }
    to tierlist/index.html and keep their own styles above.
    ========================================================================== */
 .feed-note {
-  margin: -0.5rem 0 var(--s-6);
+  margin: calc(var(--s-2) * -1) 0 var(--s-6);
   max-width: 46rem;
   color: var(--fg-dim);
   font-size: 0.86rem;
   line-height: 1.6;
 }
 
-.news-list { display: grid; gap: 0.9rem; }
+.news-list { display: grid; gap: var(--s-4); }
 
 .news {
   position: relative;
@@ -3227,7 +3247,7 @@ a.build-card { text-decoration: none; }
   color: var(--fg-dim);
 }
 .news-kind {
-  padding: 0.15rem var(--s-2);
+  padding: var(--s-micro) var(--s-2);
   border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
   border-radius: var(--r-full);
   background: var(--gold-soft);
@@ -3281,7 +3301,7 @@ a.build-card { text-decoration: none; }
 }
 .news-src a { color: var(--gold); overflow-wrap: anywhere; }
 .news-src a:hover, .news-src a:focus-visible { color: var(--ember); }
-.news-src .fetched { margin-left: 0.35rem; color: var(--fg-dim); }
+.news-src .fetched { margin-left: var(--s-1); color: var(--fg-dim); }
 .news-src.none {
   margin: var(--s-3) 0 0;
   padding-top: var(--s-2);
@@ -3292,7 +3312,7 @@ a.build-card { text-decoration: none; }
 }
 
 /* --- build updates ------------------------------------------------------ */
-.upd-day { margin: 0 0 1.1rem; }
+.upd-day { margin: 0 0 var(--s-4); }
 .upd-date {
   display: flex;
   align-items: baseline;
@@ -3317,7 +3337,7 @@ a.build-card { text-decoration: none; }
   background: linear-gradient(90deg, var(--line), transparent);
 }
 
-.upd-list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.upd-list { display: grid; gap: var(--s-2); margin: 0; padding: 0; list-style: none; }
 .upd {
   padding: var(--s-3) var(--s-4);
   border: 1px solid var(--line);
@@ -3356,8 +3376,8 @@ a.build-card { text-decoration: none; }
 }
 
 @media (max-width: 34rem) {
-  .news { padding: 0.85rem 0.9rem 0.95rem; }
-  .news-src { gap: 0.3rem 0.5rem; }
+  .news { padding: var(--s-3) var(--s-4) var(--s-4); }
+  .news-src { gap: var(--s-1) var(--s-2); }
 }
 
 /* ==========================================================================
@@ -3410,7 +3430,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
 
 .nav-link {
   min-height: var(--tap);
-  padding: 0.55rem 0.75rem;
+  padding: var(--s-2) var(--s-3);
   border-radius: var(--r-md);
   font-size: var(--fs-xs);
   letter-spacing: 0.12em;
@@ -3444,7 +3464,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
 
 /* the season chip is a real chip now, not floating mono text */
 .nav-season {
-  padding: 0.25rem 0.6rem;
+  padding: var(--s-1) var(--s-2);
   border: 1px solid var(--line);
   border-radius: var(--r-full);
   background: var(--surface-2);
@@ -3478,14 +3498,14 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
 .dbtn { border-radius: var(--r-sm); }
 .dbtn:active .dn { color: var(--ember); }
 .history-toggle:active { background: color-mix(in srgb, var(--gold) 18%, transparent); }
-.run-details-toggle { border-radius: var(--r-sm); padding: 0.15rem 0.3rem; margin-left: -0.3rem; }
+.run-details-toggle { border-radius: var(--r-sm); padding: var(--s-micro) var(--s-1); margin-left: calc(var(--s-1) * -1); }
 .run-details-toggle:active { background: var(--gold-soft); }
 
 /* the source disclosure on a boss card is a control; give it a control's box */
 .bsrc summary {
   display: inline-block;
-  padding: 0.3rem 0.55rem;
-  margin-left: -0.55rem;
+  padding: var(--s-1) var(--s-2);
+  margin-left: calc(var(--s-2) * -1);
   border-radius: var(--r-sm);
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
@@ -3520,7 +3540,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
 .affix li, .loadout li { padding-block: var(--s-1); }
 .affix li:hover, .loadout li:hover { color: var(--fg); }
 
-.bfacts .bf { padding-block: 0.2rem; border-top: 1px solid var(--line); }
+.bfacts .bf { padding-block: var(--s-1); border-top: 1px solid var(--line); }
 .bfacts .bf:first-of-type { border-top: none; }
 
 .runs li { transition: border-color var(--dur-1) var(--ease); }
@@ -3588,12 +3608,12 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
   /* the bar still has to fit, but a 4px tap target is not a target */
   .menu-btn, .nav-link {
     min-height: var(--tap);
-    padding: 0.5rem 0.45rem;
+    padding: var(--s-2) var(--s-2);
     font-size: var(--fs-2xs);
     letter-spacing: 0.06em;
   }
   .nav-link[aria-current="page"]::after { left: 0.45rem; right: 0.45rem; }
-  .nav-season { padding: 0.2rem 0.4rem; font-size: var(--fs-3xs); letter-spacing: 0.04em; }
+  .nav-season { padding: var(--s-1) var(--s-2); font-size: var(--fs-3xs); letter-spacing: 0.04em; }
   .menubar { margin-left: 0; }
   .tier-classes { grid-template-columns: minmax(0, 1fr); }
   .foot { letter-spacing: 0.06em; }
