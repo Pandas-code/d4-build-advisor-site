@@ -1,6 +1,8 @@
 /* ==========================================================================
-   Diablo 4 Build Advisor - "Horadric field manual, ember-lit"
-   Dark: obsidian + ember gold. Light: aged vellum + iron-gall ink.
+   Diablo 4 Build Advisor - "midnight console" (Task 42)
+
+   Dark: deep navy/indigo surfaces, electric azure chrome, amber second accent.
+   Light: the same indigo hue family run cool and bright - never the old vellum.
 
    Shared stylesheet for the multi-page static site (Task 24). Copied verbatim
    to site/dist/assets/site.css by scripts/build_site.py; every page links it
@@ -10,28 +12,41 @@
    ========================================================================== */
 
 /* ==========================================================================
-   1. TOKENS  (Task 37 - ui-modernist owns this block)
+   1. TOKENS  (Task 37 scales, Task 42 color - ui-modernist owns this block)
    --------------------------------------------------------------------------
    Two layers, and the order matters.
 
    (a) SCALES - space, type, radius, motion. Theme-independent, declared once.
        Every measurement in this file comes off one of these ramps. A raw
-       value is a bug unless it carries a comment saying why.
+       value is a bug unless it carries a comment saying why. Task 42 did not
+       touch them: the space/type/radius/motion ramps are the same numbers
+       Task 37 settled, and the token guards in tests/test_build_site.py pin
+       them.
    (b) COLOR + ELEVATION - declared THREE times, because the site has three
        theme states: light (the bare :root default), system dark
        (@media prefers-color-scheme: dark, unless the page asks for light),
        and explicit dark (:root[data-theme="dark"]). A token missing from any
        one of the three is broken in that state.
+
+   Task 42 replaced every color token. The old obsidian/ember-gold and aged
+   vellum are gone, and the names went with them (--gold -> --accent,
+   --ember -> --accent-2, --blood -> --danger), so no rule can quietly keep
+   painting a color the palette no longer has.
    ========================================================================== */
 
 :root {
   color-scheme: light dark;
 
-  /* --- type families: system stacks only; nothing is ever fetched ------- */
-  --font-display: "Trajan Pro", "Cinzel", "Hoefler Text", "Baskerville Old Face",
-                  Baskerville, "Palatino Linotype", Palatino, Georgia, serif;
-  --font-body: "Iowan Old Style", "Charter", "Palatino Linotype", Palatino,
-               Georgia, "Times New Roman", serif;
+  /* --- type families: system stacks only; nothing is ever fetched -------
+         Task 42 moved the whole site off serif. Headings and body are one
+         modern sans stack at different weights; mono still carries labels
+         and every number. */
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont,
+                  "Segoe UI Variable Display", "Segoe UI", Roboto,
+                  "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text",
+               "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial,
+               sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
                "Liberation Mono", monospace;
 
@@ -45,8 +60,7 @@
          a viewport-continuous gutter cannot be a step. Three more carry a
          raw length and each says why at the site (.vh, the select caret
          clearance, the zoom-scaled paragon gutter). Everything else in this
-         file - 294 of 382 gaps, paddings and margins, with the rest at 0 or
-         a keyword - resolves to this ramp. */
+         file resolves to this ramp. */
   --s-hair: 1px;
   --s-micro: 2px;
 
@@ -72,9 +86,8 @@
   --fs-xl: 1.25rem;      /* 20px */
   --fs-2xl: 1.5rem;      /* 24px */
 
-  /* --- radius: chiselled, not bubbly. Every corner on this site was
-         square before Task 37; a hair of softening is the biggest "modern"
-         signal there is, and stopping at 9px is what keeps it Diablo. -- */
+  /* --- radius: unchanged from Task 37. Cards stop at 9px; only pills and
+         count badges go full-round. -------------------------------------- */
   --r-sm: 3px;
   --r-md: 5px;
   --r-lg: 9px;
@@ -92,60 +105,67 @@
   --measure: 68ch;          /* comfortable reading width for running prose */
   --tap: 2.5rem;            /* minimum comfortable hit target */
 
-  /* --- light theme: aged vellum + iron-gall ink ------------------------- */
-  --bg: #e9dfc9;
-  --bg-deep: #ded2b8;
-  --surface: #f6efdf;
-  --surface-2: #eee5cf;
-  --raised: #fcf7ec;
-  --nav-bg: rgba(243, 236, 218, 0.84);
-  --fg: #201a12;
-  --fg-soft: #493b2a;
-  --fg-dim: #6b5a44;
-  --line: rgba(74, 56, 30, 0.20);
-  --line-strong: rgba(74, 56, 30, 0.40);
-  --gold: #7f5c0d;
-  --gold-soft: rgba(127, 92, 13, 0.12);
-  --ember: #a3441a;
-  --blood: #85160f;
-  --ptr: #56349a;
-  --ptr-soft: rgba(86, 52, 154, 0.12);
+  /* --- light theme: the indigo family run cool and bright --------------- */
+  --bg: #eaeef7;
+  --bg-deep: #dde3f0;
+  --surface: #fbfcfe;
+  --surface-2: #f1f4fa;
+  --raised: #ffffff;
+  --nav-bg: rgba(247, 249, 253, 0.82);
+  --fg: #101625;
+  --fg-soft: #3a4460;
+  --fg-dim: #58627e;
+  --line: rgba(38, 62, 128, 0.16);
+  --line-strong: rgba(38, 62, 128, 0.34);
+  --accent: #0d63ad;
+  --accent-soft: rgba(13, 99, 173, 0.10);
+  --accent-2: #a24a06;
+  --accent-2-soft: rgba(162, 74, 6, 0.10);
+  --danger: #b91c1c;
+  --ptr: #6d28d9;
+  --ptr-soft: rgba(109, 40, 217, 0.10);
+
+  --sheen: rgba(255, 255, 255, 0.9);
+  --glow: 0 0 30px -10px rgba(13, 99, 173, 0.45);
+  --glow-2: 0 0 30px -10px rgba(162, 74, 6, 0.38);
 
   /* elevation ladder: rest / lifted / overlay. Two components of the same
-     importance sit on the same rung, always. */
-  --e-1: 0 1px 0 rgba(255, 250, 236, 0.6),
-         0 1px 2px rgba(40, 26, 8, 0.06),
-         0 6px 16px -12px rgba(40, 26, 8, 0.5);
-  --e-2: 0 1px 0 rgba(255, 250, 236, 0.7),
-         0 2px 6px rgba(40, 26, 8, 0.10),
-         0 16px 30px -18px rgba(40, 26, 8, 0.6);
-  --e-3: 0 1px 0 rgba(255, 250, 236, 0.85),
-         0 4px 12px rgba(40, 26, 8, 0.14),
-         0 28px 50px -24px rgba(40, 26, 8, 0.7);
+     importance sit on the same rung, always. Task 42 widened the gap between
+     the rungs so a lifted card reads as lifted at a glance. */
+  --e-0: 0 0 0 1px var(--line);
+  --e-1: inset 0 1px 0 var(--sheen),
+         0 1px 2px rgba(16, 26, 56, 0.06),
+         0 8px 18px -14px rgba(16, 26, 56, 0.55);
+  --e-2: inset 0 1px 0 var(--sheen),
+         0 3px 10px rgba(16, 26, 56, 0.10),
+         0 20px 34px -20px rgba(16, 26, 56, 0.7);
+  --e-3: inset 0 1px 0 var(--sheen),
+         0 8px 20px rgba(16, 26, 56, 0.14),
+         0 36px 60px -26px rgba(16, 26, 56, 0.8);
   /* pre-Task-37 names, kept so every existing rule keeps working */
   --shadow: var(--e-1);
   --shadow-lift: var(--e-2);
 
-  --grain-opacity: 0.32;
-  --halo-1: rgba(163, 68, 26, 0.10);
-  --halo-2: rgba(127, 92, 13, 0.12);
+  --grain-opacity: 0.14;
+  --halo-1: rgba(13, 99, 173, 0.10);
+  --halo-2: rgba(109, 40, 217, 0.08);
 
   /* class accents as HSL triples so tints derive from one value */
-  --c-barbarian: 12 64% 36%;
-  --c-druid: 92 40% 27%;
-  --c-necromancer: 268 40% 44%;
-  --c-paladin: 232 48% 40%;
-  --c-rogue: 176 62% 25%;
-  --c-sorcerer: 212 64% 38%;
-  --c-spiritborn: 36 76% 31%;
-  --c-warlock: 322 46% 38%;
-  --c-unknown: 36 14% 34%;
+  --c-barbarian: 8 80% 40%;
+  --c-druid: 92 62% 26%;
+  --c-necromancer: 272 62% 48%;
+  --c-paladin: 228 72% 46%;
+  --c-rogue: 166 92% 22%;
+  --c-sorcerer: 200 92% 31%;
+  --c-spiritborn: 32 94% 29%;
+  --c-warlock: 320 72% 40%;
+  --c-unknown: 222 12% 39%;
 
-  --t-s: 36 78% 34%;
-  --t-a: 96 34% 28%;
-  --t-b: 210 40% 36%;
-  --t-c: 30 12% 40%;
-  --t-d: 0 30% 36%;
+  --t-s: 40 96% 28%;
+  --t-a: 152 84% 23%;
+  --t-b: 206 90% 34%;
+  --t-c: 225 10% 41%;
+  --t-d: 350 78% 40%;
 }
 
 /* an explicit light choice must also tell the UA, or form controls and
@@ -157,55 +177,63 @@
   :root:not([data-theme="light"]) {
   color-scheme: dark;
 
-  --bg: #0c0a08;
-  --bg-deep: #060505;
-  --surface: #17120e;
-  --surface-2: #1d1712;
-  --raised: #241c16;
-  --nav-bg: rgba(10, 8, 6, 0.86);
-  --fg: #ece1cb;
-  --fg-soft: #c8b89e;
-  --fg-dim: #9a8871;
-  --line: rgba(201, 162, 84, 0.20);
-  --line-strong: rgba(201, 162, 84, 0.44);
-  --gold: #d9af52;
-  --gold-soft: rgba(217, 175, 82, 0.12);
-  --ember: #e5873f;
-  --blood: #cf3f31;
-  --ptr: #b490ec;
-  --ptr-soft: rgba(180, 144, 236, 0.14);
+  --bg: #0a0e1a;
+  --bg-deep: #06080f;
+  --surface: #131a2b;
+  --surface-2: #1a2338;
+  --raised: #212b45;
+  --nav-bg: rgba(9, 12, 22, 0.82);
+  --fg: #eef2fc;
+  --fg-soft: #c2cbe2;
+  --fg-dim: #98a3bf;
+  --line: rgba(122, 152, 224, 0.18);
+  --line-strong: rgba(122, 152, 224, 0.40);
+  --accent: #56b6ff;
+  --accent-soft: rgba(86, 182, 255, 0.14);
+  --accent-2: #ffa447;
+  --accent-2-soft: rgba(255, 164, 71, 0.14);
+  --danger: #ff5f5f;
+  --ptr: #b09bff;
+  --ptr-soft: rgba(176, 155, 255, 0.16);
 
-  --e-1: 0 1px 0 rgba(255, 220, 160, 0.04),
-         0 1px 2px rgba(0, 0, 0, 0.55),
-         0 8px 20px -14px rgba(0, 0, 0, 0.9);
-  --e-2: 0 1px 0 rgba(255, 220, 160, 0.07),
-         0 2px 8px rgba(0, 0, 0, 0.6),
-         0 18px 34px -18px rgba(0, 0, 0, 0.95);
-  --e-3: 0 1px 0 rgba(255, 220, 160, 0.10),
-         0 6px 16px rgba(0, 0, 0, 0.7),
-         0 32px 56px -22px rgba(0, 0, 0, 1);
+  /* gloss: the 1px top highlight every raised surface carries, and the
+     colored bloom reserved for hero / focus / selected surfaces */
+  --sheen: rgba(150, 185, 255, 0.09);
+  --glow: 0 0 34px -8px rgba(86, 182, 255, 0.55);
+  --glow-2: 0 0 34px -8px rgba(255, 164, 71, 0.45);
+
+  --e-0: 0 0 0 1px var(--line);
+  --e-1: inset 0 1px 0 var(--sheen),
+         0 1px 2px rgba(2, 4, 10, 0.55),
+         0 10px 24px -16px rgba(2, 4, 10, 1);
+  --e-2: inset 0 1px 0 var(--sheen),
+         0 4px 12px rgba(2, 4, 10, 0.60),
+         0 22px 42px -20px rgba(2, 4, 10, 1);
+  --e-3: inset 0 1px 0 var(--sheen),
+         0 10px 24px rgba(2, 4, 10, 0.70),
+         0 40px 70px -26px rgba(2, 4, 10, 1);
   --shadow: var(--e-1);
   --shadow-lift: var(--e-2);
 
-  --grain-opacity: 0.42;
-  --halo-1: rgba(224, 128, 58, 0.16);
-  --halo-2: rgba(120, 60, 200, 0.10);
+  --grain-opacity: 0.20;
+  --halo-1: rgba(86, 182, 255, 0.13);
+  --halo-2: rgba(139, 92, 246, 0.13);
 
-  --c-barbarian: 14 68% 58%;
-  --c-druid: 90 44% 54%;
-  --c-necromancer: 268 54% 71%;
-  --c-paladin: 230 64% 70%;
-  --c-rogue: 174 54% 50%;
-  --c-sorcerer: 208 74% 65%;
-  --c-spiritborn: 40 84% 58%;
-  --c-warlock: 320 62% 66%;
-  --c-unknown: 38 14% 64%;
+  --c-barbarian: 8 92% 66%;
+  --c-druid: 92 62% 56%;
+  --c-necromancer: 272 95% 76%;
+  --c-paladin: 228 100% 74%;
+  --c-rogue: 166 80% 52%;
+  --c-sorcerer: 194 96% 60%;
+  --c-spiritborn: 36 100% 60%;
+  --c-warlock: 320 92% 70%;
+  --c-unknown: 222 16% 66%;
 
-  --t-s: 40 86% 60%;
-  --t-a: 96 40% 56%;
-  --t-b: 208 52% 62%;
-  --t-c: 34 12% 58%;
-  --t-d: 2 46% 58%;
+  --t-s: 44 100% 60%;
+  --t-a: 150 80% 52%;
+  --t-b: 205 100% 66%;
+  --t-c: 225 14% 62%;
+  --t-d: 350 95% 68%;
   }
 }
 
@@ -213,55 +241,63 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #0c0a08;
-  --bg-deep: #060505;
-  --surface: #17120e;
-  --surface-2: #1d1712;
-  --raised: #241c16;
-  --nav-bg: rgba(10, 8, 6, 0.86);
-  --fg: #ece1cb;
-  --fg-soft: #c8b89e;
-  --fg-dim: #9a8871;
-  --line: rgba(201, 162, 84, 0.20);
-  --line-strong: rgba(201, 162, 84, 0.44);
-  --gold: #d9af52;
-  --gold-soft: rgba(217, 175, 82, 0.12);
-  --ember: #e5873f;
-  --blood: #cf3f31;
-  --ptr: #b490ec;
-  --ptr-soft: rgba(180, 144, 236, 0.14);
+  --bg: #0a0e1a;
+  --bg-deep: #06080f;
+  --surface: #131a2b;
+  --surface-2: #1a2338;
+  --raised: #212b45;
+  --nav-bg: rgba(9, 12, 22, 0.82);
+  --fg: #eef2fc;
+  --fg-soft: #c2cbe2;
+  --fg-dim: #98a3bf;
+  --line: rgba(122, 152, 224, 0.18);
+  --line-strong: rgba(122, 152, 224, 0.40);
+  --accent: #56b6ff;
+  --accent-soft: rgba(86, 182, 255, 0.14);
+  --accent-2: #ffa447;
+  --accent-2-soft: rgba(255, 164, 71, 0.14);
+  --danger: #ff5f5f;
+  --ptr: #b09bff;
+  --ptr-soft: rgba(176, 155, 255, 0.16);
 
-  --e-1: 0 1px 0 rgba(255, 220, 160, 0.04),
-         0 1px 2px rgba(0, 0, 0, 0.55),
-         0 8px 20px -14px rgba(0, 0, 0, 0.9);
-  --e-2: 0 1px 0 rgba(255, 220, 160, 0.07),
-         0 2px 8px rgba(0, 0, 0, 0.6),
-         0 18px 34px -18px rgba(0, 0, 0, 0.95);
-  --e-3: 0 1px 0 rgba(255, 220, 160, 0.10),
-         0 6px 16px rgba(0, 0, 0, 0.7),
-         0 32px 56px -22px rgba(0, 0, 0, 1);
+  /* gloss: the 1px top highlight every raised surface carries, and the
+     colored bloom reserved for hero / focus / selected surfaces */
+  --sheen: rgba(150, 185, 255, 0.09);
+  --glow: 0 0 34px -8px rgba(86, 182, 255, 0.55);
+  --glow-2: 0 0 34px -8px rgba(255, 164, 71, 0.45);
+
+  --e-0: 0 0 0 1px var(--line);
+  --e-1: inset 0 1px 0 var(--sheen),
+         0 1px 2px rgba(2, 4, 10, 0.55),
+         0 10px 24px -16px rgba(2, 4, 10, 1);
+  --e-2: inset 0 1px 0 var(--sheen),
+         0 4px 12px rgba(2, 4, 10, 0.60),
+         0 22px 42px -20px rgba(2, 4, 10, 1);
+  --e-3: inset 0 1px 0 var(--sheen),
+         0 10px 24px rgba(2, 4, 10, 0.70),
+         0 40px 70px -26px rgba(2, 4, 10, 1);
   --shadow: var(--e-1);
   --shadow-lift: var(--e-2);
 
-  --grain-opacity: 0.42;
-  --halo-1: rgba(224, 128, 58, 0.16);
-  --halo-2: rgba(120, 60, 200, 0.10);
+  --grain-opacity: 0.20;
+  --halo-1: rgba(86, 182, 255, 0.13);
+  --halo-2: rgba(139, 92, 246, 0.13);
 
-  --c-barbarian: 14 68% 58%;
-  --c-druid: 90 44% 54%;
-  --c-necromancer: 268 54% 71%;
-  --c-paladin: 230 64% 70%;
-  --c-rogue: 174 54% 50%;
-  --c-sorcerer: 208 74% 65%;
-  --c-spiritborn: 40 84% 58%;
-  --c-warlock: 320 62% 66%;
-  --c-unknown: 38 14% 64%;
+  --c-barbarian: 8 92% 66%;
+  --c-druid: 92 62% 56%;
+  --c-necromancer: 272 95% 76%;
+  --c-paladin: 228 100% 74%;
+  --c-rogue: 166 80% 52%;
+  --c-sorcerer: 194 96% 60%;
+  --c-spiritborn: 36 100% 60%;
+  --c-warlock: 320 92% 70%;
+  --c-unknown: 222 16% 66%;
 
-  --t-s: 40 86% 60%;
-  --t-a: 96 40% 56%;
-  --t-b: 208 52% 62%;
-  --t-c: 34 12% 58%;
-  --t-d: 2 46% 58%;
+  --t-s: 44 100% 60%;
+  --t-a: 150 80% 52%;
+  --t-b: 205 100% 66%;
+  --t-c: 225 14% 62%;
+  --t-d: 350 95% 68%;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -271,7 +307,7 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   min-height: 100%;
-  -webkit-tap-highlight-color: color-mix(in srgb, var(--gold) 20%, transparent);
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 20%, transparent);
   background-color: var(--bg);
   background-image:
     radial-gradient(120% 70% at 50% -10%, var(--halo-1) 0%, transparent 60%),
@@ -286,7 +322,7 @@ body {
   text-size-adjust: 100%;
 }
 
-::selection { background: color-mix(in srgb, var(--gold) 30%, transparent); color: var(--fg); }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--fg); }
 
 /* fine grain overlay, inline SVG data URI (no network) */
 body::before {
@@ -314,7 +350,7 @@ body::before {
 /* One focus treatment for the whole site: a gold ring with a ground-colored
    gap under it, so it reads on a card, on a tinted plate and on the nav. */
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--r-sm);
 }
@@ -331,7 +367,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   z-index: 100;
   padding: var(--s-2) var(--s-4);
   background: var(--raised);
-  color: var(--gold);
+  color: var(--accent);
   border: 1px solid var(--line-strong);
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -349,7 +385,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   -webkit-backdrop-filter: blur(12px) saturate(1.3);
   backdrop-filter: blur(12px) saturate(1.3);
   border-bottom: 1px solid var(--line);
-  box-shadow: 0 1px 0 var(--gold-soft), 0 10px 24px -22px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 1px 0 var(--accent-soft), 0 10px 24px -22px rgba(0, 0, 0, 0.9);
   padding-top: env(safe-area-inset-top);
 }
 .topnav-in {
@@ -378,13 +414,13 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   flex: 0 0 auto;
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
-.brand:hover { background: var(--gold-soft); }
+.brand:hover { background: var(--accent-soft); }
 .brand:active { transform: translateY(1px); }
 .brand-sigil {
   font-size: 1.15rem;
   line-height: 1;
-  color: var(--gold);
-  filter: drop-shadow(0 0 10px var(--gold-soft));
+  color: var(--accent);
+  filter: drop-shadow(0 0 10px var(--accent-soft));
 }
 .brand-name {
   display: block;
@@ -398,9 +434,9 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   display: block;
   font-size: 0.62rem;
   letter-spacing: 0.28em;
-  color: var(--gold);
+  color: var(--accent);
 }
-.brand:hover .brand-name { color: var(--gold); }
+.brand:hover .brand-name { color: var(--accent); }
 
 .menubar { display: flex; align-items: center; gap: var(--s-micro); }
 .menu-wrap { position: relative; }
@@ -426,12 +462,12 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
               background-color var(--dur-1) var(--ease),
               border-color var(--dur-1) var(--ease);
 }
-.menu-btn:active { background: color-mix(in srgb, var(--gold) 20%, transparent); }
-.menu-btn:hover { color: var(--gold); background: var(--gold-soft); }
+.menu-btn:active { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+.menu-btn:hover { color: var(--accent); background: var(--accent-soft); }
 .menu-btn .caret { font-size: 0.6em; transition: transform var(--dur-2) var(--ease); }
 .menu-btn[aria-expanded="true"] {
-  color: var(--gold);
-  background: var(--gold-soft);
+  color: var(--accent);
+  background: var(--accent-soft);
   border-color: var(--line);
 }
 .menu-btn[aria-expanded="true"] .caret { transform: rotate(180deg); }
@@ -480,12 +516,12 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
 .menu button:hover, .menu button:focus-visible {
-  color: var(--gold);
-  background: var(--gold-soft);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 .menu button[aria-current="true"] {
-  color: var(--gold);
-  border-left-color: var(--gold);
+  color: var(--accent);
+  border-left-color: var(--accent);
 }
 .menu .mi-label { flex: 1 1 auto; }
 .menu .mi-count {
@@ -551,13 +587,13 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   height: 1px;
   transform: translateX(-50%);
   background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
-  box-shadow: 0 0 14px 1px var(--gold-soft);
+  box-shadow: 0 0 14px 1px var(--accent-soft);
 }
 .sigil {
   font-size: clamp(1.6rem, 5vw, 2.3rem);
   line-height: 1;
-  color: var(--gold);
-  filter: drop-shadow(0 0 12px var(--gold-soft));
+  color: var(--accent);
+  filter: drop-shadow(0 0 12px var(--accent-soft));
   margin-bottom: var(--s-2);
 }
 .masthead h1 {
@@ -577,7 +613,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: 0.42em;
   letter-spacing: 0.42em;
   text-indent: 0.42em;
-  color: var(--gold);
+  color: var(--accent);
 }
 .season-line {
   margin: var(--s-4) 0 0;
@@ -592,7 +628,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   max-width: 44rem;
   padding: var(--s-3) var(--s-4);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--ember);
+  border-left: 3px solid var(--accent-2);
   border-radius: var(--r-md);
   background: var(--surface);
   color: var(--fg-soft);
@@ -606,7 +642,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: 0.66rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ember);
+  color: var(--accent-2);
   margin-bottom: var(--s-1);
 }
 
@@ -615,11 +651,11 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   margin: var(--s-4) auto 0;
   max-width: 44rem;
   padding: var(--s-2) var(--s-4);
-  border: 1px solid color-mix(in srgb, var(--blood) 55%, transparent);
-  border-left: 3px solid var(--blood);
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, transparent);
+  border-left: 3px solid var(--danger);
   border-radius: var(--r-md);
-  background: color-mix(in srgb, var(--blood) 14%, var(--surface));
-  color: var(--blood);
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface));
+  color: var(--danger);
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
   font-weight: 600;
@@ -642,7 +678,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: clamp(0.95rem, 2.4vw, 1.15rem);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 .rule::after {
   content: "";
@@ -717,7 +753,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: 0.86rem;
   color: var(--fg-dim);
 }
-.star { color: var(--gold); font-size: 0.8em; letter-spacing: 0; }
+.star { color: var(--accent); font-size: 0.8em; letter-spacing: 0; }
 
 /* -------------------------------- tabs ---------------------------------- */
 .tabs {
@@ -753,9 +789,9 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   opacity: 0.75;
   margin-left: 0.45em;
 }
-.tabs button:hover { color: var(--fg); background: var(--gold-soft); }
+.tabs button:hover { color: var(--fg); background: var(--accent-soft); }
 .tabs button[aria-selected="true"] {
-  color: var(--gold);
+  color: var(--accent);
   background: var(--surface);
   border-color: var(--line);
 }
@@ -764,7 +800,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   position: absolute;
   left: 0; right: 0; bottom: -1px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
 /* ------------------------------ build grid ------------------------------ */
@@ -873,8 +909,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   background: hsl(var(--cls) / 0.12);
 }
 .chip.st-unchanged { color: var(--fg-dim); }
-.chip.st-adjusted { color: var(--ember); border-color: color-mix(in srgb, var(--ember) 55%, transparent); }
-.chip.st-retired { color: var(--blood); border-color: color-mix(in srgb, var(--blood) 60%, transparent); }
+.chip.st-adjusted { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 55%, transparent); }
+.chip.st-retired { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 60%, transparent); }
 .chip.conf-high { color: hsl(var(--t-a)); border-color: hsl(var(--t-a) / 0.5); }
 .chip.conf-medium { color: hsl(var(--t-s)); border-color: hsl(var(--t-s) / 0.5); }
 .chip.conf-low { color: hsl(var(--t-d)); border-color: hsl(var(--t-d) / 0.5); }
@@ -925,8 +961,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
               border-color var(--dur-1) var(--ease),
               background-color var(--dur-1) var(--ease);
 }
-.back:hover { color: var(--gold); border-color: var(--gold); background: var(--gold-soft); }
-.back:active { background: color-mix(in srgb, var(--gold) 22%, transparent); }
+.back:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.back:active { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 
 /* hero header */
 .hero {
@@ -1006,7 +1042,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: 0.63rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 .select-wrap { position: relative; display: inline-flex; }
 .select-wrap::after {
@@ -1071,7 +1107,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   cursor: pointer;
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
-.btab:hover { color: var(--fg); background: var(--gold-soft); }
+.btab:hover { color: var(--fg); background: var(--accent-soft); }
 .btab .n {
   font-family: var(--font-mono);
   font-size: 0.68em;
@@ -1116,7 +1152,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: 0.64rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: var(--s-1);
 }
 .callout.trigger-callout {
@@ -1142,7 +1178,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 .gear-list { display: grid; gap: var(--s-2); }
 .gear-row {
@@ -1178,7 +1214,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   flex: 1 1 9rem;
   min-width: 0;
   font-size: 0.94rem;
-  color: var(--gold);
+  color: var(--accent);
   overflow-wrap: anywhere;
 }
 .gear-row .g-item.none {
@@ -1234,7 +1270,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 .slot-card .item {
   margin: var(--s-micro) 0 var(--s-2);
   font-size: 0.95rem;
-  color: var(--gold);
+  color: var(--accent);
   overflow-wrap: anywhere;
 }
 .slot-card .item.none { color: var(--fg-dim); font-style: italic; font-size: 0.88rem; }
@@ -1270,11 +1306,11 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 .affix li.top::before {
   content: "\2605";
   top: 0.25rem;
-  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
-  background: var(--gold-soft);
-  color: var(--gold);
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 0.7rem;
-  box-shadow: 0 0 10px -2px var(--gold-soft);
+  box-shadow: 0 0 10px -2px var(--accent-soft);
 }
 
 /* the full loadout of one finished item: every affix the planner records, in
@@ -1310,11 +1346,11 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 .loadout li.greater::before {
   content: "\2605";
   top: 0.25rem;
-  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
-  background: var(--gold-soft);
-  color: var(--gold);
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 0.7rem;
-  box-shadow: 0 0 10px -2px var(--gold-soft);
+  box-shadow: 0 0 10px -2px var(--accent-soft);
 }
 .loadout li.temper::before {
   content: "\2692";
@@ -1473,7 +1509,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-family: var(--font-display);
   font-size: 0.98rem;
   letter-spacing: 0.04em;
-  color: var(--gold);
+  color: var(--accent);
   overflow-wrap: anywhere;
 }
 .chip.glyph {
@@ -1497,7 +1533,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   padding: var(--s-3) var(--s-4) var(--s-3);
   background: linear-gradient(180deg, var(--raised), var(--surface));
   border: 1px solid var(--line);
-  border-left: 2px solid var(--gold);
+  border-left: 2px solid var(--accent);
   border-radius: var(--r-md);
   box-shadow: var(--e-1);
 }
@@ -1513,7 +1549,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-family: var(--font-display);
   font-size: 1.02rem;
   letter-spacing: 0.04em;
-  color: var(--gold);
+  color: var(--accent);
   overflow-wrap: anywhere;
 }
 /* a mercenary plate with a crest: the art sits left of the two text lines */
@@ -1566,7 +1602,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-family: var(--font-display);
   font-size: 0.96rem;
   letter-spacing: 0.03em;
-  color: var(--gold);
+  color: var(--accent);
   overflow-wrap: anywhere;
 }
 .mskill .kind {
@@ -1591,7 +1627,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 .block > h3 .meta {
   margin-left: var(--s-2);
@@ -1612,7 +1648,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   padding: var(--s-3) var(--s-3) var(--s-3);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 2px solid var(--gold);
+  border-left: 2px solid var(--accent);
   border-radius: var(--r-md);
   box-shadow: var(--e-1);
 }
@@ -1627,7 +1663,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-family: var(--font-display);
   font-size: 0.95rem;
   letter-spacing: 0.04em;
-  color: var(--gold);
+  color: var(--accent);
 }
 .unique .how { font-size: 0.86rem; color: var(--fg-soft); margin: 0; }
 .unique .src {
@@ -1637,7 +1673,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   font-size: 0.64rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ember);
+  color: var(--accent-2);
   text-underline-offset: 3px;
 }
 
@@ -1650,8 +1686,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: var(--fg-dim);
   white-space: nowrap;
 }
-.log a { color: var(--gold); text-underline-offset: 3px; overflow-wrap: anywhere; }
-.log a:hover { color: var(--ember); }
+.log a { color: var(--accent); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.log a:hover { color: var(--accent-2); }
 .log .note { color: var(--fg-dim); font-size: 0.82rem; flex: 1 1 100%; }
 
 .empty {
@@ -1685,9 +1721,9 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   cursor: pointer;
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
-.history-toggle:hover { color: var(--gold); background: var(--gold-soft); }
+.history-toggle:hover { color: var(--accent); background: var(--accent-soft); }
 .history-toggle .caret { transition: transform var(--dur-2) var(--ease); display: inline-block; }
-.history-toggle[aria-expanded="true"] { color: var(--gold); }
+.history-toggle[aria-expanded="true"] { color: var(--accent); }
 .history-toggle[aria-expanded="true"] .caret { transform: rotate(90deg); }
 .history-toggle .n {
   margin-left: auto;
@@ -1718,7 +1754,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
 .runs .dot.success { background: hsl(var(--t-a)); }
 .runs .dot.no-change { background: var(--fg-dim); }
 /* status values come from STATUSES in scripts/log_run.py: success, failed, no-change */
-.runs .dot.failed, .runs .dot.failure { background: var(--blood); }
+.runs .dot.failed, .runs .dot.failure { background: var(--danger); }
 .runs .when { font-family: var(--font-mono); font-size: 0.72rem; color: var(--fg-dim); }
 .runs .what { color: var(--fg-soft); }
 .runs .trigger {
@@ -1735,14 +1771,14 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--gold);
+  color: var(--accent);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
 }
-.run-details-toggle:hover { color: var(--ember); }
+.run-details-toggle:hover { color: var(--accent-2); }
 .run-details {
   margin: var(--s-2) 0 0;
   padding-left: var(--s-4);
@@ -1785,8 +1821,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   white-space: nowrap;
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
-.nav-link:hover, .nav-link:focus-visible { color: var(--gold); background: var(--gold-soft); }
-.nav-link[aria-current="page"] { color: var(--gold); border-color: var(--line); }
+.nav-link:hover, .nav-link:focus-visible { color: var(--accent); background: var(--accent-soft); }
+.nav-link[aria-current="page"] { color: var(--accent); border-color: var(--line); }
 .menu a {
   display: flex;
   width: 100%;
@@ -1802,8 +1838,8 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   text-decoration: none;
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
-.menu a:hover, .menu a:focus-visible { color: var(--gold); background: var(--gold-soft); }
-.menu a[aria-current="true"] { color: var(--gold); border-left-color: var(--gold); }
+.menu a:hover, .menu a:focus-visible { color: var(--accent); background: var(--accent-soft); }
+.menu a[aria-current="true"] { color: var(--accent); border-left-color: var(--accent); }
 
 a.back { display: inline-block; text-decoration: none; }
 a.build-card { text-decoration: none; }
@@ -1852,7 +1888,7 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   background-image:
     repeating-linear-gradient(135deg,
-      var(--gold-soft) 0 2px, transparent 2px 7px),
+      var(--accent-soft) 0 2px, transparent 2px 7px),
     linear-gradient(160deg, var(--raised), var(--surface-2));
 }
 .icon.sm { --icon-size: 1.5rem; }
@@ -1915,8 +1951,8 @@ a.build-card { text-decoration: none; }
   color: hsl(var(--cls));
   white-space: nowrap;
 }
-.rank.max { border-color: color-mix(in srgb, var(--gold) 60%, transparent);
-            background: var(--gold-soft); color: var(--gold); }
+.rank.max { border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+            background: var(--accent-soft); color: var(--accent); }
 
 /* action bar: icon plate over the skill name, like the in-game bar --------- */
 .skillbar .slot {
@@ -1977,7 +2013,7 @@ a.build-card { text-decoration: none; }
   box-shadow: inset 0 0 60px -18px rgba(0, 0, 0, 0.85);
   overscroll-behavior: contain;
 }
-.tmap-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.tmap-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 /* --tw/--th/--x/--y are unitless numbers from the generator; --tz zooms the
    whole map so a narrow screen sees more of the tree at once */
 .tcanvas {
@@ -2017,8 +2053,8 @@ a.build-card { text-decoration: none; }
 .tn.k-upgrade { --tn: 1.9rem; border-radius: 50%; overflow: hidden; }
 .tn.k-root, .tn.k-cluster {
   --tn: 0.62rem;
-  border-color: var(--gold);
-  background: var(--gold-soft);
+  border-color: var(--accent);
+  background: var(--accent-soft);
   transform: translate(-50%, -50%) rotate(45deg);
 }
 /* a node the icon manifest has no art for stays a plate, never a broken img */
@@ -2055,8 +2091,8 @@ a.build-card { text-decoration: none; }
 }
 .tmap-legend .sw.upgrade { border-radius: 50%; }
 .tmap-legend .sw.junction {
-  border-color: var(--gold);
-  background: var(--gold-soft);
+  border-color: var(--accent);
+  background: var(--accent-soft);
   transform: rotate(45deg);
 }
 
@@ -2067,16 +2103,16 @@ a.build-card { text-decoration: none; }
    dimmed -- it names which tree you are looking at. */
 .tn.wp-root {
   --tn: 2.1rem;
-  border-color: var(--gold);
+  border-color: var(--accent);
   border-radius: 50%;
   overflow: hidden;
-  background: var(--gold-soft);
+  background: var(--accent-soft);
 }
 .tcanvas.has-path .tn.wp-root { opacity: 0.72; filter: none; }
 .tmap-legend .sw.root {
-  border-color: var(--gold);
+  border-color: var(--accent);
   border-radius: 50%;
-  background: var(--gold-soft);
+  background: var(--accent-soft);
 }
 .wp-picks { margin-top: var(--s-3); }
 .wp-picks .kind { color: hsl(var(--cls)); }
@@ -2113,7 +2149,7 @@ a.build-card { text-decoration: none; }
   background: hsl(var(--cls) / 0.2);
   border-color: hsl(var(--cls));
 }
-.stage-hint .stage-jump:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.stage-hint .stage-jump:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------------------- visual paragon board grids ---------------------- */
 .pboard {
@@ -2177,12 +2213,12 @@ a.build-card { text-decoration: none; }
 .pnode.r-magic { border-color: hsl(var(--t-b) / 0.6); }
 .pnode.r-rare { border-color: hsl(var(--t-s) / 0.65); }
 .pnode.r-legendary {
-  border-color: color-mix(in srgb, var(--ember) 70%, transparent);
-  box-shadow: 0 0 10px -3px var(--ember);
+  border-color: color-mix(in srgb, var(--accent-2) 70%, transparent);
+  box-shadow: 0 0 10px -3px var(--accent-2);
 }
 .pnode.k-socket {
-  border-color: var(--gold);
-  box-shadow: 0 0 12px -3px var(--gold), inset 0 0 10px -6px var(--gold);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px -3px var(--accent), inset 0 0 10px -6px var(--accent);
 }
 .pnode.k-start { border-color: var(--line-strong); }
 /* a board with a recorded node path dims everything off the path */
@@ -2214,8 +2250,8 @@ a.build-card { text-decoration: none; }
   background: var(--surface-2);
 }
 .pgrid-legend .sw.taken { border-color: hsl(var(--cls)); box-shadow: 0 0 8px -2px hsl(var(--cls)); }
-.pgrid-legend .sw.socket { border-color: var(--gold); box-shadow: 0 0 8px -2px var(--gold); }
-.pgrid-legend .sw.legendary { border-color: var(--ember); box-shadow: 0 0 8px -2px var(--ember); }
+.pgrid-legend .sw.socket { border-color: var(--accent); box-shadow: 0 0 8px -2px var(--accent); }
+.pgrid-legend .sw.legendary { border-color: var(--accent-2); box-shadow: 0 0 8px -2px var(--accent-2); }
 .pboard .b-note { margin: var(--s-2) 0 0; font-size: 0.86rem; color: var(--fg-soft); }
 .pboard .b-unmapped {
   margin: var(--s-2) 0 0;
@@ -2249,7 +2285,7 @@ a.build-card { text-decoration: none; }
   height: 1px;
   transform: translateX(-50%);
   background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
-  box-shadow: 0 0 14px 1px var(--gold-soft);
+  box-shadow: 0 0 14px 1px var(--accent-soft);
 }
 .page-head h1 {
   margin: 0;
@@ -2287,7 +2323,7 @@ a.build-card { text-decoration: none; }
   padding: var(--s-3) var(--s-3);
   background: linear-gradient(180deg, var(--raised), var(--surface));
   border: 1px solid var(--line);
-  border-top: 2px solid var(--gold);
+  border-top: 2px solid var(--accent);
   border-radius: var(--r-lg);
   box-shadow: var(--e-1);
 }
@@ -2317,10 +2353,10 @@ a.build-card { text-decoration: none; }
   transition: border-color var(--dur-1) var(--ease);
 }
 .filters input[type="search"]:hover,
-.filters select:hover { border-color: color-mix(in srgb, var(--gold) 55%, var(--line-strong)); }
+.filters select:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line-strong)); }
 .filters input[type="search"]::placeholder { color: var(--fg-dim); opacity: 0.8; }
 .filters input[type="search"]:focus,
-.filters select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.filters select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .filters .sel { position: relative; }
 .filters .sel::after {
   content: "\25be";
@@ -2329,7 +2365,7 @@ a.build-card { text-decoration: none; }
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: var(--gold);
+  color: var(--accent);
   font-size: 0.7rem;
 }
 /* off-ramp on purpose: clearance for the caret .sel::after draws at
@@ -2353,10 +2389,10 @@ a.build-card { text-decoration: none; }
   margin: var(--s-4) 0 0;
   padding: var(--s-3) var(--s-4) var(--s-4);
   background:
-    radial-gradient(120% 90% at 0% 0%, var(--gold-soft), transparent 60%),
+    radial-gradient(120% 90% at 0% 0%, var(--accent-soft), transparent 60%),
     linear-gradient(180deg, var(--raised), var(--surface));
   border: 1px solid var(--line-strong);
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid var(--accent);
   border-radius: var(--r-lg);
   box-shadow: var(--e-3);
   animation: rise var(--dur-3) var(--ease-out) both;
@@ -2373,7 +2409,7 @@ a.build-card { text-decoration: none; }
   font-size: 0.62rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 .focus-head { display: flex; align-items: center; gap: var(--s-3); }
 .focus-head h3 {
@@ -2409,8 +2445,8 @@ a.build-card { text-decoration: none; }
   border-left: 2px solid var(--line-strong);
   font-size: 0.9rem;
 }
-.xref a { color: var(--gold); text-decoration: none; text-underline-offset: 3px; }
-.xref a:hover { color: var(--ember); text-decoration: underline; }
+.xref a { color: var(--accent); text-decoration: none; text-underline-offset: 3px; }
+.xref a:hover { color: var(--accent-2); text-decoration: underline; }
 .xref .note {
   font-family: var(--font-mono);
   font-size: 0.62rem;
@@ -2481,12 +2517,12 @@ a.build-card { text-decoration: none; }
 }
 .chip.tier { color: hsl(var(--boss)); border-color: hsl(var(--boss) / 0.5); }
 .chip.myth {
-  color: var(--ember);
-  border-color: color-mix(in srgb, var(--ember) 55%, transparent);
-  background: color-mix(in srgb, var(--ember) 12%, transparent);
+  color: var(--accent-2);
+  border-color: color-mix(in srgb, var(--accent-2) 55%, transparent);
+  background: color-mix(in srgb, var(--accent-2) 12%, transparent);
 }
-.chip.r-mythic { color: var(--ember); border-color: color-mix(in srgb, var(--ember) 55%, transparent); }
-.chip.r-unique { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
+.chip.r-mythic { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent-2) 55%, transparent); }
+.chip.r-unique { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
 .chip.r-set { color: hsl(var(--t-a)); border-color: hsl(var(--t-a) / 0.5); }
 
 .boss .blurb { margin: var(--s-3) 0 0; font-size: 0.9rem; color: var(--fg-soft); }
@@ -2540,17 +2576,17 @@ a.build-card { text-decoration: none; }
               background-color var(--dur-1) var(--ease),
               border-color var(--dur-1) var(--ease);
 }
-.loot-btn:active { background: color-mix(in srgb, var(--gold) 22%, transparent); }
+.loot-btn:active { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .loot-btn .ln { min-width: 0; overflow-wrap: anywhere; }
-.loot-btn:hover { color: var(--fg); border-left-color: var(--gold); background: var(--gold-soft); }
+.loot-btn:hover { color: var(--fg); border-left-color: var(--accent); background: var(--accent-soft); }
 .loot.hit .loot-btn {
-  color: var(--gold);
+  color: var(--accent);
   border-color: var(--line-strong);
-  border-left-color: var(--gold);
-  background: var(--gold-soft);
-  box-shadow: inset 0 0 22px -12px var(--gold);
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 22px -12px var(--accent);
 }
-.loot.hit .loot-btn .icon { border-color: color-mix(in srgb, var(--gold) 60%, transparent); }
+.loot.hit .loot-btn .icon { border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
 .no-hits {
   margin: var(--s-3) 0 0;
   font-family: var(--font-mono);
@@ -2567,7 +2603,7 @@ a.build-card { text-decoration: none; }
   color: var(--fg-dim);
   cursor: pointer;
 }
-.bsrc summary:hover { color: var(--gold); }
+.bsrc summary:hover { color: var(--accent); }
 .bsrc .log { margin-top: var(--s-2); }
 
 /* -------------------------------- codex --------------------------------- */
@@ -2590,8 +2626,8 @@ a.build-card { text-decoration: none; }
   transition: background-color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
 }
 .cx-row:hover, .cx-row:focus-visible {
-  background: var(--gold-soft);
-  border-left-color: var(--gold);
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
 }
 .cx-body { min-width: 0; display: grid; }
 .cx-name {
@@ -2622,10 +2658,10 @@ a.build-card { text-decoration: none; }
   margin: var(--s-4) 0 0;
   padding: var(--s-4) var(--s-4) var(--s-4);
   background:
-    radial-gradient(120% 90% at 0% 0%, var(--gold-soft), transparent 60%),
+    radial-gradient(120% 90% at 0% 0%, var(--accent-soft), transparent 60%),
     linear-gradient(180deg, var(--raised), var(--surface));
   border: 1px solid var(--line-strong);
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid var(--accent);
   border-radius: var(--r-lg);
   box-shadow: var(--e-3);
   scroll-margin-top: calc(var(--nav-h) + 6rem);
@@ -2640,7 +2676,7 @@ a.build-card { text-decoration: none; }
   font-size: clamp(1.1rem, 3vw, 1.4rem);
   letter-spacing: 0.08em;
 }
-.chip.dom { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 55%, transparent); }
+.chip.dom { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
 .cx-line { margin-top: var(--s-3); }
 .cx-label {
   display: block;
@@ -2665,9 +2701,9 @@ a.build-card { text-decoration: none; }
 .vslot {
   display: inline-block;
   padding: 0 0.3em;
-  border: 1px dashed color-mix(in srgb, var(--gold) 55%, transparent);
-  background: var(--gold-soft);
-  color: var(--gold);
+  border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent);
   font-family: var(--font-mono);
   font-size: 0.82em;
   letter-spacing: 0.02em;
@@ -2688,7 +2724,7 @@ a.build-card { text-decoration: none; }
   padding: var(--s-3) var(--s-3) var(--s-3);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-top: 2px solid var(--gold);
+  border-top: 2px solid var(--accent);
   border-radius: var(--r-md);
   box-shadow: var(--e-1);
 }
@@ -2712,7 +2748,7 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.dbtn:hover .dn { color: var(--gold); }
+.dbtn:hover .dn { color: var(--accent); }
 .dbtn .dc {
   font-family: var(--font-mono);
   font-size: 0.62rem;
@@ -2833,7 +2869,7 @@ a.build-card { text-decoration: none; }
 .pv-find::placeholder { color: var(--fg-dim); }
 .pv-find:focus-visible,
 .pv-btn:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 .pv-hits {
@@ -2980,20 +3016,20 @@ a.build-card { text-decoration: none; }
   background: hsl(var(--cls) / 0.18);
 }
 .pgrid-legend .sw.gate {
-  border-color: var(--gold);
-  background: var(--gold-soft);
+  border-color: var(--accent);
+  background: var(--accent-soft);
   transform: rotate(45deg);
 }
 
 /* the attachment gate is a real grid node in the feed; give it the weight the
    reference gives it, so the join between boards reads at a glance */
 .pnode.k-gate {
-  border-color: var(--gold);
-  background: var(--gold-soft);
-  box-shadow: 0 0 12px -4px var(--gold);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 12px -4px var(--accent);
 }
 .chip.gate {
-  border-color: var(--gold);
+  border-color: var(--accent);
   color: var(--fg-soft);
 }
 .chip.gate.start { border-color: hsl(var(--cls) / 0.6); }
@@ -3015,7 +3051,7 @@ a.build-card { text-decoration: none; }
 .tn.k-skill .tb { transform: rotate(-45deg); }
 /* cluster and root gates: the tree's own attachment points, in gate gold */
 .tn.k-root, .tn.k-cluster {
-  box-shadow: 0 0 10px -3px var(--gold);
+  box-shadow: 0 0 10px -3px var(--accent);
 }
 
 /* "Allocated only": everything off the build's path drops away almost
@@ -3034,8 +3070,8 @@ a.build-card { text-decoration: none; }
 .pgrid.searching .pnode.hit {
   opacity: 1;
   filter: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 2px var(--gold-soft), 0 0 16px -2px var(--gold);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft), 0 0 16px -2px var(--accent);
   z-index: 5;
 }
 .pgrid.searching .pe { opacity: 0.25; }
@@ -3101,7 +3137,7 @@ a.build-card { text-decoration: none; }
 .sock .nm {
   display: block;
   font-size: 0.9rem;
-  color: var(--gold);
+  color: var(--accent);
   overflow-wrap: anywhere;
 }
 .sock .kind {
@@ -3140,9 +3176,9 @@ a.build-card { text-decoration: none; }
   gap: var(--s-2);
   margin: var(--s-2) 0 0;
   padding: var(--s-1) var(--s-2);
-  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   border-radius: var(--r-sm);
-  background: var(--gold-soft);
+  background: var(--accent-soft);
   font-size: var(--fs-sm);
   color: var(--fg-soft);
 }
@@ -3151,7 +3187,7 @@ a.build-card { text-decoration: none; }
   font-size: 0.58rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 .chip.sock { margin-left: var(--s-2); color: var(--fg-soft); }
 .g-sockets {
@@ -3255,7 +3291,7 @@ a.build-card { text-decoration: none; }
   position: relative;
   padding: var(--s-4) var(--s-5) var(--s-4);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid var(--accent);
   border-radius: var(--r-lg);
   background: var(--surface);
   box-shadow: var(--e-1);
@@ -3263,7 +3299,7 @@ a.build-card { text-decoration: none; }
 }
 .news:hover { box-shadow: var(--e-2); }
 .news.n-ptr { border-left-color: var(--ptr); }
-.news.n-season { border-left-color: var(--ember); }
+.news.n-season { border-left-color: var(--accent-2); }
 
 .news-head {
   display: flex;
@@ -3278,10 +3314,10 @@ a.build-card { text-decoration: none; }
 }
 .news-kind {
   padding: var(--s-micro) var(--s-2);
-  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
   border-radius: var(--r-full);
-  background: var(--gold-soft);
-  color: var(--gold);
+  background: var(--accent-soft);
+  color: var(--accent);
   font-weight: 600;
 }
 .news.n-ptr .news-kind {
@@ -3290,9 +3326,9 @@ a.build-card { text-decoration: none; }
   color: var(--ptr);
 }
 .news.n-season .news-kind {
-  border-color: color-mix(in srgb, var(--ember) 55%, transparent);
+  border-color: color-mix(in srgb, var(--accent-2) 55%, transparent);
   background: transparent;
-  color: var(--ember);
+  color: var(--accent-2);
 }
 .news-head time { color: var(--fg-soft); letter-spacing: 0.1em; }
 
@@ -3329,8 +3365,8 @@ a.build-card { text-decoration: none; }
   text-transform: uppercase;
   color: var(--fg-dim);
 }
-.news-src a { color: var(--gold); overflow-wrap: anywhere; }
-.news-src a:hover, .news-src a:focus-visible { color: var(--ember); }
+.news-src a { color: var(--accent); overflow-wrap: anywhere; }
+.news-src a:hover, .news-src a:focus-visible { color: var(--accent-2); }
 .news-src .fetched { margin-left: var(--s-1); color: var(--fg-dim); }
 .news-src.none {
   margin: var(--s-3) 0 0;
@@ -3389,7 +3425,7 @@ a.build-card { text-decoration: none; }
   border-bottom: 1px solid transparent;
 }
 .upd-head a:hover,
-.upd-head a:focus-visible { color: var(--gold); border-bottom-color: var(--gold); }
+.upd-head a:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
 .upd-season {
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -3468,18 +3504,18 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
               background-color var(--dur-1) var(--ease);
 }
 .menu-btn:hover, .nav-link:hover, .nav-link:focus-visible {
-  color: var(--gold);
-  background: var(--gold-soft);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
-.nav-link:active { background: color-mix(in srgb, var(--gold) 20%, transparent); }
+.nav-link:active { background: color-mix(in srgb, var(--accent) 20%, transparent); }
 
 /* the current page is marked by a gold rule under the label, not by a box --
    a box in a row of boxes reads as "pressed", which it is not */
 .nav-link[aria-current="page"] {
   position: relative;
-  color: var(--gold);
+  color: var(--accent);
   border-color: transparent;
-  background: var(--gold-soft);
+  background: var(--accent-soft);
 }
 .nav-link[aria-current="page"]::after {
   content: "";
@@ -3489,7 +3525,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
   bottom: 0.3rem;
   height: 2px;
   border-radius: var(--r-full);
-  background: var(--gold);
+  background: var(--accent);
 }
 
 /* the season chip is a real chip now, not floating mono text */
@@ -3507,7 +3543,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
 .brand-sub { font-size: var(--fs-3xs); letter-spacing: 0.22em; }
 
 .menu button:active, .menu a:active {
-  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
 }
 .menu .mi-count { font-size: var(--fs-2xs); }
 
@@ -3517,19 +3553,19 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
    (accent + a weight change, never color alone).
    -------------------------------------------------------------------------- */
 .tabs button:active, .btab:active {
-  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 .tabs button[aria-selected="true"], .btab[aria-selected="true"] {
   font-weight: 600;
 }
 .cx-row:active, .cbuilds a:active, .loot-btn:active {
-  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
 }
 .dbtn { border-radius: var(--r-sm); }
-.dbtn:active .dn { color: var(--ember); }
-.history-toggle:active { background: color-mix(in srgb, var(--gold) 18%, transparent); }
+.dbtn:active .dn { color: var(--accent-2); }
+.history-toggle:active { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 .run-details-toggle { border-radius: var(--r-sm); padding: var(--s-micro) var(--s-1); margin-left: calc(var(--s-1) * -1); }
-.run-details-toggle:active { background: var(--gold-soft); }
+.run-details-toggle:active { background: var(--accent-soft); }
 
 /* the source disclosure on a boss card is a control; give it a control's box */
 .bsrc summary {
@@ -3539,10 +3575,10 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
   border-radius: var(--r-sm);
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
-.bsrc summary:hover { background: var(--gold-soft); }
+.bsrc summary:hover { background: var(--accent-soft); }
 
 /* compound controls read as one unit when anything inside them has focus */
-.filters .field:focus-within label { color: var(--gold); }
+.filters .field:focus-within label { color: var(--accent); }
 .pv-controls:focus-within { border-left-color: hsl(var(--cls)); }
 
 /* --------------------------------------------------------------------------
@@ -3647,4 +3683,310 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
   .menubar { margin-left: 0; }
   .tier-classes { grid-template-columns: minmax(0, 1fr); }
   .foot { letter-spacing: 0.06em; }
+}
+
+/* ==========================================================================
+   Task 42: the "midnight console" layer.
+
+   The owner's brief was blunt - "I don't like the color of the site, there is
+   nothing modern on the page" - and picked a direction: like Mobalytics. So
+   the palette above was replaced wholesale (navy/indigo ground, electric
+   azure chrome, vivid class and tier hues) and this section is the visual
+   language that palette needs: sans-serif-forward headings, glossy elevated
+   surfaces, pill chrome, and colored light used sparingly on the elements
+   that carry meaning.
+
+   It comes last on purpose. Everything here is an override of the Task 24/31/
+   35/36/37 sections above, so those stay readable as the record of what the
+   site used to be, and every value still resolves to a token declared in all
+   three theme blocks - light, system-dark and explicit-dark stay correct by
+   construction. Nothing here changes a class name, a scale step or a piece of
+   markup.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Typography: sans-serif-forward
+   The display face was a Trajan-flavoured serif set in wide caps. It is now
+   the system sans at real weight, with tracking cut back everywhere: heavy
+   and tight is what reads modern, and it is also what stops long build names
+   from wrapping.
+   -------------------------------------------------------------------------- */
+body { font-synthesis-weight: none; letter-spacing: 0; }
+
+.masthead h1,
+.page-head h1,
+.hero h1,
+.build-card h3,
+.news h3,
+.focus-head h3,
+.bhead h3,
+.cx-dhead h2,
+.b-name,
+.merc .nm,
+.mskill .nm,
+.unique .nm,
+.cx-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.masthead h1 {
+  font-weight: 800;
+  letter-spacing: 0.005em;
+  line-height: 1.02;
+  text-shadow: none;
+}
+.masthead h1 .sub {
+  margin-top: 0.5em;
+  font-size: 0.34em;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--accent);
+}
+.page-head h1 { font-weight: 800; letter-spacing: 0.01em; }
+.hero h1 { font-weight: 800; letter-spacing: -0.005em; line-height: 1.08; }
+.build-card h3 { font-weight: 700; letter-spacing: 0; line-height: 1.2; }
+.news h3 { font-weight: 700; letter-spacing: -0.005em; }
+.focus-head h3, .bhead h3, .cx-dhead h2 { font-weight: 700; letter-spacing: 0.01em; }
+.hero > .hero-mark { font-weight: 800; color: hsl(var(--cls) / 0.13); }
+
+/* section rules: a solid accent tick, then the label, then the hairline */
+.rule {
+  font-weight: 700;
+  font-size: clamp(1rem, 2.6vw, 1.25rem);
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  gap: var(--s-3);
+}
+.rule::before {
+  content: "";
+  flex: 0 0 auto;
+  width: var(--s-1);
+  height: 1.1em;
+  border-radius: var(--r-full);
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+}
+.rule::after { background: linear-gradient(90deg, var(--line-strong), transparent); }
+.rule .rule-note { letter-spacing: 0.06em; color: var(--fg-dim); }
+
+.block > h3, .gear-col > h4, .focus-cols h4 { color: var(--accent); letter-spacing: 0.14em; }
+
+/* nav, tabs and menus were wide serif caps; they are compact sans caps now */
+.brand-name { font-weight: 800; letter-spacing: 0.08em; }
+.brand-sub { font-weight: 600; letter-spacing: 0.18em; color: var(--accent); }
+.menu-btn, .nav-link, .menu button, .menu a,
+.tabs button, .btab, .history-toggle, .dbtn .dn, .stage-select {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.tabs button, .btab { font-size: var(--fs-md); }
+
+/* --------------------------------------------------------------------------
+   2. The ground
+   A navy field with two colored blooms and a much quieter grain - the old
+   parchment tooth was the loudest thing on the page.
+   -------------------------------------------------------------------------- */
+body {
+  background-image:
+    radial-gradient(65% 42% at 10% -6%, var(--halo-1) 0%, transparent 62%),
+    radial-gradient(58% 38% at 94% 2%, var(--halo-2) 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+}
+::selection { background: color-mix(in srgb, var(--accent) 32%, transparent); color: var(--fg); }
+
+/* --------------------------------------------------------------------------
+   3. Glossy elevated surfaces
+   Every card gets the same two-part treatment: a top-to-bottom gradient from
+   --raised to --surface, and the 1px --sheen highlight that --e-1..--e-3 now
+   carry. That is what makes a card look lit from above instead of printed.
+   -------------------------------------------------------------------------- */
+.build-card, .news, .boss, .slot-card, .pboard, .board, .unique, .merc,
+.dcard, .skill-row, .gear-row, .alloc li, .mskill, .runs li, .callout,
+.whats-new, .ptr-banner, .empty {
+  background-image: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+}
+.build-card, .news, .boss, .pboard, .item-focus, .codex-detail, .filters,
+.hero, .stage-bar {
+  border-radius: var(--r-lg);
+}
+.slot-card, .board, .unique, .merc, .dcard, .skill-row, .gear-row,
+.alloc li, .mskill, .runs li, .callout, .upd, .slot, .sock {
+  border-radius: var(--r-md);
+}
+
+/* hover lifts a rung and picks up the surface's own color as light */
+.build-card:hover, .build-card:focus-visible {
+  box-shadow: var(--e-2), 0 0 34px -14px hsl(var(--cls) / 0.85);
+  border-color: hsl(var(--cls) / 0.6);
+}
+.news:hover { box-shadow: var(--e-2), 0 0 30px -16px var(--accent); }
+.boss.hit { box-shadow: var(--e-2), 0 0 0 1px hsl(var(--boss) / 0.45), 0 0 34px -14px hsl(var(--boss) / 0.8); }
+
+/* the hero is the one surface allowed a real bloom */
+.hero {
+  background-image:
+    radial-gradient(90% 130% at 100% 0%, hsl(var(--cls) / 0.30), transparent 62%),
+    linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+  border-left-width: 1px;
+  border-top: 2px solid hsl(var(--cls) / 0.85);
+  box-shadow: var(--e-2), 0 0 46px -18px hsl(var(--cls) / 0.7);
+}
+.hero .kicker { color: hsl(var(--cls)); font-weight: 600; letter-spacing: 0.16em; }
+
+/* the two focus panels (codex detail, boss item focus) read as overlays */
+.item-focus, .codex-detail {
+  background-image:
+    radial-gradient(90% 120% at 0% 0%, var(--accent-soft), transparent 58%),
+    linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+  border-left-width: 1px;
+  border-top: 2px solid var(--accent);
+  box-shadow: var(--e-3), var(--glow);
+}
+
+/* --------------------------------------------------------------------------
+   4. Pills
+   Chips, nav items, tabs and the small buttons are all full-round now. This
+   is the single change that most says "2020s" at a glance, and it is safe:
+   nothing here is a card, so the --r-lg ceiling still holds where it matters.
+   -------------------------------------------------------------------------- */
+.chip, .pts, .rank, .badge-ptr, .news-kind, .nav-season, .back,
+.nav-link, .menu-btn, .tabs button, .btab, .g-aspects li, .stage-jump {
+  border-radius: var(--r-full);
+}
+.chip {
+  padding: var(--s-1) var(--s-3);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+}
+.chip.cls { background: hsl(var(--cls) / 0.16); border-color: hsl(var(--cls) / 0.55); }
+.chip.wrap { letter-spacing: 0.02em; }
+.g-aspects li { padding: var(--s-micro) var(--s-3); background: var(--surface-2); }
+
+/* tabs become a segmented pill strip floating over the section hairline */
+.tabs { gap: var(--s-2); padding-bottom: var(--s-2); }
+.btabs { gap: var(--s-2); }
+.btabs-scroll { padding-bottom: var(--s-2); }
+.tabs button, .btab {
+  border: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  background: var(--surface-2);
+  padding: var(--s-2) var(--s-4);
+}
+.tabs button:hover, .btab:hover { background: var(--accent-soft); color: var(--fg); }
+.tabs button[aria-selected="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: inset 0 1px 0 var(--sheen), 0 0 20px -10px var(--accent);
+}
+.btab[aria-selected="true"] {
+  color: hsl(var(--cls));
+  background: hsl(var(--cls) / 0.18);
+  border-color: hsl(var(--cls) / 0.6);
+  box-shadow: inset 0 1px 0 var(--sheen), 0 0 20px -10px hsl(var(--cls));
+}
+/* the underline accent belonged to the old boxed tab; a filled pill says
+   "selected" on its own, and dropping it also drops the 1px vertical overflow
+   that used to make the scrolling strip swallow the wheel */
+.tabs button[aria-selected="true"]::after,
+.btab[aria-selected="true"]::after { content: none; }
+
+/* --------------------------------------------------------------------------
+   5. Chrome: nav, controls, focus
+   -------------------------------------------------------------------------- */
+.topnav {
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 0 var(--accent-soft), 0 14px 34px -28px rgba(0, 0, 0, 0.95);
+}
+.brand { border-radius: var(--r-full); }
+.brand:hover { background: var(--accent-soft); }
+.brand-sigil { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 55%, transparent)); }
+.sigil { filter: drop-shadow(0 0 16px color-mix(in srgb, var(--accent) 45%, transparent)); }
+
+.nav-link[aria-current="page"] {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.nav-link[aria-current="page"]::after { bottom: 0.28rem; height: 2px; }
+.nav-season {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+  font-weight: 600;
+}
+.menu { border-radius: var(--r-lg); box-shadow: var(--e-3); }
+.menu button, .menu a { border-radius: var(--r-md); }
+
+.back, .pv-btn, .stage-jump, .loot-btn, .stage-select,
+.filters input[type="search"], .filters select {
+  box-shadow: inset 0 1px 0 var(--sheen);
+}
+.back:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* --------------------------------------------------------------------------
+   6. Tier badges and status color
+   The tier letter is the loudest thing on the tier list, so it gets the
+   vivid treatment: a saturated plate, a heavy letter and a matching bloom.
+   -------------------------------------------------------------------------- */
+.tier-badge {
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: 0;
+  color: hsl(var(--tier));
+  background:
+    linear-gradient(160deg, hsl(var(--tier) / 0.30) 0%, hsl(var(--tier) / 0.08) 100%);
+  border: 1px solid hsl(var(--tier) / 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 0 var(--sheen),
+              inset 0 0 26px -10px hsl(var(--tier) / 0.9),
+              0 0 26px -14px hsl(var(--tier));
+}
+.class-row {
+  border-left-width: 3px;
+  background-image: linear-gradient(90deg, hsl(var(--cls) / 0.10) 0%, transparent 38%);
+}
+.class-row:hover {
+  box-shadow: var(--e-2), 0 0 26px -16px hsl(var(--cls));
+}
+.class-row .name { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.06em; }
+
+.chip.st-adjusted { background: var(--accent-2-soft); }
+.chip.st-retired { background: color-mix(in srgb, var(--danger) 12%, transparent); }
+.chip.conf-high { background: hsl(var(--t-a) / 0.14); }
+.chip.conf-medium { background: hsl(var(--t-s) / 0.14); }
+.chip.conf-low { background: hsl(var(--t-d) / 0.14); }
+.runs .dot { box-shadow: 0 0 10px 0 currentColor; }
+
+/* --------------------------------------------------------------------------
+   7. Small screens keep every Task 37 accommodation
+   These re-assert the tail media queries above, because this section is
+   later in the cascade and would otherwise win at the same specificity.
+   -------------------------------------------------------------------------- */
+@media (max-width: 44rem) {
+  .tabs button, .btab { padding: var(--s-2) var(--s-3); font-size: 0.78rem; letter-spacing: 0.04em; }
+  .tier-badge { font-size: 1.3rem; }
+}
+
+@media (max-width: 34rem) {
+  .menu-btn, .nav-link {
+    min-height: var(--tap);
+    padding: var(--s-2) var(--s-1);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.02em;
+  }
+  .nav-link[aria-current="page"]::after { left: 0.25rem; right: 0.25rem; }
+  .nav-season { padding: var(--s-1) var(--s-2); font-size: var(--fs-3xs); letter-spacing: 0.02em; }
+  .rule { font-size: 1rem; letter-spacing: 0.04em; }
+  /* the heavier nav labels cost real width; the bar has to fit 400px with a
+     season chip on the end, so the padding comes off, never the label */
+  .brand { padding-inline: 0 var(--s-1); }
+  .topnav-in { gap: var(--s-micro); }
+  .menubar { gap: var(--s-micro); }
 }
