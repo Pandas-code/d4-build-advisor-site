@@ -862,10 +862,10 @@
 
       if (status) {
         var loading = done < shards.length
-          ? " \u2014 loading the index (" + done + "/" + shards.length + ")" : "";
+          ? " \u2014 loading the index (" + done + "/" + shards.length + ")\u2026" : "";
         if (!entries.length) {
           status.textContent = failed && done >= shards.length
-            ? "The codex index could not be loaded."
+            ? "The codex index could not be loaded \u2014 reload the page to try again."
             : "Loading the index\u2026";
         } else if (!hits.length) {
           status.textContent = "Nothing matches" + loading;

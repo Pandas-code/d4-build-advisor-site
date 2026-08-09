@@ -5,6 +5,10 @@
 <title>Boss Loot — Diablo IV Build Advisor</title>
 <meta name="description" content="Which Diablo 4 boss drops which unique, and which builds want it.">
 <meta name="color-scheme" content="light dark">
+<!-- browser chrome matches the page ground in each theme (these are the --bg
+     token's two values in site.css; keep the three in step) -->
+<meta name="theme-color" content="#e9dfc9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0a08" media="(prefers-color-scheme: dark)">
 <!-- inline SVG favicon: crossed swords, no network request -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.92em%22 font-size=%2292%22>&#9876;&#65039;</text></svg>">
 <link rel="stylesheet" href="../assets/site.css">
@@ -109,7 +113,7 @@
   <div class="field grow">
     <label for="f-item">Item name</label>
     <input id="f-item" type="search" autocomplete="off" spellcheck="false"
-           placeholder="Type part of a unique&#8217;s name">
+           placeholder="harlequin, tyrael&#8217;s might, doombringer&#8230;">
   </div>
   <button id="f-reset" class="back" type="button">Reset</button>
 </section>
