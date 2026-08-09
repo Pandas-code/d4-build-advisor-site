@@ -2770,3 +2770,181 @@ a.build-card { text-decoration: none; }
   .pgrid { --cell: calc(1.6rem * var(--pz)); }
   .pgrid-scroll { max-height: min(60vh, 26rem); }
 }
+
+/* ======================================================================== */
+/* Task 35: reference parity -- sockets on a slot card, resolved affix       */
+/* values, ranked build lists under each class, both mercenary trees.        */
+/* Everything here reuses tokens declared in the three theme blocks at the   */
+/* top; no new color is introduced, so light, dark and system stay correct.  */
+/* ======================================================================== */
+
+/* -------------------- what sits in an item's sockets --------------------- */
+.sockets {
+  margin-top: 0.55rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.sock-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.sock-head .s-label,
+.sock-head .s-count {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.sock-head .s-label { color: hsl(var(--cls)); }
+.sock-head .s-count { color: var(--fg-dim); }
+.socketed { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+.sock {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.4rem 0.45rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-left: 2px solid hsl(var(--cls) / 0.5);
+}
+.sock > .icon { --icon-size: 1.9rem; flex: 0 0 auto; }
+.sock .s-body { min-width: 0; }
+.sock .nm {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--gold);
+  overflow-wrap: anywhere;
+}
+.sock .kind {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.sock .eff {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--fg-soft);
+  overflow-wrap: anywhere;
+}
+.sock .eff .lbl {
+  margin-right: 0.45em;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: hsl(var(--cls));
+}
+.sock .note { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--fg-dim); }
+/* a socket the build records nothing for: stated, never quietly dropped */
+.sock.empty { border-left-style: dashed; border-left-color: var(--line-strong); }
+.sock.empty .nm { color: var(--fg-dim); font-style: italic; }
+.sock.empty > .icon.ph { border-style: dashed; }
+/* two runes in one item are a Runeword: the pair, and the Offering bargain */
+.runeword {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.4rem 0 0;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  background: var(--gold-soft);
+  font-size: 0.8rem;
+  color: var(--fg-soft);
+}
+.runeword .label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.chip.sock { margin-left: 0.4rem; color: var(--fg-soft); }
+.g-sockets {
+  margin-left: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+/* ------------------- resolved affix values and the caption --------------- */
+/* A row whose number the game database settles reads as the finished line;
+   the rest keep their {x} slot, so the difference has to be visible. */
+.loadout li.val { color: var(--fg); }
+.section-note {
+  margin: 0 0 0.6rem;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--fg-dim);
+}
+.section-note .vslot { font-size: 0.9em; }
+
+/* ------------------ ranked build list under each class ------------------- */
+.cbuilds {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.2rem;
+  counter-reset: none;
+}
+.cbuilds a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.28rem 0.4rem;
+  border: 1px solid transparent;
+  color: var(--fg-soft);
+  text-decoration: none;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.cbuilds a:hover,
+.cbuilds a:focus-visible {
+  border-color: hsl(var(--cls) / 0.45);
+  background: hsl(var(--cls) / 0.08);
+  color: var(--fg);
+}
+.cbuilds .rk {
+  flex: 0 0 auto;
+  min-width: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: hsl(var(--cls));
+}
+.cbuilds .bn { flex: 1 1 auto; font-size: 0.86rem; overflow-wrap: anywhere; }
+.cbuilds .sec {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.cbuilds-none {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--fg-dim);
+}
+.class-row .why.none { font-style: italic; }
+.tier-row.unranked .tier-badge { color: var(--fg-dim); }
+.tier-legend {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.74rem;
+  color: var(--fg-dim);
+}
