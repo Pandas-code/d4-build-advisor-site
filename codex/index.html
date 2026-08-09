@@ -57,7 +57,7 @@
   <p class="lede">The whole game database this advisor is built on, searchable.
     Skills and their tree upgrades, paragon boards, nodes, thresholds and
     glyphs, every affix, every aspect, every item.</p>
-  <p class="meta-line">14322 entries &#183; searched in the browser &#183; nothing
+  <p class="meta-line">14850 entries &#183; searched in the browser &#183; nothing
     leaves this origin</p>
 </header>
 
@@ -77,6 +77,7 @@
           <option value="items">Items (6765)</option>
           <option value="aspects">Aspects (685)</option>
           <option value="affixes">Affixes (4305)</option>
+          <option value="socketables">Socketables (528)</option>
       </select>
     </div>
   </div>
@@ -113,9 +114,13 @@
     <li class="dcard"><button class="dbtn" type="button" data-domain="items"><span class="dn">Items</span><span class="dc">6765 entries</span></button><span class="db">Uniques, mythics, sets, legendaries and base gear.</span></li>
     <li class="dcard"><button class="dbtn" type="button" data-domain="aspects"><span class="dn">Aspects</span><span class="dc">685 entries</span></button><span class="db">Legendary aspects and the powers they imprint.</span></li>
     <li class="dcard"><button class="dbtn" type="button" data-domain="affixes"><span class="dn">Affixes</span><span class="dc">4305 entries</span></button><span class="db">Gear, tempering, talisman and seasonal affix pools.</span></li>
+    <li class="dcard"><button class="dbtn" type="button" data-domain="socketables"><span class="dn">Socketables</span><span class="dc">528 entries</span></button><span class="db">Gems, Runes of Ritual and Invocation, charms and Horadric Seals.</span></li>
   </ul>
-  <p class="prose">Every entry keeps the game database&#8217;s own wording. Where
-    the feed writes a runtime value it ships a placeholder, shown here as
+  <p class="prose">Every entry keeps the game database&#8217;s own wording, with its
+    numbers resolved from the game database&#8217;s own roll formulas at maximum item
+    power &#8212; a range like <em>13 &#8211; 25%</em> is the whole span the affix can roll.
+    Where a value depends on something the database does not carry (skill payload
+    damage, your equipped gear, masterwork rank), the placeholder stays:
     <span class="vslot">{x}</span> &#8212; this site never invents the number
     behind it.</p>
 </section>
@@ -126,10 +131,10 @@
     <code>codex/data/</code>.</p>
 </noscript>
 
-<p class="foot" id="foot">game database 3.1.0.72698 already imported: 4305 affixes, 685 aspects, 247 boss uniques, 19 bosses, 8 classes, 45 item sets, 6765 items, 4 mercenaries, 76 mercenary skills, 84 mercenary tree nodes, 33 mythics, 79 paragon boards, 160 paragon glyphs, 561 paragon nodes, 2228 skill tree nodes, 313 skills, 926 uniques</p>
+<p class="foot" id="foot">game database 3.1.0.72698 already imported: 4305 affixes, 685 aspects, 247 boss uniques, 19 bosses, 365 charms, 8 classes, 64 gems, 12 horadric seals, 45 item sets, 6765 items, 4 mercenaries, 76 mercenary skills, 84 mercenary tree nodes, 33 mythics, 79 paragon boards, 160 paragon glyphs, 561 paragon nodes, 52 runes, 35 seasonal socketables, 2228 skill tree nodes, 313 skills, 926 uniques</p>
 
 </main>
 
-<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-08-09", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 852, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6765, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 685, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 4305, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}], "total": 14322}</script>
+<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-08-09", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 852, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6765, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 685, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 4305, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}, {"count": 528, "domain": "socketables", "file": "data/socketables.json", "label": "Socketables"}], "total": 14850}</script>
 <script src="../assets/site.js"></script>
 </html>

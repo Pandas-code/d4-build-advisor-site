@@ -6,7 +6,8 @@
     "aspects",
     "paragon",
     "bosses",
-    "classes"
+    "classes",
+    "socketables"
   ],
   "generated": "2026-08-09",
   "icons": {
@@ -12685,6 +12686,356 @@
       },
       "spiritborn_jaguar_sun_passive": {
         "missing": true
+      }
+    },
+    "socketables": {
+      "Gem_Amethyst_01": {
+        "path": "socketables/Gem_Amethyst_01.webp"
+      },
+      "Gem_Amethyst_02": {
+        "path": "socketables/Gem_Amethyst_02.webp"
+      },
+      "Gem_Amethyst_03": {
+        "path": "socketables/Gem_Amethyst_03.webp"
+      },
+      "Gem_Amethyst_04": {
+        "path": "socketables/Gem_Amethyst_04.webp"
+      },
+      "Gem_Amethyst_05": {
+        "path": "socketables/Gem_Amethyst_05.webp"
+      },
+      "Gem_Amethyst_06": {
+        "path": "socketables/Gem_Amethyst_06.webp"
+      },
+      "Gem_Amethyst_07": {
+        "path": "socketables/Gem_Amethyst_07.webp"
+      },
+      "Gem_Amethyst_08": {
+        "path": "socketables/Gem_Amethyst_08.webp"
+      },
+      "Gem_Amethyst_09": {
+        "path": "socketables/Gem_Amethyst_09.webp"
+      },
+      "Gem_Diamond_01": {
+        "path": "socketables/Gem_Diamond_01.webp"
+      },
+      "Gem_Diamond_02": {
+        "path": "socketables/Gem_Diamond_02.webp"
+      },
+      "Gem_Diamond_03": {
+        "path": "socketables/Gem_Diamond_03.webp"
+      },
+      "Gem_Diamond_04": {
+        "path": "socketables/Gem_Diamond_04.webp"
+      },
+      "Gem_Diamond_05": {
+        "path": "socketables/Gem_Diamond_05.webp"
+      },
+      "Gem_Diamond_06": {
+        "path": "socketables/Gem_Diamond_06.webp"
+      },
+      "Gem_Diamond_07": {
+        "path": "socketables/Gem_Diamond_07.webp"
+      },
+      "Gem_Diamond_08": {
+        "path": "socketables/Gem_Diamond_08.webp"
+      },
+      "Gem_Diamond_09": {
+        "path": "socketables/Gem_Diamond_09.webp"
+      },
+      "Gem_Emerald_01": {
+        "path": "socketables/Gem_Emerald_01.webp"
+      },
+      "Gem_Emerald_02": {
+        "path": "socketables/Gem_Emerald_02.webp"
+      },
+      "Gem_Emerald_03": {
+        "path": "socketables/Gem_Emerald_03.webp"
+      },
+      "Gem_Emerald_04": {
+        "path": "socketables/Gem_Emerald_04.webp"
+      },
+      "Gem_Emerald_05": {
+        "path": "socketables/Gem_Emerald_05.webp"
+      },
+      "Gem_Emerald_06": {
+        "path": "socketables/Gem_Emerald_06.webp"
+      },
+      "Gem_Emerald_07": {
+        "path": "socketables/Gem_Emerald_07.webp"
+      },
+      "Gem_Emerald_08": {
+        "path": "socketables/Gem_Emerald_08.webp"
+      },
+      "Gem_Emerald_09": {
+        "path": "socketables/Gem_Emerald_09.webp"
+      },
+      "Gem_Mythic_01": {
+        "path": "socketables/Gem_Mythic_01.webp"
+      },
+      "Gem_Ruby_01": {
+        "path": "socketables/Gem_Ruby_01.webp"
+      },
+      "Gem_Ruby_02": {
+        "path": "socketables/Gem_Ruby_02.webp"
+      },
+      "Gem_Ruby_03": {
+        "path": "socketables/Gem_Ruby_03.webp"
+      },
+      "Gem_Ruby_04": {
+        "path": "socketables/Gem_Ruby_04.webp"
+      },
+      "Gem_Ruby_05": {
+        "path": "socketables/Gem_Ruby_05.webp"
+      },
+      "Gem_Ruby_06": {
+        "path": "socketables/Gem_Ruby_06.webp"
+      },
+      "Gem_Ruby_07": {
+        "path": "socketables/Gem_Ruby_07.webp"
+      },
+      "Gem_Ruby_08": {
+        "path": "socketables/Gem_Ruby_08.webp"
+      },
+      "Gem_Ruby_09": {
+        "path": "socketables/Gem_Ruby_09.webp"
+      },
+      "Gem_Sapphire_01": {
+        "path": "socketables/Gem_Sapphire_01.webp"
+      },
+      "Gem_Sapphire_02": {
+        "path": "socketables/Gem_Sapphire_02.webp"
+      },
+      "Gem_Sapphire_03": {
+        "path": "socketables/Gem_Sapphire_03.webp"
+      },
+      "Gem_Sapphire_04": {
+        "path": "socketables/Gem_Sapphire_04.webp"
+      },
+      "Gem_Sapphire_05": {
+        "path": "socketables/Gem_Sapphire_05.webp"
+      },
+      "Gem_Sapphire_06": {
+        "path": "socketables/Gem_Sapphire_06.webp"
+      },
+      "Gem_Sapphire_07": {
+        "path": "socketables/Gem_Sapphire_07.webp"
+      },
+      "Gem_Sapphire_08": {
+        "path": "socketables/Gem_Sapphire_08.webp"
+      },
+      "Gem_Sapphire_09": {
+        "path": "socketables/Gem_Sapphire_09.webp"
+      },
+      "Gem_Skull_01": {
+        "path": "socketables/Gem_Skull_01.webp"
+      },
+      "Gem_Skull_02": {
+        "path": "socketables/Gem_Skull_02.webp"
+      },
+      "Gem_Skull_03": {
+        "path": "socketables/Gem_Skull_03.webp"
+      },
+      "Gem_Skull_04": {
+        "path": "socketables/Gem_Skull_04.webp"
+      },
+      "Gem_Skull_05": {
+        "path": "socketables/Gem_Skull_05.webp"
+      },
+      "Gem_Skull_06": {
+        "path": "socketables/Gem_Skull_06.webp"
+      },
+      "Gem_Skull_07": {
+        "path": "socketables/Gem_Skull_07.webp"
+      },
+      "Gem_Skull_08": {
+        "path": "socketables/Gem_Skull_08.webp"
+      },
+      "Gem_Skull_09": {
+        "path": "socketables/Gem_Skull_09.webp"
+      },
+      "Gem_Topaz_01": {
+        "path": "socketables/Gem_Topaz_01.webp"
+      },
+      "Gem_Topaz_02": {
+        "path": "socketables/Gem_Topaz_02.webp"
+      },
+      "Gem_Topaz_03": {
+        "path": "socketables/Gem_Topaz_03.webp"
+      },
+      "Gem_Topaz_04": {
+        "path": "socketables/Gem_Topaz_04.webp"
+      },
+      "Gem_Topaz_05": {
+        "path": "socketables/Gem_Topaz_05.webp"
+      },
+      "Gem_Topaz_06": {
+        "path": "socketables/Gem_Topaz_06.webp"
+      },
+      "Gem_Topaz_07": {
+        "path": "socketables/Gem_Topaz_07.webp"
+      },
+      "Gem_Topaz_08": {
+        "path": "socketables/Gem_Topaz_08.webp"
+      },
+      "Gem_Topaz_09": {
+        "path": "socketables/Gem_Topaz_09.webp"
+      },
+      "Rune_Condition_AllSkillsOnCD": {
+        "path": "socketables/Rune_Condition_AllSkillsOnCD.webp"
+      },
+      "Rune_Condition_Bomb": {
+        "path": "socketables/Rune_Condition_Bomb.webp"
+      },
+      "Rune_Condition_CastRepeatSkill": {
+        "path": "socketables/Rune_Condition_CastRepeatSkill.webp"
+      },
+      "Rune_Condition_HitHealthierEnemy": {
+        "path": "socketables/Rune_Condition_HitHealthierEnemy.webp"
+      },
+      "Rune_Condition_OnAvoidDamage": {
+        "path": "socketables/Rune_Condition_OnAvoidDamage.webp"
+      },
+      "Rune_Condition_OnCCEnemy": {
+        "path": "socketables/Rune_Condition_OnCCEnemy.webp"
+      },
+      "Rune_Condition_OnCCdOrInjured": {
+        "path": "socketables/Rune_Condition_OnCCdOrInjured.webp"
+      },
+      "Rune_Condition_OnCastCoreSkill": {
+        "path": "socketables/Rune_Condition_OnCastCoreSkill.webp"
+      },
+      "Rune_Condition_OnCastCrossClassSkill": {
+        "path": "socketables/Rune_Condition_OnCastCrossClassSkill.webp"
+      },
+      "Rune_Condition_OnCastUltimateSkill": {
+        "path": "socketables/Rune_Condition_OnCastUltimateSkill.webp"
+      },
+      "Rune_Condition_OnEvade": {
+        "path": "socketables/Rune_Condition_OnEvade.webp"
+      },
+      "Rune_Condition_OnMove": {
+        "path": "socketables/Rune_Condition_OnMove.webp"
+      },
+      "Rune_Condition_OnPetKillOrDie": {
+        "path": "socketables/Rune_Condition_OnPetKillOrDie.webp"
+      },
+      "Rune_Condition_OnPotion": {
+        "path": "socketables/Rune_Condition_OnPotion.webp"
+      },
+      "Rune_Condition_OnSpendResource": {
+        "path": "socketables/Rune_Condition_OnSpendResource.webp"
+      },
+      "Rune_Condition_OnStutterStep": {
+        "path": "socketables/Rune_Condition_OnStutterStep.webp"
+      },
+      "Rune_Condition_OnTakeDamage": {
+        "path": "socketables/Rune_Condition_OnTakeDamage.webp"
+      },
+      "Rune_Condition_StandStill": {
+        "path": "socketables/Rune_Condition_StandStill.webp"
+      },
+      "Rune_Condition_Summons": {
+        "path": "socketables/Rune_Condition_Summons.webp"
+      },
+      "Rune_Effect_Barbarian_ChallengingShout": {
+        "path": "socketables/Rune_Effect_Barbarian_ChallengingShout.webp"
+      },
+      "Rune_Effect_Barbarian_WarCry": {
+        "path": "socketables/Rune_Effect_Barbarian_WarCry.webp"
+      },
+      "Rune_Effect_BonusToAllSkills": {
+        "path": "socketables/Rune_Effect_BonusToAllSkills.webp"
+      },
+      "Rune_Effect_CritBuff": {
+        "path": "socketables/Rune_Effect_CritBuff.webp"
+      },
+      "Rune_Effect_CriticalOverpower": {
+        "path": "socketables/Rune_Effect_CriticalOverpower.webp"
+      },
+      "Rune_Effect_Druid_EarthenBulwark": {
+        "path": "socketables/Rune_Effect_Druid_EarthenBulwark.webp"
+      },
+      "Rune_Effect_Druid_Petrify": {
+        "path": "socketables/Rune_Effect_Druid_Petrify.webp"
+      },
+      "Rune_Effect_FlatCDR": {
+        "path": "socketables/Rune_Effect_FlatCDR.webp"
+      },
+      "Rune_Effect_GainResource": {
+        "path": "socketables/Rune_Effect_GainResource.webp"
+      },
+      "Rune_Effect_MaxHPIncrease": {
+        "path": "socketables/Rune_Effect_MaxHPIncrease.webp"
+      },
+      "Rune_Effect_MobilityBuff": {
+        "path": "socketables/Rune_Effect_MobilityBuff.webp"
+      },
+      "Rune_Effect_Necromancer_Decrepify": {
+        "path": "socketables/Rune_Effect_Necromancer_Decrepify.webp"
+      },
+      "Rune_Effect_Necromancer_IronMaiden": {
+        "path": "socketables/Rune_Effect_Necromancer_IronMaiden.webp"
+      },
+      "Rune_Effect_Paladin_Rally": {
+        "path": "socketables/Rune_Effect_Paladin_Rally.webp"
+      },
+      "Rune_Effect_ReduceUltimateCD": {
+        "path": "socketables/Rune_Effect_ReduceUltimateCD.webp"
+      },
+      "Rune_Effect_ResourceToDamage": {
+        "path": "socketables/Rune_Effect_ResourceToDamage.webp"
+      },
+      "Rune_Effect_Rogue_Concealment": {
+        "path": "socketables/Rune_Effect_Rogue_Concealment.webp"
+      },
+      "Rune_Effect_Rogue_DarkShroud": {
+        "path": "socketables/Rune_Effect_Rogue_DarkShroud.webp"
+      },
+      "Rune_Effect_Sorcerer_FrostNova": {
+        "path": "socketables/Rune_Effect_Sorcerer_FrostNova.webp"
+      },
+      "Rune_Effect_Sorcerer_Teleport": {
+        "path": "socketables/Rune_Effect_Sorcerer_Teleport.webp"
+      },
+      "Rune_Effect_Spiritborn_ConcussiveStomp": {
+        "path": "socketables/Rune_Effect_Spiritborn_ConcussiveStomp.webp"
+      },
+      "Rune_Effect_Spiritborn_Vortex": {
+        "path": "socketables/Rune_Effect_Spiritborn_Vortex.webp"
+      },
+      "Rune_Effect_Subpower_Brimstone": {
+        "path": "socketables/Rune_Effect_Subpower_Brimstone.webp"
+      },
+      "Rune_Effect_Subpower_DancingBolts": {
+        "path": "socketables/Rune_Effect_Subpower_DancingBolts.webp"
+      },
+      "Rune_Effect_Subpower_DesecratedGround": {
+        "path": "socketables/Rune_Effect_Subpower_DesecratedGround.webp"
+      },
+      "Rune_Effect_Subpower_Earthquake": {
+        "path": "socketables/Rune_Effect_Subpower_Earthquake.webp"
+      },
+      "Rune_Effect_Subpower_Grenades": {
+        "path": "socketables/Rune_Effect_Subpower_Grenades.webp"
+      },
+      "Rune_Effect_Subpower_LightningBolt": {
+        "path": "socketables/Rune_Effect_Subpower_LightningBolt.webp"
+      },
+      "Rune_Effect_Subpower_Meteorites": {
+        "path": "socketables/Rune_Effect_Subpower_Meteorites.webp"
+      },
+      "Rune_Effect_Subpower_Spear": {
+        "path": "socketables/Rune_Effect_Subpower_Spear.webp"
+      },
+      "Rune_Effect_Subpower_Swarm": {
+        "path": "socketables/Rune_Effect_Subpower_Swarm.webp"
+      },
+      "Rune_Effect_SummonSpiritWolf": {
+        "path": "socketables/Rune_Effect_SummonSpiritWolf.webp"
+      },
+      "Rune_Effect_Warlock_ChainPrison": {
+        "path": "socketables/Rune_Effect_Warlock_ChainPrison.webp"
       }
     }
   },
