@@ -183,9 +183,20 @@
     });
   })();
 
-  /* -------------------------------- index -------------------------------- */
-  (function indexPage() {
-    if (DATA.kind !== "index") { return; }
+  /* ------------------------------- home page ------------------------------
+     The news feed is entirely pre-rendered; the only thing left to do in the
+     browser is age the "generated" stamp, exactly as every other page does. */
+  (function newsPage() {
+    if (DATA.kind !== "news") { return; }
+    var seasonLine = byId("season-line");
+    if (!seasonLine) { return; }
+    seasonLine.textContent = (DATA.label || "") + "  \u2022  generated " +
+      relativeDays(daysSince(DATA.generated));
+  })();
+
+  /* ------------------------------ tier list ------------------------------ */
+  (function tierListPage() {
+    if (DATA.kind !== "tierlist") { return; }
 
     var seasons = Array.isArray(DATA.seasons) ? DATA.seasons : [];
     var blocks = all(".season-block");
