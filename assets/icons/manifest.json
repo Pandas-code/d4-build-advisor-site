@@ -1,13 +1,14 @@
 {
   "domains": [
     "skills",
+    "mercenaries",
     "items",
     "aspects",
     "paragon",
     "bosses",
     "classes"
   ],
-  "generated": "2026-08-08",
+  "generated": "2026-08-09",
   "icons": {
     "aspects": {
       "LTE_Hibernal_legendary_generic_001": {
@@ -5130,6 +5131,248 @@
       },
       "zzRing_PvP_DebugBuffRefresh": {
         "path": "items/zzRing_PvP_DebugBuffRefresh.webp"
+      }
+    },
+    "mercenaries": {
+      "MercenaryClass_BerserkerCrone": {
+        "path": "mercenaries/MercenaryClass_BerserkerCrone.webp"
+      },
+      "MercenaryClass_BountyHunter": {
+        "path": "mercenaries/MercenaryClass_BountyHunter.webp"
+      },
+      "MercenaryClass_CursedChild": {
+        "path": "mercenaries/MercenaryClass_CursedChild.webp"
+      },
+      "MercenaryClass_ShieldBearer": {
+        "path": "mercenaries/MercenaryClass_ShieldBearer.webp"
+      },
+      "Mercenary_BerserkerCrone_Bloodthirst": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_Bloodthirst.webp"
+      },
+      "Mercenary_BerserkerCrone_Cleave": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_Cleave.webp"
+      },
+      "Mercenary_BerserkerCrone_Harpoons": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_Harpoons.webp"
+      },
+      "Mercenary_BerserkerCrone_MassacrePassive2": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_MassacrePassive2.webp"
+      },
+      "Mercenary_BerserkerCrone_RumblingEarth": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_RumblingEarth.webp"
+      },
+      "Mercenary_BerserkerCrone_Shockwave": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_Shockwave.webp"
+      },
+      "Mercenary_BerserkerCrone_Whirlwind": {
+        "path": "mercenaries/Mercenary_BerserkerCrone_Whirlwind.webp"
+      },
+      "Mercenary_CursedChild_FireStorm": {
+        "path": "mercenaries/Mercenary_CursedChild_FireStorm.webp"
+      },
+      "Mercenary_CursedChild_FlameSurge": {
+        "path": "mercenaries/Mercenary_CursedChild_FlameSurge.webp"
+      },
+      "Mercenary_CursedChild_Haunt": {
+        "path": "mercenaries/Mercenary_CursedChild_Haunt.webp"
+      },
+      "Mercenary_CursedChild_SummonDemonForm": {
+        "path": "mercenaries/Mercenary_CursedChild_SummonDemonForm.webp"
+      },
+      "Mercenary_CursedChild_WaveOfFlame": {
+        "path": "mercenaries/Mercenary_CursedChild_WaveOfFlame.webp"
+      },
+      "Mercenary_CursedChild_Wither": {
+        "path": "mercenaries/Mercenary_CursedChild_Wither.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveA1": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveA1.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveA2": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveA2.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveA3": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveA3.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveA4": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveA4.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveA5": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveA5.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveA6": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveA6.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveB1": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveB1.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveB2": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveB2.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveB3": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveB3.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveB4": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveB4.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveB5": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveB5.webp"
+      },
+      "NPC_Mercenary_BerserkerCrone_passiveB6": {
+        "path": "mercenaries/NPC_Mercenary_BerserkerCrone_passiveB6.webp"
+      },
+      "NPC_Mercenary_BountyHunter_ConcussiveTrap": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_ConcussiveTrap.webp"
+      },
+      "NPC_Mercenary_BountyHunter_ExplosiveCharge": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_ExplosiveCharge.webp"
+      },
+      "NPC_Mercenary_BountyHunter_Molotov": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_Molotov.webp"
+      },
+      "NPC_Mercenary_BountyHunter_Perk": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_Perk.webp"
+      },
+      "NPC_Mercenary_BountyHunter_ScatterTraps": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_ScatterTraps.webp"
+      },
+      "NPC_Mercenary_BountyHunter_Snipe": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_Snipe.webp"
+      },
+      "NPC_Mercenary_BountyHunter_Volley": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_Volley.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveA1": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveA1.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveA2": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveA2.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveA3": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveA3.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveA4": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveA4.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveA5": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveA5.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveA6": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveA6.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveB1": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveB1.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveB2": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveB2.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveB3": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveB3.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveB4": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveB4.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveB5": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveB5.webp"
+      },
+      "NPC_Mercenary_BountyHunter_passiveB6": {
+        "path": "mercenaries/NPC_Mercenary_BountyHunter_passiveB6.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveA1": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveA1.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveA2": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveA2.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveA3": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveA3.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveA4": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveA4.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveA5": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveA5.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveA6": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveA6.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveB1": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveB1.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveB2": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveB2.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveB3": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveB3.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveB4": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveB4.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveB5": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveB5.webp"
+      },
+      "NPC_Mercenary_CursedChild_passiveB6": {
+        "path": "mercenaries/NPC_Mercenary_CursedChild_passiveB6.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_Bastion": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_Bastion.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_ChargeSkill": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_ChargeSkill.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_Crater": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_Crater.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_GroundSlam": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_GroundSlam.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveA1": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveA1.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveA2": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveA2.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveA3": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveA3.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveA4": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveA4.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveA5": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveA5.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveA6": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveA6.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveB1": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveB1.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveB2": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveB2.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveB3": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveB3.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveB4": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveB4.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveB5": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveB5.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_PassiveB6": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_PassiveB6.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_Provoke": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_Provoke.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_ShieldThrow": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_ShieldThrow.webp"
+      },
+      "NPC_Mercenary_ShieldBearer_Valiance": {
+        "path": "mercenaries/NPC_Mercenary_ShieldBearer_Valiance.webp"
+      },
+      "mercenary_cursedChild_soulChain": {
+        "path": "mercenaries/mercenary_cursedChild_soulChain.webp"
       }
     },
     "paragon": {
