@@ -2512,3 +2512,261 @@ a.build-card { text-decoration: none; }
   .loot-grid { grid-template-columns: minmax(0, 1fr); }
   .page-head .lede { font-size: 0.92rem; }
 }
+
+/* ==========================================================================
+   Task 31: reference-exact board and tree presentation.
+
+   The reference (d4builds.gg) puts every node graph inside a viewport with a
+   control rail over it: a search box, a zoom stepper, a fullscreen button and
+   -- on its Skill Tree -- an allocation toggle. This section is that rail plus
+   the two canvases it drives. Everything is built from the tokens defined at
+   the top of this file, so all three theme states follow automatically, and
+   every control is a real <button>/<input> with a visible focus ring.
+
+   Nothing here is required for the page to work: with no script the canvases
+   are still ordinary scrollable boxes at their default zoom.
+   ========================================================================== */
+
+/* ----------------------------- the control rail ------------------------- */
+.pv-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+  padding: 0.4rem 0.45rem;
+  background: linear-gradient(180deg, var(--raised), var(--surface-2));
+  border: 1px solid var(--line);
+  border-left: 2px solid hsl(var(--cls) / 0.5);
+}
+.pv-search { display: contents; }
+.pv-find {
+  flex: 1 1 12rem;
+  min-width: 0;
+  appearance: none;
+  padding: 0.4rem 0.55rem;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+.pv-find::placeholder { color: var(--fg-dim); }
+.pv-find:focus-visible,
+.pv-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+.pv-hits {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 0 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.pv-hits:empty { display: none; }
+.pv-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex: 0 0 auto;
+}
+.pv-zoom {
+  min-width: 2.9rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+}
+.pv-btn {
+  appearance: none;
+  flex: 0 0 auto;
+  min-width: 1.9rem;
+  padding: 0.35rem 0.55rem;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  color: var(--fg-soft);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.pv-btn:hover {
+  background: hsl(var(--cls) / 0.16);
+  border-color: hsl(var(--cls) / 0.75);
+  color: var(--fg);
+}
+.pv-btn[aria-pressed="true"] {
+  background: hsl(var(--cls) / 0.24);
+  border-color: hsl(var(--cls));
+  color: var(--fg);
+  box-shadow: inset 0 0 12px -6px hsl(var(--cls));
+}
+
+/* --------------------------- fullscreen wrapper -------------------------- */
+/* Two paths, same look: the Fullscreen API when the browser grants it, and a
+   fixed-position fallback (`is-fs`) when it refuses or is unavailable. */
+.pboard-view,
+.tview { position: relative; }
+.pboard-view.is-fs,
+.tview.is-fs {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  margin: 0;
+  padding: 0.6rem;
+  overflow: auto;
+  background: var(--bg);
+}
+.pboard-view:fullscreen,
+.tview:fullscreen {
+  padding: 0.6rem;
+  overflow: auto;
+  background: var(--bg);
+}
+.pboard-view.is-fs .pgrid-scroll,
+.pboard-view:fullscreen .pgrid-scroll,
+.tview.is-fs .tmap-scroll,
+.tview:fullscreen .tmap-scroll { max-height: calc(100vh - 5rem); }
+
+/* --------------------- paragon board: zoom and rotation ------------------ */
+/* --pz is the board's zoom. It scales the cell *size* rather than applying a
+   transform, so the grid keeps its layout box and the scroll container keeps
+   working -- and the icons stay crisp because they are re-laid-out, not
+   stretched. */
+.pgrid { --pz: 1; --cell: calc(2.3rem * var(--pz)); gap: calc(0.16rem * var(--pz)); }
+.pgrid-scroll { overflow: auto; max-height: min(78vh, 44rem); }
+.pgrid-rot {
+  width: max-content;
+  margin: 0 auto;
+  transition: transform 220ms ease;
+}
+/* The reference draws its boards upright -- its tiles measure as unrotated 40px
+   squares -- so upright is the default. This is the in-game diamond on demand:
+   the grid turns 45 degrees and every node's artwork counter-rotates back to
+   level, which leaves diamond tiles carrying upright icons. The 0.7071 scale is
+   cos(45deg): it keeps the rotated grid inside the footprint the upright one
+   had, so the scroll box does not jump. */
+/* The wrapper becomes a square exactly the size of the rotated grid's bounding
+   box -- site.js measures it and sets width/height -- and centres the grid
+   inside it. That keeps the whole diamond inside a scrollable layout box: a
+   transform alone would spill above and to the left, where no scrollbar can
+   reach. */
+.pgrid-rot[data-rot="45"] { position: relative; }
+.pgrid-rot[data-rot="45"] > .pgrid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0.7071);
+}
+.pgrid-rot[data-rot="45"] .pnode img,
+.pgrid-rot[data-rot="45"] .pnode.ph { transform: rotate(-45deg); }
+
+/* ------------------------- the glyph radius overlay ---------------------- */
+/* A Manhattan diamond around the socket: `in-rad` tints the region, `rad-edge`
+   draws its outline at exactly the radius. Both classes land on empty cells too
+   so the ring stays closed where the board has a hole. Radius comes from
+   knowledge/paragon-notes.md; it is never guessed here. */
+.pgrid .in-rad { position: relative; }
+.pgrid .pe.in-rad { background: hsl(var(--cls) / 0.10); }
+.pgrid .rad-edge {
+  outline: 2px dashed hsl(var(--cls) / 0.85);
+  outline-offset: -2px;
+  z-index: 3;
+}
+.pgrid .pe.rad-edge { background: hsl(var(--cls) / 0.20); }
+/* nodes in range stay readable on a board that dims everything off the path,
+   and the ring itself never dims -- an overlay you cannot see is not an overlay */
+.pgrid.has-path .pnode.in-rad { opacity: 0.44; }
+.pgrid.has-path .pnode.rad-edge { opacity: 0.78; filter: none; }
+.pgrid.has-path .pnode.in-rad.taken,
+.pgrid.has-path .pnode.rad-edge.taken { opacity: 1; }
+.pgrid-legend .sw.rad {
+  border-style: dashed;
+  border-color: hsl(var(--cls) / 0.75);
+  background: hsl(var(--cls) / 0.18);
+}
+.pgrid-legend .sw.gate {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: rotate(45deg);
+}
+
+/* the attachment gate is a real grid node in the feed; give it the weight the
+   reference gives it, so the join between boards reads at a glance */
+.pnode.k-gate {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  box-shadow: 0 0 12px -4px var(--gold);
+}
+.chip.gate {
+  border-color: var(--gold);
+  color: var(--fg-soft);
+}
+.chip.gate.start { border-color: hsl(var(--cls) / 0.6); }
+
+/* ---------------------- tree: zoom, diamonds, toggles -------------------- */
+/* The reference's skill nodes are diamond plates carrying upright art; its
+   passives are circles. `--tz` already drives the whole canvas geometry, so the
+   zoom stepper only has to set that one number. */
+.tn.k-skill {
+  transform: translate(-50%, -50%) rotate(45deg);
+  border-color: var(--line-strong);
+  background: linear-gradient(145deg, var(--raised), var(--surface-2));
+}
+.tn.k-skill img { transform: rotate(-45deg); }
+.tn.k-skill:hover { transform: translate(-50%, -50%) rotate(45deg) scale(1.18); }
+.tcanvas.has-path .tn.k-skill.lit {
+  box-shadow: 0 0 16px -3px hsl(var(--cls) / 0.95);
+}
+.tn.k-skill .tb { transform: rotate(-45deg); }
+/* cluster and root gates: the tree's own attachment points, in gate gold */
+.tn.k-root, .tn.k-cluster {
+  box-shadow: 0 0 10px -3px var(--gold);
+}
+
+/* "Allocated only": everything off the build's path drops away almost
+   completely, which is what the toggle is for. */
+.tcanvas.alloc-only .tn { opacity: 0.07; filter: grayscale(1); }
+.tcanvas.alloc-only .tn.lit { opacity: 1; filter: none; }
+.tcanvas.alloc-only .tlinks line { stroke: var(--line); opacity: 0.25; }
+.tcanvas.alloc-only .tlinks line.on { opacity: 1; }
+
+/* ------------------------------ node search ------------------------------ */
+/* The search dims everything that does not match and rings what does. It only
+   ever adds and removes class names -- no markup is built from the query. */
+.tcanvas.searching .tn,
+.pgrid.searching .pnode { opacity: 0.12; filter: grayscale(1); }
+.tcanvas.searching .tn.hit,
+.pgrid.searching .pnode.hit {
+  opacity: 1;
+  filter: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold-soft), 0 0 16px -2px var(--gold);
+  z-index: 5;
+}
+.pgrid.searching .pe { opacity: 0.25; }
+
+/* dragging to pan: while a drag is live the cursor says so and text selection
+   is suppressed so the pointer does not paint a selection across the canvas */
+.tmap-scroll.dragging,
+.pgrid-scroll.dragging { cursor: grabbing; user-select: none; }
+
+@media (max-width: 44rem) {
+  /* phones get the rail wrapped and the canvas shorter; panning is plain
+     scrolling here, so nothing depends on a pinch gesture */
+  .pv-controls { gap: 0.3rem; padding: 0.35rem; }
+  .pv-find { flex: 1 1 100%; }
+  .pv-btn { padding: 0.45rem 0.5rem; font-size: 0.6rem; }
+  .pgrid { --cell: calc(1.6rem * var(--pz)); }
+  .pgrid-scroll { max-height: min(60vh, 26rem); }
+}

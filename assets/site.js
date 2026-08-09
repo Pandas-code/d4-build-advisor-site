@@ -941,4 +941,217 @@
 
     run();
   })();
+
+  /* ------------------- Task 31: node-graph viewports ---------------------- */
+  /* One behaviour for three canvases: the class skill tree, the mercenary tree
+     and every paragon board. Each gets a search box, a zoom stepper, a
+     fullscreen button and (where it applies) a rotate or allocation toggle.
+
+     Nothing in here builds markup from data. The search only adds and removes
+     class names, and the one string it writes -- the hit count -- goes in via
+     textContent. Panning is ordinary scrolling that a pointer drag nudges, so
+     the canvases stay usable with a keyboard, on a phone, and with this file
+     absent entirely. */
+  (function viewports() {
+    var MIN = 0.4, MAX = 2.5, STEP = 0.2;
+
+    function clamp(z) { return Math.min(MAX, Math.max(MIN, Math.round(z * 100) / 100)); }
+
+    /* --- drag to pan: scrollLeft/scrollTop, so native scrolling still owns
+       the axis and momentum, focus and keyboard paging keep working --- */
+    function dragToPan(box) {
+      var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0;
+      box.addEventListener("pointerdown", function (event) {
+        /* let the controls, links and focusable node plates behave normally */
+        if (event.button !== 0 || event.target.closest("a, button, input")) { return; }
+        live = true;
+        id = event.pointerId;
+        sx = event.clientX;
+        sy = event.clientY;
+        ox = box.scrollLeft;
+        oy = box.scrollTop;
+        box.classList.add("dragging");
+      });
+      box.addEventListener("pointermove", function (event) {
+        if (!live || event.pointerId !== id) { return; }
+        var dx = event.clientX - sx, dy = event.clientY - sy;
+        if (!box.hasPointerCapture(id) && Math.abs(dx) + Math.abs(dy) > 4) {
+          try { box.setPointerCapture(id); } catch (err) { /* not capturable */ }
+        }
+        box.scrollLeft = ox - dx;
+        box.scrollTop = oy - dy;
+      });
+      function stop(event) {
+        if (!live || (event && event.pointerId !== id)) { return; }
+        live = false;
+        box.classList.remove("dragging");
+        try { box.releasePointerCapture(id); } catch (err) { /* already gone */ }
+      }
+      box.addEventListener("pointerup", stop);
+      box.addEventListener("pointercancel", stop);
+    }
+
+    /* --- fullscreen: the API when it is granted, a fixed overlay when not --- */
+    function wireFullscreen(view, btn) {
+      function paint() {
+        var on = document.fullscreenElement === view || view.classList.contains("is-fs");
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.textContent = on ? "Exit" : "Fullscreen";
+      }
+      function fallbackOn() { view.classList.add("is-fs"); paint(); }
+      btn.addEventListener("click", function () {
+        var on = document.fullscreenElement === view || view.classList.contains("is-fs");
+        if (on) {
+          view.classList.remove("is-fs");
+          if (document.fullscreenElement === view && document.exitFullscreen) {
+            document.exitFullscreen().catch(function () { /* already out */ });
+          }
+          paint();
+          return;
+        }
+        if (view.requestFullscreen) {
+          var result = view.requestFullscreen();
+          if (result && result.catch) { result.catch(fallbackOn); }
+          window.setTimeout(paint, 0);
+        } else {
+          fallbackOn();
+        }
+      });
+      document.addEventListener("fullscreenchange", paint);
+      /* Escape leaves the fallback overlay, matching what the real API does */
+      view.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && view.classList.contains("is-fs")) {
+          view.classList.remove("is-fs");
+          paint();
+          btn.focus();
+        }
+      });
+      paint();
+    }
+
+    /* --- search: dim everything, ring the matches, count them out loud --- */
+    function wireSearch(input, hits, canvas, nodes, noun) {
+      function apply() {
+        var q = (input.value || "").trim().toLowerCase();
+        if (!q) {
+          canvas.classList.remove("searching");
+          nodes.forEach(function (n) { n.classList.remove("hit"); });
+          hits.textContent = "";
+          return;
+        }
+        var found = 0;
+        nodes.forEach(function (n) {
+          var hay = (n.getAttribute("title") || "").toLowerCase();
+          var on = hay.indexOf(q) !== -1;
+          n.classList.toggle("hit", on);
+          if (on) { found++; }
+        });
+        canvas.classList.add("searching");
+        hits.textContent = found + (found === 1 ? " match" : " matches");
+        if (!found) { hits.textContent = "no " + noun + " matched"; }
+      }
+      input.addEventListener("input", apply);
+      input.addEventListener("search", apply);
+      apply();
+    }
+
+    /* --- zoom: one CSS custom property drives the whole canvas geometry --- */
+    function wireZoom(view, box, target, prop, base) {
+      var zoom = 1;
+      var label = view.querySelector("[data-zoomlabel]");
+      function paint() {
+        /* keep whatever was in the middle of the box in the middle of the box:
+           zooming a canvas that then jumps to a corner loses the reader's place */
+        var w = box.scrollWidth - box.clientWidth;
+        var h = box.scrollHeight - box.clientHeight;
+        var fx = w > 0 ? (box.scrollLeft + box.clientWidth / 2) / box.scrollWidth : 0.5;
+        var fy = h > 0 ? (box.scrollTop + box.clientHeight / 2) / box.scrollHeight : 0.5;
+        target.style.setProperty(prop, String(zoom * base));
+        if (label) { label.textContent = Math.round(zoom * 100) + "%"; }
+        box.scrollLeft = Math.max(0, fx * box.scrollWidth - box.clientWidth / 2);
+        box.scrollTop = Math.max(0, fy * box.scrollHeight - box.clientHeight / 2);
+      }
+      function by(delta) { zoom = clamp(zoom + delta); paint(); }
+      Array.prototype.slice.call(view.querySelectorAll("[data-zoom]"))
+        .forEach(function (btn) {
+          var kind = btn.getAttribute("data-zoom");
+          btn.addEventListener("click", function () {
+            if (kind === "reset") { zoom = 1; paint(); }
+            else { by(kind === "in" ? STEP : -STEP); }
+          });
+        });
+      /* ctrl/meta + wheel is the trackpad pinch gesture; a bare wheel is left
+         alone so the page still scrolls past a canvas on the way down */
+      box.addEventListener("wheel", function (event) {
+        if (!event.ctrlKey && !event.metaKey) { return; }
+        event.preventDefault();
+        by(event.deltaY < 0 ? STEP : -STEP);
+      }, { passive: false });
+      paint();
+    }
+
+    function wireToggle(btn, target, cls) {
+      if (!btn) { return; }
+      btn.addEventListener("click", function () {
+        var on = btn.getAttribute("aria-pressed") !== "true";
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        target.classList.toggle(cls, on);
+      });
+    }
+
+    all("[data-pview]").forEach(function (view) {
+      var box = view.querySelector(".pgrid-scroll");
+      var grid = view.querySelector(".pgrid");
+      var rot = view.querySelector(".pgrid-rot");
+      if (!box || !grid || !rot) { return; }
+      var input = view.querySelector("[data-find]");
+      var hits = view.querySelector("[data-hits]");
+      var nodes = all(".pnode", grid);
+      if (input && hits) { wireSearch(input, hits, grid, nodes, "nodes"); }
+      wireZoom(view, box, grid, "--pz", 1);
+      dragToPan(box);
+      var fs = view.querySelector("[data-fullscreen]");
+      if (fs) { wireFullscreen(view, fs); }
+      var turn = view.querySelector("[data-rotate]");
+      if (turn) {
+        turn.addEventListener("click", function () {
+          var on = turn.getAttribute("aria-pressed") !== "true";
+          turn.setAttribute("aria-pressed", on ? "true" : "false");
+          rot.setAttribute("data-rot", on ? "45" : "0");
+          /* A rotated box overflows its layout box, and overflow above and to
+             the left of a scroll container cannot be scrolled to. So give the
+             wrapper the rotated bounding box as its own size and let it centre
+             the grid: rotating a W x H box by 45deg gives a square bounding
+             box of (W + H) * cos(45deg) a side, and the stylesheet then scales
+             that by cos(45deg) again -- so the side is (W + H) / 2. */
+          if (!on) {
+            rot.style.width = "";
+            rot.style.height = "";
+            return;
+          }
+          var side = (grid.offsetWidth + grid.offsetHeight) / 2;
+          rot.style.width = side + "px";
+          rot.style.height = side + "px";
+        });
+      }
+    });
+
+    all("[data-tview]").forEach(function (view) {
+      var box = view.querySelector(".tmap-scroll");
+      var canvas = view.querySelector(".tcanvas");
+      if (!box || !canvas) { return; }
+      var input = view.querySelector("[data-find]");
+      var hits = view.querySelector("[data-hits]");
+      var nodes = all(".tn", canvas);
+      if (input && hits) { wireSearch(input, hits, canvas, nodes, "nodes"); }
+      /* the stylesheet already zooms the canvas out on a narrow screen; read
+         that starting value so the stepper counts from what is on screen */
+      var start = parseFloat(window.getComputedStyle(canvas).getPropertyValue("--tz")) || 1;
+      wireZoom(view, box, canvas, "--tz", start);
+      dragToPan(box);
+      var fs = view.querySelector("[data-fullscreen]");
+      if (fs) { wireFullscreen(view, fs); }
+      wireToggle(view.querySelector("[data-alloconly]"), canvas, "alloc-only");
+    });
+  })();
 })();
