@@ -502,9 +502,21 @@
      and hands focus back when focus was inside the tooltip to begin with.
      Below SHEET_WIDTH the card stops floating beside a
      fingertip and becomes a bottom sheet (the .sheet rules in site.css). */
+
+  /* Task 46 published the controller to the rest of the file, because two
+     pages carry item names that are not build-page gear slots and cannot use
+     a plain `.tt-anchor` button:
+
+       * the boss page's loot buttons already own a click (they open the
+         cross-reference panel) and already say `aria-controls`;
+       * the codex builds its result rows in the browser, so its anchors do
+         not exist when this runs.
+
+     Both call TT.attach() with the element they already have. It is set below
+     and both callers run after it. */
+  var TT = null;
+
   (function itemTooltips() {
-    var anchors = all(".tt-anchor[data-tt]");
-    if (!anchors.length) { return; }
     var SHEET_WIDTH = 720;   /* px; matches the 44rem/62rem CSS stack points */
     var GAP = 10;            /* px of air between the anchor and the card */
     var open = null;
@@ -524,7 +536,11 @@
         return;
       }
       card.classList.remove("sheet");
-      var anchor = open.anchor.getBoundingClientRect();
+      /* positioned against `box`, which is the anchor itself everywhere
+         except the codex, where the anchor is the whole result row: a card
+         placed beside a row that spans the page has nowhere to go but on top
+         of it, so that page hands over the row's name instead. */
+      var anchor = open.box.getBoundingClientRect();
       var box = card.getBoundingClientRect();
       /* flip to the other side when the card would leave the viewport, and
          clamp rather than overflow when neither side fits */
@@ -550,30 +566,51 @@
       open.card.classList.remove("sheet");
       open.card.style.left = "";
       open.card.style.top = "";
-      open.anchor.setAttribute("aria-expanded", "false");
+      /* only where the generator declared it: on the boss page the anchor is
+         a button that already `aria-controls` its cross-reference panel, and
+         an `aria-expanded` there would be a claim about that panel */
+      if (open.anchor.hasAttribute("aria-expanded")) {
+        open.anchor.setAttribute("aria-expanded", "false");
+      }
       open = null;
       pinned = false;
     }
 
-    function show(anchor) {
+    function show(anchor, opts) {
       var card = byId(anchor.getAttribute("data-tt"));
       if (!card) { return; }
       if (open && open.card === card) { place(); return; }
       close();
       card.hidden = false;
-      anchor.setAttribute("aria-expanded", "true");
-      open = { anchor: anchor, card: card };
+      if (anchor.hasAttribute("aria-expanded")) {
+        anchor.setAttribute("aria-expanded", "true");
+      }
+      open = { anchor: anchor, card: card,
+               box: (opts && opts.box) || anchor };
       place();
     }
 
-    anchors.forEach(function (anchor) {
+    /* `opts.box`    the element the card is positioned beside, when that is
+                     not the anchor itself.
+       `opts.click`  what a click on the anchor does, for the two pages whose
+                     anchors already own their click:
+                       "toggle" (default) pin the card, click again to close;
+                       "close"  the anchor's own action answers the same
+                                question (a codex row opens the full entry),
+                                so the card gets out of the way;
+                       "ignore" the page drives the card itself through
+                                TT.pin() / TT.close(), so that the card and
+                                whatever else the click toggles can never end
+                                up in opposite states. */
+    function attach(anchor, opts) {
+      var onClick = (opts && opts.click) || "toggle";
       /* mouseenter as well as pointerenter: a pointer event carries the input
          type, but not every browser (or automation harness) sends one, and a
          hover that does nothing is the one failure this feature cannot have.
          show() is idempotent, so both firing is harmless. */
       function enter(event) {
         if (event && event.pointerType && event.pointerType !== "mouse") { return; }
-        show(anchor);
+        show(anchor, opts);
       }
       function leave(event) {
         if (event && event.pointerType && event.pointerType !== "mouse") { return; }
@@ -583,19 +620,37 @@
       anchor.addEventListener("pointerleave", leave);
       anchor.addEventListener("mouseenter", enter);
       anchor.addEventListener("mouseleave", leave);
-      anchor.addEventListener("click", function () {
-        if (open && open.anchor === anchor && pinned) { close(); return; }
-        show(anchor);
-        pinned = true;
-      });
+      if (onClick !== "ignore") {
+        anchor.addEventListener("click", function () {
+          if (onClick === "close") { close(); return; }
+          if (open && open.anchor === anchor && pinned) { close(); return; }
+          show(anchor, opts);
+          pinned = true;
+        });
+      }
       anchor.addEventListener("focus", function () {
         if (restoring) { return; }
         var visible = true;
         try { visible = anchor.matches(":focus-visible"); } catch (err) { visible = true; }
-        if (visible) { show(anchor); pinned = true; }
+        if (visible) {
+          show(anchor, opts);
+          if (onClick === "toggle") { pinned = true; }
+        }
       });
       anchor.addEventListener("blur", function () { close(); });
-    });
+      anchor.__ttOpts = opts || null;
+    }
+
+    all(".tt-anchor[data-tt]").forEach(function (anchor) { attach(anchor); });
+    TT = {
+      attach: attach,
+      close: close,
+      /* open and keep it open, for a page driving its own click */
+      pin: function (anchor) {
+        show(anchor, anchor.__ttOpts);
+        if (open) { pinned = true; }
+      }
+    };
 
     document.addEventListener("keydown", function (event) {
       if (event.key !== "Escape" || !open) { return; }
@@ -728,6 +783,9 @@
     }
 
     function applyFilters() {
+      /* a filter can hide the row a card is pinned to; the card would then be
+         floating beside nothing */
+      if (TT) { TT.close(); }
       var boss = bossSel.value;
       var cls = classSel.value;
       var query = loose(search.value);
@@ -809,9 +867,25 @@
 
     all(".loot-btn").forEach(function (btn) {
       btn.setAttribute("aria-pressed", "false");
+      /* Task 46: the same button is the handle on the drop's in-game card,
+         where the game database publishes one. The card is opened from here
+         rather than by the tooltip's own click handler ("ignore"), so that
+         one tap opens the card and the cross-reference together and the next
+         closes both -- two independent toggles on one button drift out of
+         phase the moment a reader dismisses one of them on its own (Escape,
+         or a click anywhere else). Hover and keyboard focus are unaffected:
+         they still open the card and nothing else. */
+      var carded = TT && btn.getAttribute("data-tt");
+      if (carded) { TT.attach(btn, { click: "ignore" }); }
       btn.addEventListener("click", function () {
         var key = btn.getAttribute("data-item");
-        if (selected === key) { clear(); } else { select(key, true); }
+        if (selected === key) {
+          clear();
+          if (carded) { TT.close(); }
+        } else {
+          select(key, true);
+          if (carded) { TT.pin(btn); }
+        }
       });
     });
 
@@ -908,8 +982,9 @@
     function iconNode(entry, size) {
       var plate = document.createElement("span");
       plate.setAttribute("aria-hidden", "true");
+      size = size ? " " + size : "";
       if (entry.icon) {
-        plate.className = "icon " + size;
+        plate.className = "icon" + size;
         var img = document.createElement("img");
         img.setAttribute("src", ICON_BASE + entry.icon);
         img.setAttribute("alt", "");
@@ -917,7 +992,7 @@
         img.setAttribute("decoding", "async");
         plate.appendChild(img);
       } else {
-        plate.className = "icon " + size + " ph";
+        plate.className = "icon" + size + " ph";
         plate.textContent = initial(entry.name);
       }
       return plate;
@@ -958,6 +1033,81 @@
       return chip;
     }
 
+    /* ---- the in-game card behind an item or aspect result (Task 46) ----
+       Every other page ships its cards rendered by build_site.py's
+       `gamedata_card()`. This page cannot: its rows are built here, so the
+       cards are too, out of the entry that is already in hand -- the entry's
+       own name, its rarity (for an item the `kind` *is* the rarity), its
+       classes, and the power and flavour lines out of its detail rows. The
+       shard adds only `card.type` and `card.level`, the two facts an entry
+       does not otherwise carry. Same markup, same CSS, same controller as
+       the rendered ones, and still nothing but textContent. */
+    var CARD_POWER = "Power";    /* build_site.py: CARD_POWER_LABEL */
+    var CARD_FLAVOR = "Flavor";  /* build_site.py: CARD_FLAVOR_LABEL */
+    var RARITY_LABEL = {
+      common: "Common", magic: "Magic", rare: "Rare", legendary: "Legendary",
+      set: "Set", unique: "Unique", mythic: "Mythic Unique"
+    };
+    var CLASS_COUNT = (DATA.classes || []).length;
+    var layer = byId("tt-layer");
+    var cards = {};
+    var cardSeq = 0;
+
+    function titleCase(text) {
+      return String(text || "").replace(/[_-]+/g, " ")
+        .replace(/\b[a-z]/g, function (ch) { return ch.toUpperCase(); });
+    }
+
+    function line(parent, cls, text, slots) {
+      var node = document.createElement("p");
+      node.className = cls;
+      if (slots) { withSlots(node, text); } else { node.textContent = text; }
+      parent.appendChild(node);
+      return node;
+    }
+
+    function cardNode(entry) {
+      var id = key(entry.domain, entry.id);
+      if (cards[id]) { return cards[id]; }
+      var spec = entry.card || {};
+      var rarity = spec.rarity || entry.kind || "";
+      var card = document.createElement("div");
+      card.className = "tt-card r-" + (String(rarity).toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-") || "unknown");
+      card.id = "tt-cx-" + (++cardSeq);
+      card.setAttribute("role", "tooltip");
+      card.hidden = true;
+
+      var plate = document.createElement("span");
+      plate.className = "tt-icon";
+      plate.appendChild(iconNode(entry, ""));
+      card.appendChild(plate);
+
+      line(card, "tt-name", entry.name, true);
+      line(card, "tt-rarity",
+           [RARITY_LABEL[rarity] || titleCase(rarity), spec.type || ""]
+             .filter(function (part) { return !!part; }).join(" "));
+
+      var powers = document.createElement("div");
+      powers.className = "tt-unique";
+      var flavor = null;
+      (entry.detail || []).forEach(function (pair) {
+        if (pair[0] === CARD_POWER) { line(powers, "tt-power", pair[1], true); }
+        else if (pair[0] === CARD_FLAVOR && flavor === null) { flavor = pair[1]; }
+      });
+      if (powers.childNodes.length) { card.appendChild(powers); }
+      if (flavor) { line(card, "tt-flavor", flavor); }
+
+      /* printed only where the database publishes it -- never invented */
+      if (spec.level) { line(card, "tt-req", "Requires Level " + spec.level); }
+      var classes = entry.classes || [];
+      if (classes.length && classes.length < CLASS_COUNT) {
+        line(card, "tt-req cls", classes.map(titleCase).join(", ") + " Only");
+      }
+      cards[id] = card;
+      return card;
+    }
+
     function rowNode(entry) {
       var row = document.createElement("a");
       row.className = "cx-row";
@@ -985,6 +1135,20 @@
         blurb.className = "cx-blurb";
         withSlots(blurb, String(entry.detail[0][1]).replace(/\s*\n+\s*/g, " "));
         row.appendChild(blurb);
+      }
+
+      /* An item or aspect result is a handle on the game's own card. The row
+         itself is the anchor: a <button> inside this <a> would be invalid
+         markup and a second tab stop for the same thing. The card opens
+         beside the row's *name*, because a row that spans the page has no
+         side left to open on. And clicking a row means "open this entry",
+         which the detail panel answers with the same facts and more, so the
+         click hands over rather than pinning a card on top of it. */
+      if (entry.card && layer && TT) {
+        var card = cardNode(entry);
+        row.setAttribute("data-tt", card.id);
+        row.setAttribute("aria-describedby", card.id);
+        TT.attach(row, { box: name, click: "close" });
       }
       return row;
     }
@@ -1092,10 +1256,22 @@
         return a[1].lname < b[1].lname ? -1 : a[1].lname > b[1].lname ? 1 : 0;
       });
 
+      /* every row is about to be replaced, and one of them may be the anchor
+         of the open card */
+      if (TT) { TT.close(); }
       var frag = document.createDocumentFragment();
+      var deck = document.createDocumentFragment();
       var shown = Math.min(hits.length, LIMIT);
-      for (var j = 0; j < shown; j++) { frag.appendChild(rowNode(hits[j][1])); }
+      for (var j = 0; j < shown; j++) {
+        frag.appendChild(rowNode(hits[j][1]));
+        if (hits[j][1].card && layer) { deck.appendChild(cardNode(hits[j][1])); }
+      }
       results.replaceChildren(frag);
+      /* the layer holds cards for the rows on screen and no others. A card is
+         built once per entry and cached, so this moves nodes rather than
+         rebuilding them, and an entry scrolled out of the result list takes
+         its card out of the document with it. */
+      if (layer) { layer.replaceChildren(deck); }
 
       if (status) {
         var loading = done < shards.length
