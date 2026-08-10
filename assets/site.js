@@ -344,7 +344,7 @@
   (function buildPage() {
     if (DATA.kind !== "build") { return; }
 
-    var select = byId("stage-select");
+    var pills = all(".stage-pill");
     var sections = all(".stage-section");
     var triggers = all(".stage-trigger");
 
@@ -379,6 +379,8 @@
       });
     }
 
+    /* Task 45: the stage switcher is the reference's variant pill row. Every
+       stage is pre-rendered; a pill only chooses which sections are shown. */
     function applyStage(key) {
       sections.forEach(function (section) {
         section.hidden = section.getAttribute("data-stage") !== key;
@@ -387,33 +389,44 @@
       triggers.forEach(function (trigger) {
         trigger.hidden = trigger.getAttribute("data-stage") !== key;
       });
+      pills.forEach(function (pill) {
+        pill.setAttribute("aria-pressed",
+                          pill.getAttribute("data-stage") === key ? "true" : "false");
+      });
     }
 
-    if (select) {
-      select.addEventListener("change", function () { applyStage(select.value); });
+    if (pills.length) {
+      pills.forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          applyStage(pill.getAttribute("data-stage"));
+        });
+      });
 
-      /* the page opens on its endgame stage (the generator marks that option
-         `selected`); an explicit ?stage= still wins when it names a real one */
+      /* the page opens on its endgame stage (the generator presses that pill);
+         an explicit ?stage= still wins when it names a real one */
+      var current = pills[0].getAttribute("data-stage");
+      pills.forEach(function (pill) {
+        if (pill.getAttribute("aria-pressed") === "true") {
+          current = pill.getAttribute("data-stage");
+        }
+      });
       var wantedStage = new URLSearchParams(window.location.search).get("stage");
       if (wantedStage) {
-        all("option", select).forEach(function (option) {
-          if (option.value === wantedStage) { select.value = wantedStage; }
+        pills.forEach(function (pill) {
+          if (pill.getAttribute("data-stage") === wantedStage) { current = wantedStage; }
         });
       }
-      applyStage(select.value);
+      applyStage(current);
 
-      /* "Paragon opens at endgame" -> switch the select and fire its handler */
+      /* "Paragon opens at endgame" -> press that stage's pill and focus it */
       all(".stage-jump").forEach(function (button) {
         button.addEventListener("click", function () {
           var key = button.getAttribute("data-jump");
           if (!key) { return; }
-          select.value = key;
-          if (typeof window.Event === "function") {
-            select.dispatchEvent(new window.Event("change", { bubbles: true }));
-          } else {
-            applyStage(key);
-          }
-          select.focus();
+          applyStage(key);
+          pills.forEach(function (pill) {
+            if (pill.getAttribute("data-stage") === key) { pill.focus(); }
+          });
         });
       });
     }
@@ -460,6 +473,212 @@
     });
 
     if (tabs.length) { selectTab(0); }
+  })();
+
+  /* --------------------------- intro "show more" -------------------------- */
+  /* The generator ships the whole summary and a hidden button; the clamp is
+     added here, so a page without JavaScript shows every word. */
+  (function introClamp() {
+    all(".intro-text .more").forEach(function (button) {
+      var text = button.parentNode.querySelector(".prose");
+      if (!text) { return; }
+      text.classList.add("clamped");
+      button.hidden = false;
+      button.addEventListener("click", function () {
+        var open = text.classList.toggle("clamped") === false;
+        button.textContent = open
+          ? button.getAttribute("data-less") : button.getAttribute("data-more");
+      });
+    });
+  })();
+
+  /* ------------------------- in-game item tooltips ------------------------ */
+  /* Task 45. Every card is already in the page, rendered server-side by
+     build_site.py; this only positions one and toggles `hidden`. Nothing is
+     built from data here.
+
+     Three ways in, because the reference has three: hover with a mouse, tap
+     on a touch screen, Tab + Enter/Space on a keyboard. Escape always closes
+     and hands focus back. Below SHEET_WIDTH the card stops floating beside a
+     fingertip and becomes a bottom sheet (the .sheet rules in site.css). */
+  (function itemTooltips() {
+    var anchors = all(".tt-anchor[data-tt]");
+    if (!anchors.length) { return; }
+    var SHEET_WIDTH = 720;   /* px; matches the 44rem/62rem CSS stack points */
+    var GAP = 10;            /* px of air between the anchor and the card */
+    var open = null;
+    var pinned = false;
+
+    function place() {
+      if (!open) { return; }
+      var card = open.card;
+      if (window.innerWidth <= SHEET_WIDTH) {
+        card.classList.add("sheet");
+        card.style.left = "";
+        card.style.top = "";
+        return;
+      }
+      card.classList.remove("sheet");
+      var anchor = open.anchor.getBoundingClientRect();
+      var box = card.getBoundingClientRect();
+      /* flip to the other side when the card would leave the viewport, and
+         clamp rather than overflow when neither side fits */
+      var left = anchor.right + GAP;
+      if (left + box.width > window.innerWidth - GAP) {
+        left = anchor.left - box.width - GAP;
+      }
+      if (left < GAP) {
+        left = Math.max(GAP, (window.innerWidth - box.width) / 2);
+      }
+      var top = anchor.top;
+      if (top + box.height > window.innerHeight - GAP) {
+        top = window.innerHeight - box.height - GAP;
+      }
+      if (top < GAP) { top = GAP; }
+      card.style.left = Math.round(left) + "px";
+      card.style.top = Math.round(top) + "px";
+    }
+
+    function close() {
+      if (!open) { return; }
+      open.card.hidden = true;
+      open.card.classList.remove("sheet");
+      open.card.style.left = "";
+      open.card.style.top = "";
+      open.anchor.setAttribute("aria-expanded", "false");
+      open = null;
+      pinned = false;
+    }
+
+    function show(anchor) {
+      var card = byId(anchor.getAttribute("data-tt"));
+      if (!card) { return; }
+      if (open && open.card === card) { place(); return; }
+      close();
+      card.hidden = false;
+      anchor.setAttribute("aria-expanded", "true");
+      open = { anchor: anchor, card: card };
+      place();
+    }
+
+    anchors.forEach(function (anchor) {
+      /* mouseenter as well as pointerenter: a pointer event carries the input
+         type, but not every browser (or automation harness) sends one, and a
+         hover that does nothing is the one failure this feature cannot have.
+         show() is idempotent, so both firing is harmless. */
+      function enter(event) {
+        if (event && event.pointerType && event.pointerType !== "mouse") { return; }
+        show(anchor);
+      }
+      function leave(event) {
+        if (event && event.pointerType && event.pointerType !== "mouse") { return; }
+        if (!pinned) { close(); }
+      }
+      anchor.addEventListener("pointerenter", enter);
+      anchor.addEventListener("pointerleave", leave);
+      anchor.addEventListener("mouseenter", enter);
+      anchor.addEventListener("mouseleave", leave);
+      anchor.addEventListener("click", function () {
+        if (open && open.anchor === anchor && pinned) { close(); return; }
+        show(anchor);
+        pinned = true;
+      });
+      anchor.addEventListener("focus", function () {
+        var visible = true;
+        try { visible = anchor.matches(":focus-visible"); } catch (err) { visible = true; }
+        if (visible) { show(anchor); pinned = true; }
+      });
+      anchor.addEventListener("blur", function () { close(); });
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape" || !open) { return; }
+      var anchor = open.anchor;
+      close();
+      anchor.focus();
+    });
+    document.addEventListener("click", function (event) {
+      if (!open || !pinned) { return; }
+      if (open.anchor.contains(event.target) || open.card.contains(event.target)) { return; }
+      close();
+    });
+    window.addEventListener("resize", place);
+    document.addEventListener("scroll", function (event) {
+      if (!open) { return; }
+      /* scrolling inside the card itself must not move it */
+      if (event.target && event.target.nodeType === 1 &&
+          open.card.contains(event.target)) { return; }
+      place();
+    }, true);
+  })();
+
+  /* ---------------------------- video facades ----------------------------- */
+  /* Policy (spec addendum #9, CLAUDE.md, .claude/agents/web-dev.md): a creator
+     video ships as a facade the generator draws itself. No request reaches
+     YouTube - no iframe, no thumbnail, no preconnect - until the visitor
+     presses play. Only then is a youtube-nocookie embed built, from an id
+     re-validated here. Everything else on the site stays self-contained. */
+  (function videoFacades() {
+    var VIDEO_ID = /^[A-Za-z0-9_-]{6,20}$/;
+    all(".vplay[data-video]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var id = button.getAttribute("data-video") || "";
+        if (!VIDEO_ID.test(id)) { return; }
+        var wrap = button.parentNode;
+        if (!wrap) { return; }
+        var meta = wrap.querySelector(".vmeta");
+        var frame = document.createElement("div");
+        frame.className = "vframe";
+        var iframe = document.createElement("iframe");
+        iframe.setAttribute(
+          "src",
+          "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0");
+        iframe.setAttribute("title", meta ? meta.textContent : "Creator video");
+        iframe.setAttribute(
+          "allow",
+          "accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture");
+        iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+        iframe.setAttribute("allowfullscreen", "");
+        iframe.setAttribute("loading", "lazy");
+        frame.appendChild(iframe);
+        wrap.replaceChild(frame, button);
+      });
+    });
+  })();
+
+  /* ------------------------------ copy buttons ---------------------------- */
+  (function copyButtons() {
+    function fallbackCopy(text) {
+      var field = document.createElement("textarea");
+      field.value = text;
+      field.setAttribute("readonly", "");
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.appendChild(field);
+      field.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+      document.body.removeChild(field);
+      return ok;
+    }
+
+    all(".copy[data-copy]").forEach(function (button) {
+      var label = button.textContent;
+      button.addEventListener("click", function () {
+        var text = button.getAttribute("data-copy") || "";
+        function done(ok) {
+          button.textContent = ok ? "Copied" : "Copy failed";
+          window.setTimeout(function () { button.textContent = label; }, 1600);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            function () { done(true); },
+            function () { done(fallbackCopy(text)); });
+          return;
+        }
+        done(fallbackCopy(text));
+      });
+    });
   })();
 
   /* ---------------------------- boss loot page ---------------------------- */

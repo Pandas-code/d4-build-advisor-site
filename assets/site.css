@@ -3990,3 +3990,573 @@ body {
   .topnav-in { gap: var(--s-micro); }
   .menubar { gap: var(--s-micro); }
 }
+
+/* ==========================================================================
+   Task 45: the infinitybuilds-shaped build page.
+
+   Spec addendum #9. The page grew an intro/requirements block, stage-variant
+   pills, a two-column paperdoll whose icons carry markers, a sticky
+   right-hand rail, and the thing the owner actually asked for: the game's own
+   item tooltip, drawn as an ornate dark card on hover, tap or keyboard focus.
+
+   Everything below resolves to tokens declared in all three theme blocks, so
+   light, system-dark and explicit-dark stay correct by construction. The card
+   is the one element on the site that is *deliberately* dark in both themes -
+   it is quoting the game's interface, and a bright item tooltip would not be
+   quoting anything - so its ground is a fixed pair of values and every text
+   colour on it is checked against that ground rather than against --surface.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------- page body + rail ---------------------------- */
+.build-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  gap: clamp(0.9rem, 2.2vw, 1.4rem);
+  align-items: start;
+}
+.build-body > .bpanels { min-width: 0; }
+.bside {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--s-3));
+  display: grid;
+  gap: var(--s-3);
+  min-width: 0;
+  /* a rail taller than the viewport scrolls itself rather than pinning the
+     page: the loot-filter note and the 14-line stat list both get long */
+  max-height: calc(100vh - var(--nav-h) - var(--s-6));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.side-card {
+  padding: var(--s-3) var(--s-4) var(--s-4);
+  background: linear-gradient(180deg, var(--raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+}
+.side-card > h2 {
+  margin: 0 0 var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.side-card.lf { border-left: 3px solid hsl(var(--cls) / 0.75); }
+
+.lf-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: var(--tap);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--fg-soft);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease),
+              border-color var(--dur-1) var(--ease),
+              background-color var(--dur-1) var(--ease);
+}
+.btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.btn:active { transform: translateY(1px); }
+.btn.primary {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.btn.primary:hover { background: color-mix(in srgb, var(--accent) 82%, var(--fg)); color: var(--bg); }
+.lf-name { margin: var(--s-3) 0 0; font-size: var(--fs-sm); color: var(--fg-soft); }
+.lf-src {
+  margin: var(--s-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.lf-note { margin: var(--s-2) 0 0; font-size: var(--fs-sm); color: var(--fg-dim); }
+
+.stat-reqs, .records, .rot-list { margin: 0; padding: 0; list-style: none; }
+.stat-reqs li {
+  position: relative;
+  padding: var(--s-1) 0 var(--s-1) var(--s-4);
+  font-size: var(--fs-sm);
+  color: var(--fg-soft);
+  border-top: 1px solid var(--line);
+}
+.stat-reqs li:first-child { border-top: none; }
+.stat-reqs li::before {
+  content: "\25b8";
+  position: absolute;
+  left: 0;
+  color: hsl(var(--cls));
+}
+.rot-list { counter-reset: rot; display: grid; gap: var(--s-2); }
+.rot-list li {
+  position: relative;
+  counter-increment: rot;
+  padding-left: var(--s-6);
+  font-size: var(--fs-sm);
+  color: var(--fg-soft);
+}
+.rot-list li::before {
+  content: counter(rot);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: var(--s-5);
+  height: var(--s-5);
+  border-radius: var(--r-full);
+  background: hsl(var(--cls) / 0.16);
+  color: hsl(var(--cls));
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xs);
+  font-weight: 700;
+}
+.rot-skill {
+  padding: 0 var(--s-1);
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.records li { padding: var(--s-2) 0; border-top: 1px solid var(--line); }
+.records li:first-child { border-top: none; }
+.rec-label { display: block; font-size: var(--fs-sm); color: var(--fg); }
+.rec-note { display: block; font-size: var(--fs-xs); color: var(--fg-dim); }
+.records a { font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.12em; }
+
+/* --- the video facade: a plate we draw ourselves ------------------------- */
+/* Nothing here touches youtube.com. The button carries the video id and
+   site.js builds a youtube-nocookie iframe from it on click, and never
+   before - no iframe, no remote thumbnail, no preconnect. */
+.vfacade { display: grid; gap: var(--s-2); }
+.vplay {
+  appearance: none;
+  position: relative;
+  display: grid;
+  gap: var(--s-2);
+  place-items: center;
+  padding: var(--s-5) var(--s-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background:
+    radial-gradient(120% 90% at 50% 0%, hsl(var(--cls) / 0.22), transparent 70%),
+    linear-gradient(180deg, var(--surface-2), var(--bg-deep));
+  color: var(--fg-soft);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.vplay:hover { border-color: hsl(var(--cls)); color: var(--fg); }
+.vart {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--r-full);
+  border: 2px solid currentColor;
+}
+.vtri {
+  width: 0;
+  height: 0;
+  /* an optical triangle, not a spacing decision: the three lengths are one
+     glyph and only read as a play arrow at this ratio */
+  border-left: 0.85rem solid currentColor;
+  border-top: 0.5rem solid transparent;
+  border-bottom: 0.5rem solid transparent;
+  margin-left: 0.2rem;
+}
+.vfacade .vmeta { margin: 0; font-size: var(--fs-sm); color: var(--fg-soft); }
+.vfacade .vnote { margin: 0; font-size: var(--fs-xs); color: var(--fg-dim); }
+.vfacade .vout { font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.12em; }
+.vframe { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+.vframe iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--r-md);
+}
+
+/* ------------------------- intro / requirements -------------------------- */
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(0.9rem, 2.2vw, 1.4rem);
+  padding: clamp(0.9rem, 2.4vw, 1.4rem);
+  background: linear-gradient(180deg, var(--raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+}
+.intro-text .prose { margin: 0; }
+/* the clamp is added by site.js, so this only ever applies where the script
+   ran and the "Show more" button is live */
+.intro-text .prose.clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  overflow: hidden;
+}
+.intro-text .more {
+  appearance: none;
+  margin-top: var(--s-2);
+  padding: var(--s-1) 0;
+  min-height: var(--tap);
+  background: none;
+  border: 0;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.intro-text .more:hover { color: var(--fg); }
+.intro-req > h2 {
+  margin: 0 0 var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+.req-list { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-1); }
+.req-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+}
+.req-list .icon { --icon-size: 1.5rem; }
+.req-list a { color: var(--accent-2); }
+.req-slot {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+/* ---------------------------- variant pills ------------------------------ */
+.variants { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.vpill {
+  appearance: none;
+  min-height: var(--tap);
+  padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--fg-soft);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease),
+              border-color var(--dur-1) var(--ease),
+              background-color var(--dur-1) var(--ease);
+}
+.vpill:hover { color: var(--fg); border-color: hsl(var(--cls) / 0.7); }
+.vpill[aria-pressed="true"] {
+  color: var(--bg);
+  background: hsl(var(--cls));
+  border-color: hsl(var(--cls));
+  box-shadow: 0 0 18px -8px hsl(var(--cls));
+}
+
+/* ------------------------------ paperdoll -------------------------------- */
+.pd-col { min-width: 0; }
+.pd-col > h4 {
+  margin: 0 0 var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.pd-list { display: grid; gap: var(--s-2); }
+.pd-slot { position: relative; min-width: 0; }
+.pd-btn {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--s-2) var(--s-3);
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 2px solid hsl(var(--cls) / 0.65);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-1);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease),
+              background-color var(--dur-1) var(--ease),
+              box-shadow var(--dur-2) var(--ease);
+}
+.pd-btn:hover {
+  border-left-color: hsl(var(--cls));
+  background: color-mix(in srgb, hsl(var(--cls)) 5%, var(--surface));
+  box-shadow: var(--e-2);
+}
+.pd-btn[aria-expanded="true"] { border-color: hsl(var(--cls)); }
+.pd-body { display: grid; gap: var(--s-micro); min-width: 0; flex: 1 1 auto; }
+.pd-item {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--accent-2);
+  overflow-wrap: anywhere;
+}
+.pd-item.none { color: var(--fg-dim); font-style: italic; font-weight: 400; font-size: var(--fs-sm); }
+.pd-aspect { font-size: var(--fs-xs); color: var(--fg-dim); overflow-wrap: anywhere; }
+.pd-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--cls));
+}
+
+/* --- the markers the reference stacks on a slot icon --------------------- */
+.pd-plate { position: relative; display: inline-flex; flex: 0 0 auto; }
+.mks { position: absolute; inset: 0; pointer-events: none; }
+.mks .mk { position: absolute; line-height: 1; }
+.mks .mk.greater {
+  top: -0.2rem;
+  left: -0.2rem;
+  font-size: 0.7rem;
+  color: hsl(var(--t-s));
+  text-shadow: 0 0 4px var(--bg-deep);
+}
+.mks .mk.temper {
+  top: -0.2rem;
+  right: -0.15rem;
+  font-size: 0.62rem;
+  color: var(--accent);
+  text-shadow: 0 0 4px var(--bg-deep);
+}
+.mks .mk.socket {
+  left: 50%;
+  bottom: -0.18rem;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--s-micro);
+}
+.mks .mk.socket .dot {
+  width: 0.28rem;
+  height: 0.28rem;
+  transform: rotate(45deg);
+  background: var(--fg-soft);
+  box-shadow: 0 0 0 1px var(--bg-deep);
+}
+
+/* ------------------------- the in-game item card ------------------------- */
+/* Deliberately dark in both themes: it quotes the game's own tooltip. Its
+   own ground tokens are declared right here, on the card, so no theme block
+   can turn it into a light panel. */
+.tt-anchor {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.tt-name-btn { color: var(--accent-2); text-decoration: underline dotted currentColor; }
+.tt-name-btn:hover { color: var(--fg); }
+
+.tt-card {
+  --tt-bg: #0b0d16;
+  --tt-bg-2: #14172a;
+  --tt-line: rgba(180, 196, 240, 0.22);
+  --tt-fg: #e9edfb;
+  --tt-fg-soft: #b9c3de;
+  --tt-fg-dim: #8b93b0;
+  --tt-gold: #e8bd6d;
+
+  position: fixed;
+  z-index: 60;
+  width: min(22rem, calc(100vw - var(--s-6)));
+  max-height: min(38rem, calc(100vh - var(--s-7)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-3) var(--s-4) var(--s-4);
+  background: linear-gradient(180deg, var(--tt-bg-2), var(--tt-bg));
+  border: 1px solid var(--tt-line);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+              0 24px 48px -20px rgba(0, 0, 0, 0.9);
+  color: var(--tt-fg-soft);
+  font-size: var(--fs-sm);
+  animation: tt-in var(--dur-1) var(--ease-out) both;
+}
+@keyframes tt-in { from { opacity: 0; } to { opacity: 1; } }
+/* the chiselled corner rule the game's card carries */
+.tt-card::before {
+  content: "";
+  position: absolute;
+  inset: var(--s-micro);
+  border: 1px solid rgba(180, 196, 240, 0.10);
+  border-radius: var(--r-sm);
+  pointer-events: none;
+}
+.tt-icon { float: right; margin: 0 0 var(--s-2) var(--s-2); }
+.tt-icon .icon { --icon-size: 2.6rem; border-color: var(--tt-line); }
+.tt-card .tt-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tt-fg);
+}
+.tt-card.r-unique .tt-name, .tt-card.r-mythic .tt-name { color: var(--tt-gold); }
+.tt-card.r-legendary .tt-name { color: #f0a565; }
+.tt-card .tt-rarity {
+  margin: var(--s-micro) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tt-fg-dim);
+}
+.tt-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-3);
+  margin: var(--s-2) 0 0;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--tt-line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tt-fg-soft);
+}
+.tt-fact.power { color: var(--tt-fg); }
+.tt-affixes { margin: var(--s-2) 0 0; padding: 0; list-style: none; display: grid; gap: var(--s-1); }
+.tt-af {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: var(--s-1) var(--s-2);
+  align-items: baseline;
+  line-height: 1.35;
+}
+.tt-af .tt-mk { color: var(--tt-fg-dim); font-size: 0.6rem; }
+.tt-af.greater .tt-mk { color: var(--tt-gold); }
+.tt-af.temper .tt-mk { color: #7fd4ff; }
+.tt-af .tt-line { color: var(--tt-fg-soft); overflow-wrap: anywhere; }
+.tt-af.greater .tt-line { color: var(--tt-fg); }
+.tt-af .tt-val { color: var(--tt-fg); font-weight: 700; }
+.tt-af.greater .tt-val { color: var(--tt-gold); }
+/* the same span, printed inline in the slot list under the paperdoll */
+.loadout .tt-range {
+  margin-left: var(--s-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xs);
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+}
+.tt-af .tt-range {
+  margin-left: var(--s-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-3xs);
+  letter-spacing: 0.06em;
+  color: var(--tt-fg-dim);
+}
+.tt-af .vslot { border-color: var(--tt-line); color: var(--tt-fg-dim); }
+.tt-unique {
+  margin: var(--s-3) 0 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--tt-line);
+}
+.tt-power { margin: 0; color: var(--tt-gold); line-height: 1.4; }
+.tt-power + .tt-power { margin-top: var(--s-2); }
+.tt-sockets {
+  margin: var(--s-3) 0 0;
+  padding: var(--s-3) 0 0;
+  border-top: 1px solid var(--tt-line);
+  list-style: none;
+  display: grid;
+  gap: var(--s-2);
+}
+.tt-sockets li { display: flex; gap: var(--s-2); align-items: flex-start; }
+.tt-sockets .icon { --icon-size: 1.4rem; border-color: var(--tt-line); }
+.tt-sock-body { display: grid; gap: var(--s-micro); min-width: 0; }
+.tt-sock-nm { color: var(--tt-fg); font-weight: 600; }
+.tt-sock-eff { font-size: var(--fs-xs); color: var(--tt-fg-dim); line-height: 1.35; }
+.tt-flavor {
+  margin: var(--s-3) 0 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--tt-line);
+  font-style: italic;
+  color: var(--tt-fg-dim);
+  line-height: 1.4;
+}
+.tt-req {
+  margin: var(--s-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.1em;
+  color: var(--tt-fg-dim);
+}
+.tt-req.cls { color: #ff8f8f; }
+
+/* --------------------------- Task 45 responsive -------------------------- */
+@media (max-width: 62rem) {
+  /* the rail stops being a rail and becomes the last block of the page */
+  .build-body { grid-template-columns: minmax(0, 1fr); }
+  .bside { position: static; max-height: none; overflow: visible; }
+  .intro { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 44rem) {
+  .paperdoll { grid-template-columns: minmax(0, 1fr); }
+  .variants { width: 100%; }
+  .vpill { flex: 1 1 8rem; padding-inline: var(--s-2); font-size: var(--fs-xs); }
+}
+/* touch / narrow: the card is a sheet at the bottom of the screen, not a
+   floating box beside a fingertip. site.js stops positioning it and hands
+   over to these rules (it sets .sheet). */
+.tt-card.sheet {
+  left: var(--s-3);
+  right: var(--s-3);
+  bottom: var(--s-3);
+  top: auto;
+  width: auto;
+  max-width: none;
+  max-height: min(70vh, 34rem);
+}
