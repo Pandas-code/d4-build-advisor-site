@@ -498,8 +498,9 @@
      built from data here.
 
      Three ways in, because the reference has three: hover with a mouse, tap
-     on a touch screen, Tab + Enter/Space on a keyboard. Escape always closes
-     and hands focus back. Below SHEET_WIDTH the card stops floating beside a
+     on a touch screen, Tab + Enter/Space on a keyboard. Escape always closes,
+     and hands focus back when focus was inside the tooltip to begin with.
+     Below SHEET_WIDTH the card stops floating beside a
      fingertip and becomes a bottom sheet (the .sheet rules in site.css). */
   (function itemTooltips() {
     var anchors = all(".tt-anchor[data-tt]");
@@ -508,6 +509,10 @@
     var GAP = 10;            /* px of air between the anchor and the card */
     var open = null;
     var pinned = false;
+    /* Set only while Escape hands focus back to its anchor. Without it the
+       programmatic focus() fires the focus handler, which sees
+       :focus-visible and re-opens (and pins) the card Escape just closed. */
+    var restoring = false;
 
     function place() {
       if (!open) { return; }
@@ -584,6 +589,7 @@
         pinned = true;
       });
       anchor.addEventListener("focus", function () {
+        if (restoring) { return; }
         var visible = true;
         try { visible = anchor.matches(":focus-visible"); } catch (err) { visible = true; }
         if (visible) { show(anchor); pinned = true; }
@@ -594,8 +600,20 @@
     document.addEventListener("keydown", function (event) {
       if (event.key !== "Escape" || !open) { return; }
       var anchor = open.anchor;
+      /* Focus is handed back only where it was already inside this tooltip --
+         a keyboard-opened (or clicked) card, or focus sitting in the card
+         itself. A card opened by hover never took focus, and focusing its
+         anchor on the way out would both steal focus from wherever the reader
+         actually is and re-open the card (the focus handler treats it as a
+         keyboard entry). `restoring` covers the case where the browser still
+         emits a focus event for the programmatic call. */
+      var inside = document.activeElement === anchor ||
+                   open.card.contains(document.activeElement);
       close();
-      anchor.focus();
+      if (inside) {
+        restoring = true;
+        try { anchor.focus(); } finally { restoring = false; }
+      }
     });
     document.addEventListener("click", function (event) {
       if (!open || !pinned) { return; }
