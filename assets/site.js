@@ -344,7 +344,12 @@
   (function buildPage() {
     if (DATA.kind !== "build") { return; }
 
+    /* Task 47: the stage switcher is the reference's "Build Variants"
+       dropdown, a real <select>. Every stage is pre-rendered; the control
+       only chooses which sections are shown. (The pill form of the same
+       control is still honoured, so a page built either way switches.) */
     var pills = all(".stage-pill");
+    var selects = all(".stage-select");
     var sections = all(".stage-section");
     var triggers = all(".stage-trigger");
 
@@ -379,8 +384,12 @@
       });
     }
 
-    /* Task 45: the stage switcher is the reference's variant pill row. Every
-       stage is pre-rendered; a pill only chooses which sections are shown. */
+    function hasStage(key) {
+      return sections.some(function (section) {
+        return section.getAttribute("data-stage") === key;
+      });
+    }
+
     function applyStage(key) {
       sections.forEach(function (section) {
         section.hidden = section.getAttribute("data-stage") !== key;
@@ -393,40 +402,46 @@
         pill.setAttribute("aria-pressed",
                           pill.getAttribute("data-stage") === key ? "true" : "false");
       });
+      selects.forEach(function (select) {
+        if (select.value !== key) { select.value = key; }
+      });
     }
 
-    if (pills.length) {
+    if (pills.length || selects.length) {
       pills.forEach(function (pill) {
         pill.addEventListener("click", function () {
           applyStage(pill.getAttribute("data-stage"));
         });
       });
+      selects.forEach(function (select) {
+        select.addEventListener("change", function () {
+          applyStage(select.value);
+        });
+      });
 
-      /* the page opens on its endgame stage (the generator presses that pill);
-         an explicit ?stage= still wins when it names a real one */
-      var current = pills[0].getAttribute("data-stage");
+      /* the page opens on its endgame stage (the generator selects that
+         option); an explicit ?stage= still wins when it names a real one */
+      var current = selects.length ? selects[0].value
+                                   : pills[0].getAttribute("data-stage");
       pills.forEach(function (pill) {
         if (pill.getAttribute("aria-pressed") === "true") {
           current = pill.getAttribute("data-stage");
         }
       });
       var wantedStage = new URLSearchParams(window.location.search).get("stage");
-      if (wantedStage) {
-        pills.forEach(function (pill) {
-          if (pill.getAttribute("data-stage") === wantedStage) { current = wantedStage; }
-        });
-      }
+      if (wantedStage && hasStage(wantedStage)) { current = wantedStage; }
       applyStage(current);
 
-      /* "Paragon opens at endgame" -> press that stage's pill and focus it */
+      /* "Paragon opens at endgame" -> switch to that stage and focus the control */
       all(".stage-jump").forEach(function (button) {
         button.addEventListener("click", function () {
           var key = button.getAttribute("data-jump");
-          if (!key) { return; }
+          if (!key || !hasStage(key)) { return; }
           applyStage(key);
           pills.forEach(function (pill) {
             if (pill.getAttribute("data-stage") === key) { pill.focus(); }
           });
+          if (selects.length) { selects[0].focus(); }
         });
       });
     }
@@ -473,23 +488,6 @@
     });
 
     if (tabs.length) { selectTab(0); }
-  })();
-
-  /* --------------------------- intro "show more" -------------------------- */
-  /* The generator ships the whole summary and a hidden button; the clamp is
-     added here, so a page without JavaScript shows every word. */
-  (function introClamp() {
-    all(".intro-text .more").forEach(function (button) {
-      var text = button.parentNode.querySelector(".prose");
-      if (!text) { return; }
-      text.classList.add("clamped");
-      button.hidden = false;
-      button.addEventListener("click", function () {
-        var open = text.classList.toggle("clamped") === false;
-        button.textContent = open
-          ? button.getAttribute("data-less") : button.getAttribute("data-more");
-      });
-    });
   })();
 
   /* ------------------------- in-game item tooltips ------------------------ */
@@ -739,6 +737,9 @@
       var label = button.textContent;
       button.addEventListener("click", function () {
         var text = button.getAttribute("data-copy") || "";
+        /* the Share button copies the page it is on; the URL is not known
+           at generate time and is never baked into the page */
+        if (button.hasAttribute("data-copy-location")) { text = window.location.href; }
         function done(ok) {
           button.textContent = ok ? "Copied" : "Copy failed";
           window.setTimeout(function () { button.textContent = label; }, 1600);
@@ -1058,8 +1059,8 @@
         .replace(/\b[a-z]/g, function (ch) { return ch.toUpperCase(); });
     }
 
-    function line(parent, cls, text, slots) {
-      var node = document.createElement("p");
+    function line(parent, cls, text, slots, tag) {
+      var node = document.createElement(tag || "p");
       node.className = cls;
       if (slots) { withSlots(node, text); } else { node.textContent = text; }
       parent.appendChild(node);
@@ -1088,22 +1089,30 @@
            [RARITY_LABEL[rarity] || titleCase(rarity), spec.type || ""]
              .filter(function (part) { return !!part; }).join(" "));
 
+      /* the same shape the generator's item_card() writes: the effect as
+         bullets, then the flavour, then the foot line (level, class) */
       var powers = document.createElement("div");
       powers.className = "tt-unique";
+      var effects = document.createElement("ul");
+      effects.className = "tt-effects";
+      powers.appendChild(effects);
       var flavor = null;
       (entry.detail || []).forEach(function (pair) {
-        if (pair[0] === CARD_POWER) { line(powers, "tt-power", pair[1], true); }
+        if (pair[0] === CARD_POWER) { line(effects, "tt-power", pair[1], true, "li"); }
         else if (pair[0] === CARD_FLAVOR && flavor === null) { flavor = pair[1]; }
       });
-      if (powers.childNodes.length) { card.appendChild(powers); }
+      if (effects.childNodes.length) { card.appendChild(powers); }
       if (flavor) { line(card, "tt-flavor", flavor); }
 
       /* printed only where the database publishes it -- never invented */
-      if (spec.level) { line(card, "tt-req", "Requires Level " + spec.level); }
+      var foot = document.createElement("div");
+      foot.className = "tt-foot";
+      if (spec.level) { line(foot, "tt-req", "Requires Level " + spec.level, false, "span"); }
       var classes = entry.classes || [];
       if (classes.length && classes.length < CLASS_COUNT) {
-        line(card, "tt-req cls", classes.map(titleCase).join(", ") + " Only");
+        line(foot, "tt-class", classes.map(titleCase).join(", "), false, "span");
       }
+      if (foot.childNodes.length) { card.appendChild(foot); }
       cards[id] = card;
       return card;
     }
@@ -1417,10 +1426,13 @@
 
     /* --- fullscreen: the API when it is granted, a fixed overlay when not --- */
     function wireFullscreen(view, btn) {
+      /* the reference's bar draws the button as an icon; the label then
+         lives in a visually-hidden span so the icon survives the repaint */
+      var label = btn.querySelector("[data-fs-label]");
       function paint() {
         var on = document.fullscreenElement === view || view.classList.contains("is-fs");
         btn.setAttribute("aria-pressed", on ? "true" : "false");
-        btn.textContent = on ? "Exit" : "Fullscreen";
+        (label || btn).textContent = on ? "Exit fullscreen" : "Fullscreen";
       }
       function fallbackOn() { view.classList.add("is-fs"); paint(); }
       btn.addEventListener("click", function () {
@@ -1576,6 +1588,55 @@
       var fs = view.querySelector("[data-fullscreen]");
       if (fs) { wireFullscreen(view, fs); }
       wireToggle(view.querySelector("[data-alloconly]"), canvas, "alloc-only");
+    });
+
+    /* --- the panel-level bar (spec 3.4): one search field over several
+       canvases mirrors its text into each canvas's own search input -- the
+       same wireSearch above does the work -- and one fullscreen button takes
+       the whole frame --- */
+    all("[data-find-all]").forEach(function (input) {
+      var frame = input.closest("[data-bp-frame]") || document;
+      var hits = input.parentNode.parentNode.querySelector("[data-hits]");
+      function fan() {
+        var targets = all("[data-find]", frame);
+        targets.forEach(function (target) {
+          target.value = input.value;
+          target.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+        if (!hits) { return; }
+        var q = (input.value || "").trim();
+        if (!q) { hits.textContent = ""; return; }
+        var found = all(".hit", frame).length;
+        hits.textContent = found === 1 ? "1 match" : found + " matches";
+      }
+      input.addEventListener("input", fan);
+      input.addEventListener("search", fan);
+    });
+    all("[data-bp-frame]").forEach(function (frame) {
+      var bar = frame.querySelector(".bp-bar");
+      var fs = bar ? bar.querySelector("[data-fullscreen]") : null;
+      if (fs && fs.closest("[data-bp-frame], [data-tview], [data-pview]") === frame) {
+        wireFullscreen(frame, fs);
+      }
+    });
+
+    /* --- the war plans' plan tabs: every activity's tree is pre-rendered;
+       a tab only decides which one is not hidden --- */
+    all(".wp-tabs").forEach(function (row) {
+      var frame = row.closest("[data-bp-frame]");
+      if (!frame) { return; }
+      var tabs = all(".wp-tab", row);
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          var key = tab.getAttribute("data-wp");
+          tabs.forEach(function (t) {
+            t.setAttribute("aria-pressed", t === tab ? "true" : "false");
+          });
+          all("[data-wp-panel]", frame).forEach(function (panel) {
+            panel.hidden = panel.getAttribute("data-wp-panel") !== key;
+          });
+        });
+      });
     });
   })();
 })();
