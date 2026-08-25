@@ -3492,6 +3492,10 @@ body {
 .tt-pn-req + .tt-pn-stats { margin-top: 0; }
 .tt-pn-reqs { margin-top: 5px; color: var(--tt-fg-60); }
 .tt-pn .tt-sv { color: var(--tt-gold); }
+/* a legendary node's power, as the reference prints it under the name */
+.tt-pn-desc { color: var(--tt-fg-80); font-size: 15px; line-height: 1.7em; }
+/* the honesty line on a glyph card priced at the feed's reference level */
+.tt-pn-note { margin-top: 4px; font-size: 13px; line-height: 1.5em; color: var(--tt-fg-60); }
 
 /* the icon sits in the top-right corner, over the first lines */
 .tt-icon { position: absolute; top: 10px; right: 20px; }
@@ -4830,6 +4834,24 @@ html:has(.build-page), body:has(.build-page) {
 }
 .build-page .bp-glyph-group .icon.ph { background: var(--d4-panel-2); border-radius: 50%; }
 .build-page .bp-glyph-line { width: 5px; height: 2px; background: var(--d4-orange); }
+/* the glyph's recorded level, a small badge on the chip's lower-right corner */
+.build-page .bp-glyph-tile { position: relative; display: inline-flex; }
+.build-page .bp-glyph-lvl {
+  position: absolute;
+  right: -7px;
+  bottom: -4px;
+  min-width: 12px;
+  padding: 0 2px;
+  border-radius: 6px;
+  background: var(--d4-panel-2);
+  box-shadow: 0 0 0 1px var(--d4-gold);
+  color: var(--d4-gold);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 12px;
+  text-align: center;
+  pointer-events: none;
+}
 .build-page .bp-charm-chips .icon { --icon-size: 34px; }
 
 /* the mercenaries' four framed portraits */
