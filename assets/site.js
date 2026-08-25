@@ -357,6 +357,8 @@
        fresh stage would otherwise open on an empty corner of the tree. Park
        the scroll on the middle of what this stage allocates. Nothing is built
        or measured from data here: it reads the laid-out DOM. */
+    var FIT_PAD = 40;   /* px of air around the allocated cluster */
+    var FIT_NODE = 60;  /* the largest plate, so the bounds include the art */
     function centreMap(section) {
       all(".tmap-scroll", section).forEach(function (box) {
         var canvas = box.querySelector(".tcanvas");
@@ -365,18 +367,61 @@
         if (!canvas || !box.clientWidth) { return; }
         if (box.getAttribute("data-centred") === "1") { return; }
         var lit = all(".tn.lit", canvas);
+        var zoom = parseFloat(window.getComputedStyle(canvas).getPropertyValue("--tz")) || 1;
         var x = canvas.offsetWidth / 2;
         var y = canvas.offsetHeight / 2;
         if (lit.length) {
+          /* the allocated cluster's bounds in unzoomed canvas units (the
+             generator's --x/--y), then the view opens on its centre at the
+             canvas's own zoom. The plates keep the reference's size: an
+             endgame allocation spans the whole tree, and shrinking it to fit
+             would put the skill plates under the reference's 56-60px. Only a
+             cluster that fits at 100% (plus FIT_PAD of air) is guaranteed to
+             be wholly in view; the rest opens on its middle. */
           var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
           lit.forEach(function (node) {
-            minX = Math.min(minX, node.offsetLeft);
-            maxX = Math.max(maxX, node.offsetLeft);
-            minY = Math.min(minY, node.offsetTop);
-            maxY = Math.max(maxY, node.offsetTop);
+            var nx = parseFloat(node.style.getPropertyValue("--x"));
+            var ny = parseFloat(node.style.getPropertyValue("--y"));
+            if (isNaN(nx) || isNaN(ny)) { return; }
+            minX = Math.min(minX, nx);
+            maxX = Math.max(maxX, nx);
+            minY = Math.min(minY, ny);
+            maxY = Math.max(maxY, ny);
           });
-          x = (minX + maxX) / 2;
-          y = (minY + maxY) / 2;
+          if (isFinite(minX)) {
+            /* the middle of the allocation's bounds can be an empty stretch
+               between two clusters, so the view opens on the median lit
+               node instead: always inside a cluster the build actually uses */
+            var xs = [], ys = [];
+            lit.forEach(function (node) {
+              var nx = parseFloat(node.style.getPropertyValue("--x"));
+              var ny = parseFloat(node.style.getPropertyValue("--y"));
+              if (!isNaN(nx) && !isNaN(ny)) { xs.push(nx); ys.push(ny); }
+            });
+            xs.sort(function (a, b) { return a - b; });
+            ys.sort(function (a, b) { return a - b; });
+            var mx = xs[Math.floor(xs.length / 2)], my = ys[Math.floor(ys.length / 2)];
+            /* ... and on the lit node nearest that point, which is a real
+               plate rather than a spot between two clusters */
+            var best = null, bestD = Infinity;
+            lit.forEach(function (node) {
+              var nx = parseFloat(node.style.getPropertyValue("--x"));
+              var ny = parseFloat(node.style.getPropertyValue("--y"));
+              var d = (nx - mx) * (nx - mx) + (ny - my) * (ny - my);
+              if (!isNaN(d) && d < bestD) { bestD = d; best = [nx, ny]; }
+            });
+            if (best) { mx = best[0]; my = best[1]; }
+            x = mx * zoom;
+            y = my * zoom;
+            /* a cluster small enough to fit is pinned to its top-left with
+               the padding, so nothing allocated sits off the first screen */
+            var w = (maxX - minX + FIT_NODE) * zoom + 2 * FIT_PAD;
+            var h = (maxY - minY + FIT_NODE) * zoom + 2 * FIT_PAD;
+            if (w <= box.clientWidth && h <= box.clientHeight) {
+              x = (minX - FIT_NODE / 2) * zoom - FIT_PAD + box.clientWidth / 2;
+              y = (minY - FIT_NODE / 2) * zoom - FIT_PAD + box.clientHeight / 2;
+            }
+          }
         }
         box.scrollLeft = Math.max(0, x - box.clientWidth / 2);
         box.scrollTop = Math.max(0, y - box.clientHeight / 2);
@@ -697,14 +742,13 @@
         if (!VIDEO_ID.test(id)) { return; }
         var wrap = button.parentNode;
         if (!wrap) { return; }
-        var meta = wrap.querySelector(".vmeta");
         var frame = document.createElement("div");
         frame.className = "vframe";
         var iframe = document.createElement("iframe");
         iframe.setAttribute(
           "src",
           "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0");
-        iframe.setAttribute("title", meta ? meta.textContent : "Creator video");
+        iframe.setAttribute("title", button.getAttribute("data-title") || "Creator video");
         iframe.setAttribute(
           "allow",
           "accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture");
@@ -1467,10 +1511,12 @@
 
     /* --- search: dim everything, ring the matches, count them out loud --- */
     function wireSearch(input, hits, canvas, nodes, noun) {
+      /* `canvas` is one canvas or, for a frame's bar, every canvas under it */
+      var canvases = Array.isArray(canvas) ? canvas : [canvas];
       function apply() {
         var q = (input.value || "").trim().toLowerCase();
         if (!q) {
-          canvas.classList.remove("searching");
+          canvases.forEach(function (c) { c.classList.remove("searching"); });
           nodes.forEach(function (n) { n.classList.remove("hit"); });
           hits.textContent = "";
           return;
@@ -1482,7 +1528,7 @@
           n.classList.toggle("hit", on);
           if (on) { found++; }
         });
-        canvas.classList.add("searching");
+        canvases.forEach(function (c) { c.classList.add("searching"); });
         hits.textContent = found + (found === 1 ? " match" : " matches");
         if (!found) { hits.textContent = "no " + noun + " matched"; }
       }
@@ -1493,8 +1539,16 @@
 
     /* --- zoom: one CSS custom property drives the whole canvas geometry --- */
     function wireZoom(view, box, target, prop, base) {
-      var zoom = 1;
+      /* null until the first press: the fitted opening view (centreMap in
+         buildPage) may set the property after this runs, so the stepper
+         reads the live value the first time rather than assuming 100% */
+      var zoom = null;
       var label = view.querySelector("[data-zoomlabel]");
+      function current() {
+        if (zoom !== null) { return zoom; }
+        var live = parseFloat(window.getComputedStyle(target).getPropertyValue(prop));
+        return (isNaN(live) || !base) ? 1 : live / base;
+      }
       function paint() {
         /* keep whatever was in the middle of the box in the middle of the box:
            zooming a canvas that then jumps to a corner loses the reader's place */
@@ -1507,7 +1561,7 @@
         box.scrollLeft = Math.max(0, fx * box.scrollWidth - box.clientWidth / 2);
         box.scrollTop = Math.max(0, fy * box.scrollHeight - box.clientHeight / 2);
       }
-      function by(delta) { zoom = clamp(zoom + delta); paint(); }
+      function by(delta) { zoom = clamp(current() + delta); paint(); }
       Array.prototype.slice.call(view.querySelectorAll("[data-zoom]"))
         .forEach(function (btn) {
           var kind = btn.getAttribute("data-zoom");
@@ -1523,7 +1577,7 @@
         event.preventDefault();
         by(event.deltaY < 0 ? STEP : -STEP);
       }, { passive: false });
-      paint();
+      if (label) { label.textContent = Math.round(current() * 100) + "%"; }
     }
 
     function wireToggle(btn, target, cls) {
@@ -1597,20 +1651,9 @@
     all("[data-find-all]").forEach(function (input) {
       var frame = input.closest("[data-bp-frame]") || document;
       var hits = input.parentNode.parentNode.querySelector("[data-hits]");
-      function fan() {
-        var targets = all("[data-find]", frame);
-        targets.forEach(function (target) {
-          target.value = input.value;
-          target.dispatchEvent(new Event("input", { bubbles: true }));
-        });
-        if (!hits) { return; }
-        var q = (input.value || "").trim();
-        if (!q) { hits.textContent = ""; return; }
-        var found = all(".hit", frame).length;
-        hits.textContent = found === 1 ? "1 match" : found + " matches";
-      }
-      input.addEventListener("input", fan);
-      input.addEventListener("search", fan);
+      var canvases = all(".tcanvas, .pgrid", frame);
+      var nodes = all(".tn, .pnode", frame);
+      if (hits && canvases.length) { wireSearch(input, hits, canvases, nodes, "nodes"); }
     });
     all("[data-bp-frame]").forEach(function (frame) {
       var bar = frame.querySelector(".bp-bar");
