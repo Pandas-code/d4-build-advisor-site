@@ -609,6 +609,9 @@
       open.card.classList.remove("sheet");
       open.card.style.left = "";
       open.card.style.top = "";
+      if (open.home && open.card.parentNode !== open.home) {
+        open.home.appendChild(open.card);
+      }
       /* only where the generator declared it: on the boss page the anchor is
          a button that already `aria-controls` its cross-reference panel, and
          an `aria-expanded` there would be a claim about that panel */
@@ -624,11 +627,18 @@
       if (!card) { return; }
       if (open && open.card === card) { place(); return; }
       close();
+      /* the layer lives at the end of the page; while a planner is in real
+         fullscreen only that element paints, so the card is parented under it
+         for as long as it is open (no transformed ancestor in between: the
+         fullscreen element is the frame itself, so `fixed` stays viewport) */
+      var home = card.parentNode;
+      var fs = document.fullscreenElement;
+      if (fs && !fs.contains(card)) { fs.appendChild(card); }
       card.hidden = false;
       if (anchor.hasAttribute("aria-expanded")) {
         anchor.setAttribute("aria-expanded", "true");
       }
-      open = { anchor: anchor, card: card,
+      open = { anchor: anchor, card: card, home: home,
                box: (opts && opts.box) || anchor };
       place();
     }
@@ -1523,7 +1533,7 @@
         }
         var found = 0;
         nodes.forEach(function (n) {
-          var hay = (n.getAttribute("title") || "").toLowerCase();
+          var hay = (n.getAttribute("title") || n.getAttribute("aria-label") || "").toLowerCase();
           var on = hay.indexOf(q) !== -1;
           n.classList.toggle("hit", on);
           if (on) { found++; }
@@ -1702,7 +1712,10 @@
       /* drag to pan */
       var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
       wrap.addEventListener("pointerdown", function (event) {
-        if (event.button !== 0 || event.target.closest("button, a, input")) { return; }
+        /* a tile is a button too (its card's anchor), and most of a board is
+           tiles: a drag may start on one -- only the bar's own controls are
+           exempt */
+        if (event.button !== 0 || event.target.closest("button:not(.pnode), a, input")) { return; }
         live = true; moved = false;
         id = event.pointerId;
         sx = event.clientX; sy = event.clientY; ox = tx; oy = ty;
@@ -1720,14 +1733,23 @@
         tx = ox + dx; ty = oy + dy;
         paint(false);
       });
+      var dragged = false;
       function stop(event) {
         if (!live || (event && event.pointerId !== id)) { return; }
         live = false;
+        dragged = moved;
         wrap.classList.remove("dragging");
         try { wrap.releasePointerCapture(id); } catch (err) { /* already gone */ }
       }
       wrap.addEventListener("pointerup", stop);
       wrap.addEventListener("pointercancel", stop);
+      /* the click a drag ends on must not pin the tile's card */
+      wrap.addEventListener("click", function (event) {
+        if (!dragged) { return; }
+        dragged = false;
+        event.stopPropagation();
+        event.preventDefault();
+      }, true);
 
       /* keyboard: arrows pan, +/- zoom, 0 resets */
       wrap.addEventListener("keydown", function (event) {

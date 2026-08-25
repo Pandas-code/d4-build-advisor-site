@@ -3409,6 +3409,90 @@ body {
 .tt-card::-webkit-scrollbar { width: 7px; background: #1a1b1f; }
 .tt-card::-webkit-scrollbar-thumb { background: var(--tt-panel); }
 
+/* --- the paragon tile card (owner defect: hovering a tile showed nothing).
+   The reference's `.paragon__tile__tooltip`: a 56px header row -- 45px
+   rarity plate with the 35px art inset, then the rarity label (16px/500,
+   rarity-coloured) with the node's name under it -- over a disc list of
+   15px stat lines. Plate tones sampled from the reference's tile_bg_*.png. */
+.tt-pn-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--tt-rule);
+}
+.tt-pn-plate {
+  position: relative;
+  flex: none;
+  width: 45px;
+  height: 45px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #2f3030, #232423 62%, #1a1b1d 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+.tt-pn-plate.r-magic { background: radial-gradient(circle at 50% 45%, #2b3d5a, #213249 62%, #131c2b 100%); }
+.tt-pn-plate.r-rare { background: radial-gradient(circle at 50% 45%, #4a4019, #413815 62%, #221d0c 100%); }
+.tt-pn-plate.r-legendary { background: radial-gradient(circle at 50% 45%, #5c3f21, #4f361c 62%, #2a1c0e 100%); }
+.tt-pn-plate.r-gate,
+.tt-pn-plate.r-start { border-radius: 8px; background: radial-gradient(circle at 50% 45%, #2e322e, #292d29 62%, #191b19 100%); }
+.tt-pn-plate.r-socket { background: radial-gradient(circle at 50% 45%, #4a1f1e, #3e1a19 62%, #1e0c0c 100%); }
+.tt-pn-plate.r-glyph { background: radial-gradient(circle at 50% 45%, #5a4416, #453a13 62%, #221c09 100%); }
+.tt-pn-plate .icon {
+  --icon-size: 35px;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  box-shadow: none;
+}
+.tt-pn-plate.r-glyph .icon { --icon-size: 45px; left: 0; top: 0; }
+.tt-pn-plate .icon.ph { color: var(--tt-fg-40); }
+.tt-pn-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+}
+.tt-pn-rarity { color: var(--tt-fg); }
+.tt-pn-rarity.r-common { color: #9c9c9c; }
+.tt-pn-rarity.r-magic { color: #6d6ed9; }
+.tt-pn-rarity.r-rare { color: #f1f25c; }
+.tt-pn-rarity.r-legendary { color: var(--tt-orange); }
+.tt-pn-title { margin-top: 3px; color: var(--tt-fg); }
+.tt-pn-stats,
+.tt-pn-reqs {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--tt-fg-80);
+  line-height: 1.5em;
+}
+.tt-pn-stats li,
+.tt-pn-reqs li {
+  list-style: disc;
+  margin: 0 0 5px;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.7em;
+}
+.tt-pn-stats li:last-child,
+.tt-pn-reqs li:last-child { margin-bottom: 0; }
+.tt-pn-req {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.7em;
+  color: var(--tt-fg-60);
+}
+.tt-pn-req.legendary { color: var(--tt-orange); }
+.tt-pn-req + .tt-pn-stats { margin-top: 0; }
+.tt-pn-reqs { margin-top: 5px; color: var(--tt-fg-60); }
+.tt-pn .tt-sv { color: var(--tt-gold); }
+
 /* the icon sits in the top-right corner, over the first lines */
 .tt-icon { position: absolute; top: 10px; right: 20px; }
 .tt-icon .icon {
@@ -4989,6 +5073,14 @@ html:has(.build-page), body:has(.build-page) {
 }
 .build-page .pnode.k-gate::before,
 .build-page .pnode.k-start::before { border-color: #d98c3c; border-radius: 6px; opacity: 0.7; }
+/* a tile is its card's anchor: a button, so it takes focus and a tap */
+.build-page .pnode.tt-anchor { cursor: pointer; }
+.build-page .pnode.tt-anchor:focus-visible {
+  outline: 2px solid var(--d4-gold);
+  outline-offset: 1px;
+  z-index: 4;
+}
+.build-page .pwrap.dragging .pnode { cursor: grabbing; }
 .build-page .pnode.taken {
   border-color: #7c2b2b;
   background: rgba(124, 43, 43, 0.3);
