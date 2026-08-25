@@ -3416,6 +3416,19 @@ body {
 @keyframes tt-in { from { opacity: 0; } to { opacity: 1; } }
 .tt-card::-webkit-scrollbar { width: 7px; background: #1a1b1f; }
 .tt-card::-webkit-scrollbar-thumb { background: var(--tt-panel); }
+/* the reference's scroll hint: while there is more card below the fold
+   (site.js sets .scroll-hint from scrollHeight) a fade sits on the bottom
+   edge of the scrollport -- sticky, so it stays put as the card scrolls */
+.tt-card.scroll-hint::after {
+  content: "";
+  display: block;
+  position: sticky;
+  bottom: -15px;
+  height: 34px;
+  margin: -34px -15px -15px;
+  background: linear-gradient(to bottom, rgba(21, 22, 26, 0), var(--tt-bg) 78%);
+  pointer-events: none;
+}
 
 /* --- the paragon tile card (owner defect: hovering a tile showed nothing).
    The reference's `.paragon__tile__tooltip`: a 56px header row -- 45px
@@ -4868,7 +4881,7 @@ html:has(.build-page), body:has(.build-page) {
   flex-wrap: wrap;
   justify-content: center;
   gap: 0 30px;
-  margin: 5px 0 5px;
+  margin: 5px 0 15px;
 }
 .build-page .bp-merc { display: flex; flex-direction: column; align-items: center; }
 .build-page .bp-merc-lbl { margin-bottom: 10px; font-size: 15px; color: var(--d4-fg-60); }
@@ -4877,15 +4890,16 @@ html:has(.build-page), body:has(.build-page) {
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   overflow: hidden;
   background: var(--d4-raised);
   border: 1px solid var(--d4-line);
   border-radius: 5px;
+  box-shadow: inset 0 0 0 1px #0d0e11, inset 0 0 0 2px #5a5140;
 }
 .build-page .bp-merc-plate .icon {
-  --icon-size: 62px;
+  --icon-size: 50px;
   background: none;
   border: 0;
   border-radius: 0;
@@ -5259,6 +5273,164 @@ html:has(.build-page), body:has(.build-page) {
   .build-page .pwrap { height: 60vh; }
   .build-page .pchip { top: 10px; font-size: 13px; height: 32px; }
   .build-page .pnotes .b-note { padding-left: 0; }
+}
+
+/* --- the mercenary planner (owner defect): the reference's 952x640 viewport
+   holding the tree as a planner -- large square plates for skills, round
+   ones for passives, a rank badge under each, thick dark connectors with
+   the taken path in red. The pan/zoom mechanics are the paragon's (.pwrap);
+   the geometry is --tw/--th/--x/--y from the generator. --- */
+.build-page .mview {
+  position: relative;
+  width: 100%;
+  max-width: 952px;
+  margin: 0 auto;
+  background: var(--d4-panel);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.build-page .mwrap { height: 640px; max-height: 80vh; background: var(--d4-panel); }
+.build-page .mplanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--tw) * 1px);
+  height: calc(var(--th) * 1px);
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.build-page .mlinks { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.build-page .mlinks .ml-base line {
+  stroke: #0e0f12;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.build-page .mlinks .ml-base line.on { stroke: #0e0f12; }
+.build-page .mlinks .ml-on line {
+  stroke: #9b2a2a;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.build-page .mn {
+  --mn: 64px;
+  position: absolute;
+  left: calc(var(--x) * 1px);
+  top: calc(var(--y) * 1px);
+  width: var(--mn);
+  height: var(--mn);
+  box-sizing: border-box;
+  display: block;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  background: var(--d4-panel-2);
+  border: 2px solid #3a3c44;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px #0d0e11, 0 2px 4px rgba(0, 0, 0, 0.6);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+}
+.build-page .mn img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+}
+.build-page .mn.k-passive { --mn: 40px; border-radius: 50%; }
+.build-page .mn.k-passive img { border-radius: 50%; }
+.build-page .mn.k-root {
+  --mn: 56px;
+  border-radius: 50%;
+  border-color: #5a5140;
+  background: #0d0e11;
+  cursor: default;
+}
+.build-page .mn.k-root img { border-radius: 50%; }
+.build-page .mn.k-junction {
+  --mn: 14px;
+  border-radius: 50%;
+  border-color: #3a3c44;
+  background: #0e0f12;
+  cursor: default;
+}
+.build-page .mn.k-junction.on, .build-page .mn.k-root.on { border-color: #9b2a2a; }
+.build-page .mn.ph {
+  background:
+    radial-gradient(58% 58% at 50% 50%, var(--d4-fg-40, rgba(255, 255, 255, 0.4)) 0%, transparent 62%),
+    var(--d4-panel-2);
+}
+/* the rank badge under the plate: red when taken, dim otherwise */
+.build-page .mb {
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  transform: translateX(-50%);
+  padding: 0 5px;
+  min-width: 26px;
+  box-sizing: border-box;
+  background: #9b2a2a;
+  border: 1px solid #c4494c;
+  border-radius: 2px;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 1;
+}
+.build-page .mb.dim { background: #15161a; border-color: #26272d; color: var(--d4-fg-40, rgba(255, 255, 255, 0.4)); }
+.build-page .mplanner.has-path .mn.k-skill, .build-page .mplanner.has-path .mn.k-passive { opacity: 0.55; }
+.build-page .mplanner.has-path .mn.lit { opacity: 1; border-color: #c4494c; box-shadow: inset 0 0 0 1px #0d0e11, 0 0 12px -2px rgba(196, 73, 76, 0.8); }
+.build-page .mplanner.has-path .mn.lit img { filter: none; }
+.build-page .mplanner.has-path .mn:not(.lit) img { filter: grayscale(0.6) brightness(0.8); }
+.build-page .mn:hover, .build-page .mn:focus-visible { z-index: 4; transform: translate(-50%, -50%) scale(1.08); }
+.build-page .mn:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: 1px; }
+.build-page .mn.k-root:hover, .build-page .mn.k-junction:hover { transform: translate(-50%, -50%); }
+.build-page .mplanner.searching .mn { opacity: 0.12; }
+.build-page .mplanner.searching .mn.hit { opacity: 1; border-color: var(--d4-gold); box-shadow: 0 0 0 2px rgba(209, 167, 129, 0.4); z-index: 5; }
+.build-page .mwrap.dragging .mn { cursor: grabbing; }
+.build-page .bp-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 5px;
+  background: var(--d4-panel-2);
+  border: 1px solid var(--d4-raised);
+  font-size: 14px;
+  color: var(--d4-fg-60);
+  white-space: nowrap;
+}
+.build-page .bp-tabframe.is-fs .mwrap,
+.build-page .bp-tabframe:fullscreen .mwrap { height: calc(100vh - 220px); max-height: none; }
+.build-page .bp-tabframe.is-fs .mview,
+.build-page .bp-tabframe:fullscreen .mview { max-width: none; }
+/* the notes under the viewport: the opportunity and the reinforcement */
+.build-page .mnotes { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.build-page .mnotes li {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--d4-panel-2);
+  border-radius: 5px;
+}
+.build-page .mnotes .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--d4-fg-60); }
+.build-page .mnotes .mline { display: inline-flex; align-items: center; gap: 8px; }
+.build-page .mnotes .mline .icon { --icon-size: 28px; }
+.build-page .mnotes .nm { font-weight: 500; }
+.build-page .mnotes .note { grid-column: 1 / -1; font-size: 13px; color: var(--d4-fg-60); }
+@media (max-width: 44rem) {
+  .build-page .mwrap { height: 60vh; }
+  .build-page .mnotes li { grid-template-columns: 1fr; }
 }
 
 /* --- the talisman's charm seats: portrait art, whole charm in view ------- */

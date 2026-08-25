@@ -562,12 +562,76 @@
   (function itemTooltips() {
     var SHEET_WIDTH = 720;   /* px; matches the 44rem/62rem CSS stack points */
     var GAP = 10;            /* px of air between the anchor and the card */
+    var GRACE = 120;         /* ms the card stays after the anchor is left */
     var open = null;
     var pinned = false;
     /* Set only while Escape hands focus back to its anchor. Without it the
        programmatic focus() fires the focus handler, which sees
        :focus-visible and re-opens (and pins) the card Escape just closed. */
     var restoring = false;
+    /* Owner defect: a card (400px tall at most, scrollable) closed the
+       instant the pointer left its anchor, so nothing in it could be
+       scrolled. The card is interactive, as the reference's is: leaving the
+       anchor towards the card keeps it (relatedTarget, or a grace timer the
+       card's own pointerenter cancels), leaving the card closes it. */
+    var overCard = false;
+    var graceTimer = 0;
+
+    function cancelGrace() {
+      if (graceTimer) { window.clearTimeout(graceTimer); graceTimer = 0; }
+    }
+    function scheduleClose() {
+      cancelGrace();
+      graceTimer = window.setTimeout(function () {
+        graceTimer = 0;
+        if (!pinned && !overCard) { close(); }
+      }, GRACE);
+    }
+    function focusInside(card) {
+      var active = document.activeElement;
+      return !!(active && card.contains(active));
+    }
+    /* the reference's scroll hint: the fade shows only while there is more
+       card below the fold */
+    function hint(card) {
+      var more = card.scrollHeight - card.clientHeight - card.scrollTop > 2;
+      card.classList.toggle("scroll-hint", more);
+    }
+    function wireCard(card) {
+      if (card.__ttWired) { return; }
+      card.__ttWired = true;
+      function enter(event) {
+        if (event && event.pointerType && event.pointerType !== "mouse") { return; }
+        overCard = true;
+        cancelGrace();
+      }
+      function leave(event) {
+        if (event && event.pointerType && event.pointerType !== "mouse") { return; }
+        overCard = false;
+        if (pinned || !open || open.card !== card) { return; }
+        var to = event && event.relatedTarget;
+        /* back onto the anchor: its own enter keeps the card, no flicker */
+        if (to && to.nodeType === 1 && open.anchor.contains(to)) { return; }
+        if (focusInside(card)) { return; }
+        close();
+      }
+      card.addEventListener("pointerenter", enter);
+      card.addEventListener("mouseenter", enter);
+      card.addEventListener("pointerleave", leave);
+      card.addEventListener("mouseleave", leave);
+      /* a wheel over the card scrolls the card and nothing underneath it:
+         not the page, not a planner's wheel-zoom */
+      card.addEventListener("wheel", function (event) {
+        event.stopPropagation();
+        var atTop = card.scrollTop <= 0 && event.deltaY < 0;
+        var atEnd = card.scrollTop + card.clientHeight >= card.scrollHeight - 1 &&
+                    event.deltaY > 0;
+        if (card.scrollHeight <= card.clientHeight + 1 || atTop || atEnd) {
+          event.preventDefault();
+        }
+      }, { passive: false });
+      card.addEventListener("scroll", function () { hint(card); });
+    }
 
     function place() {
       if (!open) { return; }
@@ -604,9 +668,11 @@
     }
 
     function close() {
+      cancelGrace();
+      overCard = false;
       if (!open) { return; }
       open.card.hidden = true;
-      open.card.classList.remove("sheet");
+      open.card.classList.remove("sheet", "scroll-hint");
       open.card.style.left = "";
       open.card.style.top = "";
       if (open.home && open.card.parentNode !== open.home) {
@@ -625,8 +691,9 @@
     function show(anchor, opts) {
       var card = byId(anchor.getAttribute("data-tt"));
       if (!card) { return; }
-      if (open && open.card === card) { place(); return; }
+      if (open && open.card === card) { cancelGrace(); place(); return; }
       close();
+      wireCard(card);
       /* the layer lives at the end of the page; while a planner is in real
          fullscreen only that element paints, so the card is parented under it
          for as long as it is open (no transformed ancestor in between: the
@@ -640,7 +707,9 @@
       }
       open = { anchor: anchor, card: card, home: home,
                box: (opts && opts.box) || anchor };
+      card.scrollTop = 0;
       place();
+      hint(card);
     }
 
     /* `opts.box`    the element the card is positioned beside, when that is
@@ -667,7 +736,10 @@
       }
       function leave(event) {
         if (event && event.pointerType && event.pointerType !== "mouse") { return; }
-        if (!pinned) { close(); }
+        if (pinned || !open) { return; }
+        var to = event && event.relatedTarget;
+        if (to && to.nodeType === 1 && open.card.contains(to)) { return; }
+        scheduleClose();
       }
       anchor.addEventListener("pointerenter", enter);
       anchor.addEventListener("pointerleave", leave);
@@ -690,7 +762,12 @@
           if (onClick === "toggle") { pinned = true; }
         }
       });
-      anchor.addEventListener("blur", function () { close(); });
+      anchor.addEventListener("blur", function () {
+        /* a click on the card's own scrollbar blurs the anchor: the card
+           under the pointer stays */
+        if (overCard) { return; }
+        close();
+      });
       anchor.__ttOpts = opts || null;
     }
 
@@ -1785,6 +1862,123 @@
       });
     });
 
+    /* --- the mercenary planner (owner defect): the paragon's mechanics on
+       a viewport holding one tree -- opens fitted and centred, drag or the
+       arrow keys pan, wheel / +/- / the corner stepper zoom, 0 resets --- */
+    all("[data-mview]").forEach(function (view) {
+      var wrap = view.querySelector(".mwrap");
+      var planner = view.querySelector("[data-mplanner]");
+      if (!wrap || !planner) { return; }
+      var label = view.querySelector("[data-zoomlabel]");
+      var tw = parseFloat(planner.style.getPropertyValue("--tw")) || 1;
+      var th = parseFloat(planner.style.getPropertyValue("--th")) || 1;
+      var PMIN = 0.3, PMAX = 2.5, PAN = 60;
+      var scale = 1, tx = 0, ty = 0, framed = false;
+
+      function paint() {
+        planner.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
+        if (label) { label.textContent = Math.round(scale * 100) + "%"; }
+      }
+      function fit() {
+        var w = wrap.clientWidth, h = wrap.clientHeight;
+        if (!w || !h) { return; }
+        scale = Math.min(1, (w - 40) / tw, (h - 40) / th);
+        scale = Math.max(PMIN, Math.round(scale * 100) / 100);
+        tx = (w - tw * scale) / 2;
+        ty = (h - th * scale) / 2;
+        paint();
+      }
+      function clampScale(z) { return Math.min(PMAX, Math.max(PMIN, Math.round(z * 100) / 100)); }
+      function zoomAt(factor, px, py) {
+        var next = clampScale(scale * factor);
+        if (next === scale) { return; }
+        tx = px - (px - tx) * (next / scale);
+        ty = py - (py - ty) * (next / scale);
+        scale = next;
+        paint();
+      }
+      function zoomCentre(factor) { zoomAt(factor, wrap.clientWidth / 2, wrap.clientHeight / 2); }
+
+      function open() {
+        if (framed || !wrap.clientWidth) { return; }
+        framed = true;
+        fit();
+      }
+      open();
+      if (!framed && window.ResizeObserver) {
+        var ro = new ResizeObserver(function () { open(); if (framed) { ro.disconnect(); } });
+        ro.observe(wrap);
+      } else if (!framed) {
+        document.addEventListener("click", open, true);
+      }
+
+      all("[data-zoom]", view).forEach(function (btn) {
+        var kind = btn.getAttribute("data-zoom");
+        btn.addEventListener("click", function () {
+          if (kind === "reset") { fit(); }
+          else { zoomCentre(kind === "in" ? 1.2 : 1 / 1.2); }
+        });
+      });
+      wrap.addEventListener("wheel", function (event) {
+        event.preventDefault();
+        var box = wrap.getBoundingClientRect();
+        zoomAt(event.deltaY < 0 ? 1.1 : 1 / 1.1, event.clientX - box.left, event.clientY - box.top);
+      }, { passive: false });
+
+      var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
+      wrap.addEventListener("pointerdown", function (event) {
+        /* a node is a button too (its card's anchor): a drag may start on one */
+        if (event.button !== 0 || event.target.closest("button:not(.mn), a, input")) { return; }
+        live = true; moved = false;
+        id = event.pointerId;
+        sx = event.clientX; sy = event.clientY; ox = tx; oy = ty;
+      });
+      wrap.addEventListener("pointermove", function (event) {
+        if (!live || event.pointerId !== id) { return; }
+        var dx = event.clientX - sx, dy = event.clientY - sy;
+        if (!moved && Math.abs(dx) + Math.abs(dy) > 4) {
+          moved = true;
+          wrap.classList.add("dragging");
+          try { wrap.setPointerCapture(id); } catch (err) { /* not capturable */ }
+        }
+        if (!moved) { return; }
+        tx = ox + dx; ty = oy + dy;
+        paint();
+      });
+      var dragged = false;
+      function stop(event) {
+        if (!live || (event && event.pointerId !== id)) { return; }
+        live = false;
+        dragged = moved;
+        wrap.classList.remove("dragging");
+        try { wrap.releasePointerCapture(id); } catch (err) { /* already gone */ }
+      }
+      wrap.addEventListener("pointerup", stop);
+      wrap.addEventListener("pointercancel", stop);
+      wrap.addEventListener("click", function (event) {
+        if (!dragged) { return; }
+        dragged = false;
+        event.stopPropagation();
+        event.preventDefault();
+      }, true);
+      wrap.addEventListener("keydown", function (event) {
+        var key = event.key;
+        var handled = true;
+        if (key === "ArrowLeft") { tx += PAN; }
+        else if (key === "ArrowRight") { tx -= PAN; }
+        else if (key === "ArrowUp") { ty += PAN; }
+        else if (key === "ArrowDown") { ty -= PAN; }
+        else if (key === "+" || key === "=") { zoomCentre(1.2); return; }
+        else if (key === "-" || key === "_") { zoomCentre(1 / 1.2); return; }
+        else if (key === "0") { fit(); return; }
+        else { handled = false; }
+        if (!handled) { return; }
+        event.preventDefault();
+        paint();
+      });
+      document.addEventListener("fullscreenchange", function () { if (framed) { fit(); } });
+    });
+
     all("[data-tview]").forEach(function (view) {
       var box = view.querySelector(".tmap-scroll");
       var canvas = view.querySelector(".tcanvas");
@@ -1811,7 +2005,8 @@
       var frame = input.closest("[data-bp-frame]") || document;
       var hits = input.parentNode.parentNode.querySelector("[data-hits]");
       var canvases = all(".tcanvas, .pgrid", frame);
-      var nodes = all(".tn, .pnode", frame);
+      canvases = canvases.concat(all(".mplanner", frame));
+      var nodes = all(".tn, .pnode, .mn", frame);
       if (hits && canvases.length) { wireSearch(input, hits, canvases, nodes, "nodes"); }
     });
     all("[data-bp-frame]").forEach(function (frame) {

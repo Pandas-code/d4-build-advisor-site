@@ -7,4 +7,4 @@ This repository is auto-published by `scripts/deploy_site.py` in the
 overwritten on the next deploy. The source repository, build data, and
 generator live at https://github.com/Pandas-code/d4-build-advisor (private).
 
-Last deployed: 2026-08-25 from source commit `f82c11f`.
+Last deployed: 2026-08-25 from source commit `e4800d5`.
