@@ -353,81 +353,8 @@
     var sections = all(".stage-section");
     var triggers = all(".stage-trigger");
 
-    /* The skill-tree map is a canvas far wider and taller than its box, so a
-       fresh stage would otherwise open on an empty corner of the tree. Park
-       the scroll on the middle of what this stage allocates. Nothing is built
-       or measured from data here: it reads the laid-out DOM. */
-    var FIT_PAD = 40;   /* px of air around the allocated cluster */
-    var FIT_NODE = 60;  /* the largest plate, so the bounds include the art */
-    function centreMap(section) {
-      all(".tmap-scroll", section).forEach(function (box) {
-        var canvas = box.querySelector(".tcanvas");
-        /* a box inside a hidden tab panel has no layout yet: leave it alone
-           and centre it when its tab is opened */
-        if (!canvas || !box.clientWidth) { return; }
-        if (box.getAttribute("data-centred") === "1") { return; }
-        var lit = all(".tn.lit", canvas);
-        var zoom = parseFloat(window.getComputedStyle(canvas).getPropertyValue("--tz")) || 1;
-        var x = canvas.offsetWidth / 2;
-        var y = canvas.offsetHeight / 2;
-        if (lit.length) {
-          /* the allocated cluster's bounds in unzoomed canvas units (the
-             generator's --x/--y), then the view opens on its centre at the
-             canvas's own zoom. The plates keep the reference's size: an
-             endgame allocation spans the whole tree, and shrinking it to fit
-             would put the skill plates under the reference's 56-60px. Only a
-             cluster that fits at 100% (plus FIT_PAD of air) is guaranteed to
-             be wholly in view; the rest opens on its middle. */
-          var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-          lit.forEach(function (node) {
-            var nx = parseFloat(node.style.getPropertyValue("--x"));
-            var ny = parseFloat(node.style.getPropertyValue("--y"));
-            if (isNaN(nx) || isNaN(ny)) { return; }
-            minX = Math.min(minX, nx);
-            maxX = Math.max(maxX, nx);
-            minY = Math.min(minY, ny);
-            maxY = Math.max(maxY, ny);
-          });
-          if (isFinite(minX)) {
-            /* the middle of the allocation's bounds can be an empty stretch
-               between two clusters, so the view opens on the median lit
-               node instead: always inside a cluster the build actually uses */
-            var xs = [], ys = [];
-            lit.forEach(function (node) {
-              var nx = parseFloat(node.style.getPropertyValue("--x"));
-              var ny = parseFloat(node.style.getPropertyValue("--y"));
-              if (!isNaN(nx) && !isNaN(ny)) { xs.push(nx); ys.push(ny); }
-            });
-            xs.sort(function (a, b) { return a - b; });
-            ys.sort(function (a, b) { return a - b; });
-            var mx = xs[Math.floor(xs.length / 2)], my = ys[Math.floor(ys.length / 2)];
-            /* ... and on the lit node nearest that point, which is a real
-               plate rather than a spot between two clusters */
-            var best = null, bestD = Infinity;
-            lit.forEach(function (node) {
-              var nx = parseFloat(node.style.getPropertyValue("--x"));
-              var ny = parseFloat(node.style.getPropertyValue("--y"));
-              var d = (nx - mx) * (nx - mx) + (ny - my) * (ny - my);
-              if (!isNaN(d) && d < bestD) { bestD = d; best = [nx, ny]; }
-            });
-            if (best) { mx = best[0]; my = best[1]; }
-            x = mx * zoom;
-            y = my * zoom;
-            /* a cluster small enough to fit is pinned to its top-left with
-               the padding, so nothing allocated sits off the first screen */
-            var w = (maxX - minX + FIT_NODE) * zoom + 2 * FIT_PAD;
-            var h = (maxY - minY + FIT_NODE) * zoom + 2 * FIT_PAD;
-            if (w <= box.clientWidth && h <= box.clientHeight) {
-              x = (minX - FIT_NODE / 2) * zoom - FIT_PAD + box.clientWidth / 2;
-              y = (minY - FIT_NODE / 2) * zoom - FIT_PAD + box.clientHeight / 2;
-            }
-          }
-        }
-        box.scrollLeft = Math.max(0, x - box.clientWidth / 2);
-        box.scrollTop = Math.max(0, y - box.clientHeight / 2);
-        box.setAttribute("data-centred", "1");
-      });
-    }
+    /* the skill-tree planner fits itself to the stage's allocation (its
+       `data-fit` box) the moment its section has layout: see wirePlanner */
 
     function hasStage(key) {
       return sections.some(function (section) {
@@ -438,7 +365,6 @@
     function applyStage(key) {
       sections.forEach(function (section) {
         section.hidden = section.getAttribute("data-stage") !== key;
-        if (!section.hidden) { centreMap(section); }
       });
       triggers.forEach(function (trigger) {
         trigger.hidden = trigger.getAttribute("data-stage") !== key;
@@ -504,7 +430,6 @@
         panel.hidden = panel.getAttribute("data-tab") !== tabs[index].getAttribute("data-tab");
         if (!panel.hidden) {
           all(".stage-section", panel).forEach(function (section) {
-            if (!section.hidden) { centreMap(section); }
           });
         }
       });
@@ -1517,44 +1442,6 @@
      the canvases stay usable with a keyboard, on a phone, and with this file
      absent entirely. */
   (function viewports() {
-    var MIN = 0.4, MAX = 2.5, STEP = 0.2;
-
-    function clamp(z) { return Math.min(MAX, Math.max(MIN, Math.round(z * 100) / 100)); }
-
-    /* --- drag to pan: scrollLeft/scrollTop, so native scrolling still owns
-       the axis and momentum, focus and keyboard paging keep working --- */
-    function dragToPan(box) {
-      var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0;
-      box.addEventListener("pointerdown", function (event) {
-        /* let the controls, links and focusable node plates behave normally */
-        if (event.button !== 0 || event.target.closest("a, button, input")) { return; }
-        live = true;
-        id = event.pointerId;
-        sx = event.clientX;
-        sy = event.clientY;
-        ox = box.scrollLeft;
-        oy = box.scrollTop;
-        box.classList.add("dragging");
-      });
-      box.addEventListener("pointermove", function (event) {
-        if (!live || event.pointerId !== id) { return; }
-        var dx = event.clientX - sx, dy = event.clientY - sy;
-        if (!box.hasPointerCapture(id) && Math.abs(dx) + Math.abs(dy) > 4) {
-          try { box.setPointerCapture(id); } catch (err) { /* not capturable */ }
-        }
-        box.scrollLeft = ox - dx;
-        box.scrollTop = oy - dy;
-      });
-      function stop(event) {
-        if (!live || (event && event.pointerId !== id)) { return; }
-        live = false;
-        box.classList.remove("dragging");
-        try { box.releasePointerCapture(id); } catch (err) { /* already gone */ }
-      }
-      box.addEventListener("pointerup", stop);
-      box.addEventListener("pointercancel", stop);
-    }
-
     /* --- fullscreen: the API when it is granted, a fixed overlay when not --- */
     function wireFullscreen(view, btn) {
       /* the reference's bar draws the button as an icon; the label then
@@ -1622,49 +1509,6 @@
       input.addEventListener("input", apply);
       input.addEventListener("search", apply);
       apply();
-    }
-
-    /* --- zoom: one CSS custom property drives the whole canvas geometry --- */
-    function wireZoom(view, box, target, prop, base) {
-      /* null until the first press: the fitted opening view (centreMap in
-         buildPage) may set the property after this runs, so the stepper
-         reads the live value the first time rather than assuming 100% */
-      var zoom = null;
-      var label = view.querySelector("[data-zoomlabel]");
-      function current() {
-        if (zoom !== null) { return zoom; }
-        var live = parseFloat(window.getComputedStyle(target).getPropertyValue(prop));
-        return (isNaN(live) || !base) ? 1 : live / base;
-      }
-      function paint() {
-        /* keep whatever was in the middle of the box in the middle of the box:
-           zooming a canvas that then jumps to a corner loses the reader's place */
-        var w = box.scrollWidth - box.clientWidth;
-        var h = box.scrollHeight - box.clientHeight;
-        var fx = w > 0 ? (box.scrollLeft + box.clientWidth / 2) / box.scrollWidth : 0.5;
-        var fy = h > 0 ? (box.scrollTop + box.clientHeight / 2) / box.scrollHeight : 0.5;
-        target.style.setProperty(prop, String(zoom * base));
-        if (label) { label.textContent = Math.round(zoom * 100) + "%"; }
-        box.scrollLeft = Math.max(0, fx * box.scrollWidth - box.clientWidth / 2);
-        box.scrollTop = Math.max(0, fy * box.scrollHeight - box.clientHeight / 2);
-      }
-      function by(delta) { zoom = clamp(current() + delta); paint(); }
-      Array.prototype.slice.call(view.querySelectorAll("[data-zoom]"))
-        .forEach(function (btn) {
-          var kind = btn.getAttribute("data-zoom");
-          btn.addEventListener("click", function () {
-            if (kind === "reset") { zoom = 1; paint(); }
-            else { by(kind === "in" ? STEP : -STEP); }
-          });
-        });
-      /* ctrl/meta + wheel is the trackpad pinch gesture; a bare wheel is left
-         alone so the page still scrolls past a canvas on the way down */
-      box.addEventListener("wheel", function (event) {
-        if (!event.ctrlKey && !event.metaKey) { return; }
-        event.preventDefault();
-        by(event.deltaY < 0 ? STEP : -STEP);
-      }, { passive: false });
-      if (label) { label.textContent = Math.round(current() * 100) + "%"; }
     }
 
     function wireToggle(btn, target, cls) {
@@ -1862,18 +1706,27 @@
       });
     });
 
-    /* --- the mercenary planner (owner defect): the paragon's mechanics on
-       a viewport holding one tree -- opens fitted and centred, drag or the
-       arrow keys pan, wheel / +/- / the corner stepper zoom, 0 resets --- */
-    all("[data-mview]").forEach(function (view) {
-      var wrap = view.querySelector(".mwrap");
-      var planner = view.querySelector("[data-mplanner]");
-      if (!wrap || !planner) { return; }
+    /* --- one planner for three trees (the mercenary's, the class skill
+       tree, every war plan): the paragon's mechanics on a viewport holding
+       one canvas -- opens fitted (to the canvas's `data-fit` box when the
+       generator wrote one, else to the whole canvas) and centred, drag or
+       the arrow keys pan, wheel / +/- / the corner stepper zoom, 0 refits.
+       The wrapper is watched for size changes, so a tree inside a hidden
+       plan pane or a fullscreen frame fits itself the moment it is shown. --- */
+    function wirePlanner(view, wrap, planner) {
       var label = view.querySelector("[data-zoomlabel]");
       var tw = parseFloat(planner.style.getPropertyValue("--tw")) || 1;
       var th = parseFloat(planner.style.getPropertyValue("--th")) || 1;
-      var PMIN = 0.3, PMAX = 2.5, PAN = 60;
+      var PMIN = 0.2, PMAX = 2.5, PAN = 60;
       var scale = 1, tx = 0, ty = 0, framed = false;
+      var box = null;
+      var fitAttr = (planner.getAttribute("data-fit") || "").split(" ").map(parseFloat);
+      if (fitAttr.length === 4 && fitAttr.every(function (n) { return !isNaN(n); })
+          && fitAttr[2] > fitAttr[0] && fitAttr[3] > fitAttr[1]) {
+        box = { x: fitAttr[0], y: fitAttr[1], w: fitAttr[2] - fitAttr[0], h: fitAttr[3] - fitAttr[1] };
+      } else {
+        box = { x: 0, y: 0, w: tw, h: th };
+      }
 
       function paint() {
         planner.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
@@ -1882,10 +1735,10 @@
       function fit() {
         var w = wrap.clientWidth, h = wrap.clientHeight;
         if (!w || !h) { return; }
-        scale = Math.min(1, (w - 40) / tw, (h - 40) / th);
+        scale = Math.min(1, (w - 40) / box.w, (h - 40) / box.h);
         scale = Math.max(PMIN, Math.round(scale * 100) / 100);
-        tx = (w - tw * scale) / 2;
-        ty = (h - th * scale) / 2;
+        tx = (w - box.w * scale) / 2 - box.x * scale;
+        ty = (h - box.h * scale) / 2 - box.y * scale;
         paint();
       }
       function clampScale(z) { return Math.min(PMAX, Math.max(PMIN, Math.round(z * 100) / 100)); }
@@ -1899,15 +1752,32 @@
       }
       function zoomCentre(factor) { zoomAt(factor, wrap.clientWidth / 2, wrap.clientHeight / 2); }
 
+      var lastW = 0, lastH = 0;
+      /* the class tree opens as the reference does: at 1:1 (60% on a
+         narrow screen) centred on the main cluster's hub, whose position the
+         generator wrote in data-open-at; Reset, 0 and fullscreen refit */
+      var openAt = (planner.getAttribute("data-open-at") || "").split(" ").map(parseFloat);
+      if (openAt.length !== 2 || openAt.some(function (n) { return isNaN(n); })) { openAt = null; }
+      function openOnCluster() {
+        var w = wrap.clientWidth, h = wrap.clientHeight;
+        scale = w < 480 ? 0.6 : 1;
+        tx = w / 2 - openAt[0] * scale;
+        ty = h / 2 - openAt[1] * scale;
+        paint();
+      }
       function open() {
-        if (framed || !wrap.clientWidth) { return; }
+        if (!wrap.clientWidth) { return; }
+        if (framed && wrap.clientWidth === lastW && wrap.clientHeight === lastH) { return; }
+        var first = !framed;
         framed = true;
-        fit();
+        lastW = wrap.clientWidth;
+        lastH = wrap.clientHeight;
+        if (first && openAt && !document.fullscreenElement && !view.classList.contains("is-fs")) { openOnCluster(); }
+        else { fit(); }
       }
       open();
-      if (!framed && window.ResizeObserver) {
-        var ro = new ResizeObserver(function () { open(); if (framed) { ro.disconnect(); } });
-        ro.observe(wrap);
+      if (window.ResizeObserver) {
+        new ResizeObserver(function () { open(); }).observe(wrap);
       } else if (!framed) {
         document.addEventListener("click", open, true);
       }
@@ -1921,14 +1791,14 @@
       });
       wrap.addEventListener("wheel", function (event) {
         event.preventDefault();
-        var box = wrap.getBoundingClientRect();
-        zoomAt(event.deltaY < 0 ? 1.1 : 1 / 1.1, event.clientX - box.left, event.clientY - box.top);
+        var rect = wrap.getBoundingClientRect();
+        zoomAt(event.deltaY < 0 ? 1.1 : 1 / 1.1, event.clientX - rect.left, event.clientY - rect.top);
       }, { passive: false });
 
       var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
       wrap.addEventListener("pointerdown", function (event) {
         /* a node is a button too (its card's anchor): a drag may start on one */
-        if (event.button !== 0 || event.target.closest("button:not(.mn), a, input")) { return; }
+        if (event.button !== 0 || event.target.closest("button:not(.mn):not(.tn), a, input")) { return; }
         live = true; moved = false;
         id = event.pointerId;
         sx = event.clientX; sy = event.clientY; ox = tx; oy = ty;
@@ -1977,23 +1847,31 @@
         paint();
       });
       document.addEventListener("fullscreenchange", function () { if (framed) { fit(); } });
+    }
+
+    all("[data-mview]").forEach(function (view) {
+      var wrap = view.querySelector(".mwrap");
+      var planner = view.querySelector("[data-mplanner]");
+      if (!wrap || !planner) { return; }
+      wirePlanner(view, wrap, planner);
     });
 
+    /* the class skill tree and every war plan tree: the planner above, plus
+       the tree's own search field and allocation-only toggle where the bar
+       carries them (the war plans' bar searches every tree from one field) */
     all("[data-tview]").forEach(function (view) {
-      var box = view.querySelector(".tmap-scroll");
-      var canvas = view.querySelector(".tcanvas");
-      if (!box || !canvas) { return; }
+      var wrap = view.querySelector(".twrap");
+      var canvas = view.querySelector("[data-tplanner]");
+      if (!wrap || !canvas) { return; }
       var input = view.querySelector("[data-find]");
       var hits = view.querySelector("[data-hits]");
       var nodes = all(".tn", canvas);
       if (input && hits) { wireSearch(input, hits, canvas, nodes, "nodes"); }
-      /* the stylesheet already zooms the canvas out on a narrow screen; read
-         that starting value so the stepper counts from what is on screen */
-      var start = parseFloat(window.getComputedStyle(canvas).getPropertyValue("--tz")) || 1;
-      wireZoom(view, box, canvas, "--tz", start);
-      dragToPan(box);
+      wirePlanner(view, wrap, canvas);
       var fs = view.querySelector("[data-fullscreen]");
-      if (fs) { wireFullscreen(view, fs); }
+      if (fs && fs.closest("[data-bp-frame], [data-tview], [data-pview]") === view) {
+        wireFullscreen(view, fs);
+      }
       wireToggle(view.querySelector("[data-alloconly]"), canvas, "alloc-only");
     });
 
@@ -2031,6 +1909,10 @@
           });
           all("[data-wp-panel]", frame).forEach(function (panel) {
             panel.hidden = panel.getAttribute("data-wp-panel") !== key;
+          });
+          /* the bar's count chip follows the open plan */
+          all("[data-wp-count]", frame).forEach(function (chip) {
+            chip.hidden = chip.getAttribute("data-wp-count") !== key;
           });
         });
       });
