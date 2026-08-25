@@ -1589,41 +1589,178 @@
       });
     }
 
+    /* --- the paragon planner (fix wave 2): ONE viewport per stage holding
+       every board of the build. The planner is a single absolutely
+       positioned box moved with one transform: drag (or the arrow keys) to
+       pan, wheel, +/- or the corner stepper to zoom, the bar's glyph chips
+       to glide to a board. The chip over the viewport always names the board
+       nearest its centre. Nothing here builds markup: the chip is updated
+       with textContent from data the generator put on the boards. --- */
     all("[data-pview]").forEach(function (view) {
-      var box = view.querySelector(".pgrid-scroll");
-      var grid = view.querySelector(".pgrid");
-      var rot = view.querySelector(".pgrid-rot");
-      if (!box || !grid || !rot) { return; }
-      var input = view.querySelector("[data-find]");
-      var hits = view.querySelector("[data-hits]");
-      var nodes = all(".pnode", grid);
-      if (input && hits) { wireSearch(input, hits, grid, nodes, "nodes"); }
-      wireZoom(view, box, grid, "--pz", 1);
-      dragToPan(box);
-      var fs = view.querySelector("[data-fullscreen]");
-      if (fs) { wireFullscreen(view, fs); }
-      var turn = view.querySelector("[data-rotate]");
-      if (turn) {
-        turn.addEventListener("click", function () {
-          var on = turn.getAttribute("aria-pressed") !== "true";
-          turn.setAttribute("aria-pressed", on ? "true" : "false");
-          rot.setAttribute("data-rot", on ? "45" : "0");
-          /* A rotated box overflows its layout box, and overflow above and to
-             the left of a scroll container cannot be scrolled to. So give the
-             wrapper the rotated bounding box as its own size and let it centre
-             the grid: rotating a W x H box by 45deg gives a square bounding
-             box of (W + H) * cos(45deg) a side, and the stylesheet then scales
-             that by cos(45deg) again -- so the side is (W + H) / 2. */
-          if (!on) {
-            rot.style.width = "";
-            rot.style.height = "";
-            return;
-          }
-          var side = (grid.offsetWidth + grid.offsetHeight) / 2;
-          rot.style.width = side + "px";
-          rot.style.height = side + "px";
+      var wrap = view.querySelector(".pwrap");
+      var planner = view.querySelector("[data-pplanner]");
+      if (!wrap || !planner) { return; }
+      var boards = all(".pboard", planner);
+      var frame = view.closest("[data-bp-frame]");
+      var chips = frame ? all(".bp-glyph-group[data-board]", frame) : [];
+      var jumps = frame ? all(".pnote-jump[data-board]", frame) : [];
+      var chipOrd = view.querySelector("[data-chip-ord]");
+      var chipName = view.querySelector("[data-chip-name]");
+      var chipGlyph = view.querySelector("[data-chip-glyph]");
+      var label = view.querySelector("[data-zoomlabel]");
+      var BOARD = 1255, PAD = 10, OPEN = 0.8, PMIN = 0.25, PMAX = 2, PAN = 60;
+      var scale = OPEN, tx = 0, ty = 0, current = -1, framed = false;
+
+      function boardXY(board) {
+        var bx = parseFloat(board.style.getPropertyValue("--bx")) || 0;
+        var by = parseFloat(board.style.getPropertyValue("--by")) || 0;
+        return [bx * BOARD, by * BOARD];
+      }
+      function nearest() {
+        var cx = wrap.clientWidth / 2, cy = wrap.clientHeight / 2;
+        var best = -1, bestD = Infinity;
+        boards.forEach(function (board, i) {
+          var xy = boardXY(board);
+          var x = (xy[0] + BOARD / 2) * scale + tx;
+          var y = (xy[1] + BOARD / 2) * scale + ty;
+          var d = (x - cx) * (x - cx) + (y - cy) * (y - cy);
+          if (d < bestD) { bestD = d; best = i; }
+        });
+        return best;
+      }
+      function nameBoard(i) {
+        if (i === current || !boards[i]) { return; }
+        current = i;
+        var board = boards[i];
+        if (chipOrd) { chipOrd.textContent = board.getAttribute("data-ord") || String(i + 1); }
+        if (chipName) { chipName.textContent = board.getAttribute("data-board-name") || ""; }
+        if (chipGlyph) {
+          var glyph = board.getAttribute("data-glyph") || "";
+          chipGlyph.textContent = glyph ? "(" + glyph + ")" : "";
+        }
+        chips.forEach(function (chip) {
+          chip.setAttribute("aria-pressed", chip.getAttribute("data-board") === String(i) ? "true" : "false");
         });
       }
+      function paint(glide) {
+        planner.classList.toggle("gliding", !!glide);
+        planner.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
+        if (label) { label.textContent = Math.round(scale * 100) + "%"; }
+        nameBoard(nearest());
+      }
+      /* the reference's framing: the board centred, its top edge just under
+         the viewport's top, so the chip sits over the board's frame */
+      function frameBoard(i, glide) {
+        var board = boards[i];
+        if (!board || !wrap.clientWidth) { return; }
+        var xy = boardXY(board);
+        tx = wrap.clientWidth / 2 - (xy[0] + BOARD / 2) * scale;
+        ty = PAD - xy[1] * scale;
+        paint(glide);
+      }
+      function clampScale(z) { return Math.min(PMAX, Math.max(PMIN, Math.round(z * 100) / 100)); }
+      /* zoom about a viewport point, so what is under the pointer stays put */
+      function zoomAt(factor, px, py) {
+        var next = clampScale(scale * factor);
+        if (next === scale) { return; }
+        tx = px - (px - tx) * (next / scale);
+        ty = py - (py - ty) * (next / scale);
+        scale = next;
+        paint(false);
+      }
+      function zoomCentre(factor) { zoomAt(factor, wrap.clientWidth / 2, wrap.clientHeight / 2); }
+      function reset() { scale = OPEN; frameBoard(0, true); }
+
+      /* opening view: the start board, once the viewport has a size (a
+         hidden tab panel has none yet) */
+      function open() {
+        if (framed || !wrap.clientWidth) { return; }
+        framed = true;
+        frameBoard(0, false);
+      }
+      open();
+      if (!framed && window.ResizeObserver) {
+        var ro = new ResizeObserver(function () { open(); if (framed) { ro.disconnect(); } });
+        ro.observe(wrap);
+      } else if (!framed) {
+        document.addEventListener("click", open, true);
+      }
+
+      all("[data-zoom]", view).forEach(function (btn) {
+        var kind = btn.getAttribute("data-zoom");
+        btn.addEventListener("click", function () {
+          if (kind === "reset") { reset(); }
+          else { zoomCentre(kind === "in" ? 1.2 : 1 / 1.2); }
+        });
+      });
+      wrap.addEventListener("wheel", function (event) {
+        event.preventDefault();
+        var box = wrap.getBoundingClientRect();
+        zoomAt(event.deltaY < 0 ? 1.1 : 1 / 1.1, event.clientX - box.left, event.clientY - box.top);
+      }, { passive: false });
+
+      /* drag to pan */
+      var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
+      wrap.addEventListener("pointerdown", function (event) {
+        if (event.button !== 0 || event.target.closest("button, a, input")) { return; }
+        live = true; moved = false;
+        id = event.pointerId;
+        sx = event.clientX; sy = event.clientY; ox = tx; oy = ty;
+        planner.classList.remove("gliding");
+      });
+      wrap.addEventListener("pointermove", function (event) {
+        if (!live || event.pointerId !== id) { return; }
+        var dx = event.clientX - sx, dy = event.clientY - sy;
+        if (!moved && Math.abs(dx) + Math.abs(dy) > 4) {
+          moved = true;
+          wrap.classList.add("dragging");
+          try { wrap.setPointerCapture(id); } catch (err) { /* not capturable */ }
+        }
+        if (!moved) { return; }
+        tx = ox + dx; ty = oy + dy;
+        paint(false);
+      });
+      function stop(event) {
+        if (!live || (event && event.pointerId !== id)) { return; }
+        live = false;
+        wrap.classList.remove("dragging");
+        try { wrap.releasePointerCapture(id); } catch (err) { /* already gone */ }
+      }
+      wrap.addEventListener("pointerup", stop);
+      wrap.addEventListener("pointercancel", stop);
+
+      /* keyboard: arrows pan, +/- zoom, 0 resets */
+      wrap.addEventListener("keydown", function (event) {
+        var key = event.key;
+        var handled = true;
+        if (key === "ArrowLeft") { tx += PAN; }
+        else if (key === "ArrowRight") { tx -= PAN; }
+        else if (key === "ArrowUp") { ty += PAN; }
+        else if (key === "ArrowDown") { ty -= PAN; }
+        else if (key === "+" || key === "=") { zoomCentre(1.2); return; }
+        else if (key === "-" || key === "_") { zoomCentre(1 / 1.2); return; }
+        else if (key === "0") { reset(); return; }
+        else { handled = false; }
+        if (!handled) { return; }
+        event.preventDefault();
+        paint(false);
+      });
+
+      /* the glyph chips and the notes' board buttons glide to their board */
+      chips.concat(jumps).forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var i = parseInt(btn.getAttribute("data-board"), 10);
+          if (isNaN(i)) { return; }
+          if (!framed) { open(); }
+          frameBoard(i, true);
+          if (btn.classList.contains("pnote-jump")) { wrap.focus(); }
+        });
+      });
+      /* a stage or tab that was hidden when the page loaded opens on the start
+         board the first time it gets a size (the fallback above) */
+      document.addEventListener("fullscreenchange", function () {
+        if (current >= 0) { frameBoard(current, false); }
+      });
     });
 
     all("[data-tview]").forEach(function (view) {

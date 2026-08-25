@@ -1658,83 +1658,14 @@ a.build-card { text-decoration: none; }
 .stage-hint .stage-jump:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------------------- visual paragon board grids ---------------------- */
-.pboard {
-  min-width: 0;
-  padding: var(--s-3) var(--s-3) var(--s-3);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-top: 2px solid hsl(var(--cls) / 0.55);
-  border-radius: var(--r-lg);
-  box-shadow: var(--e-1);
-}
-.pboard + .pboard { margin-top: var(--s-3); }
-.pboard .b-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2) var(--s-3);
-  margin-bottom: var(--s-2);
-}
-.pboard .b-head .b-ord { flex: 0 0 auto; }
-.pboard .b-head .b-name { margin: 0; flex: 1 1 8rem; min-width: 0; }
+
 .chip.glyph .icon { --icon-size: 1.25rem; }
 .chip.glyph { padding-left: var(--s-1); }
 
-.pgrid-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: var(--s-1) var(--s-micro) var(--s-2);
-  background:
-    radial-gradient(120% 90% at 50% 0%, hsl(var(--cls) / 0.09), transparent 70%),
-    var(--bg-deep);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  overscroll-behavior: contain;
-}
-.pgrid {
-  --cell: 1.7rem;
-  display: grid;
-  grid-template-columns: repeat(var(--w), var(--cell));
-  grid-auto-rows: var(--cell);
-  gap: var(--s-micro);
-  width: max-content;
-  margin: 0 auto;
-}
-.pgrid > * { width: var(--cell); height: var(--cell); }
-.pe { display: block; }
-.pnode {
-  display: block;
-  border: 1px solid var(--line);
-  background: var(--surface-2);
-  overflow: hidden;
-}
-.pnode img { display: block; width: 100%; height: 100%; object-fit: contain; }
 /* a node the icon manifest has no art for stays a blank plate */
-.pnode.ph {
-  background:
-    radial-gradient(58% 58% at 50% 50%, var(--fg-dim) 0%, transparent 62%),
-    var(--surface-2);
-  opacity: 0.8;
-}
-.pnode.r-magic { border-color: hsl(var(--t-b) / 0.6); }
-.pnode.r-rare { border-color: hsl(var(--t-s) / 0.65); }
-.pnode.r-legendary {
-  border-color: color-mix(in srgb, var(--accent-2) 70%, transparent);
-  box-shadow: 0 0 10px -3px var(--accent-2);
-}
-.pnode.k-socket {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px -3px var(--accent), inset 0 0 10px -6px var(--accent);
-}
-.pnode.k-start { border-color: var(--line-strong); }
+
 /* a board with a recorded node path dims everything off the path */
-.pgrid.has-path .pnode { opacity: 0.24; filter: grayscale(1); }
-.pgrid.has-path .pnode.taken {
-  opacity: 1;
-  filter: none;
-  border-color: hsl(var(--cls));
-  box-shadow: 0 0 12px -3px hsl(var(--cls) / 0.9);
-}
+
 .pgrid-legend {
   display: flex;
   flex-wrap: wrap;
@@ -1758,14 +1689,6 @@ a.build-card { text-decoration: none; }
 .pgrid-legend .sw.taken { border-color: hsl(var(--cls)); box-shadow: 0 0 8px -2px hsl(var(--cls)); }
 .pgrid-legend .sw.socket { border-color: var(--accent); box-shadow: 0 0 8px -2px var(--accent); }
 .pgrid-legend .sw.legendary { border-color: var(--accent-2); box-shadow: 0 0 8px -2px var(--accent-2); }
-.pboard .b-note { margin: var(--s-2) 0 0; font-size: 0.86rem; color: var(--fg-soft); }
-.pboard .b-unmapped {
-  margin: var(--s-2) 0 0;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  color: var(--fg-dim);
-}
 
 /* ==========================================================================
    Task 25: the Codex explorer and the Boss Loot browser.
@@ -2275,7 +2198,7 @@ a.build-card { text-decoration: none; }
 }
 
 @media (max-width: 44rem) {
-  .pgrid { --cell: 1.15rem; }
+
   .skill-row.upgrade { margin-left: var(--s-4); }
   /* the map keeps its gamedata geometry, zoomed out with matching plates so
      a phone screen sees more of the tree per pan */
@@ -2430,9 +2353,7 @@ a.build-card { text-decoration: none; }
 /* --------------------------- fullscreen wrapper -------------------------- */
 /* Two paths, same look: the Fullscreen API when the browser grants it, and a
    fixed-position fallback (`is-fs`) when it refuses or is unavailable. */
-.pboard-view,
 .tview { position: relative; }
-.pboard-view.is-fs,
 .tview.is-fs {
   position: fixed;
   inset: 0;
@@ -2442,16 +2363,12 @@ a.build-card { text-decoration: none; }
   overflow: auto;
   background: var(--bg);
 }
-.pboard-view:fullscreen,
 .tview:fullscreen {
   padding: var(--s-2);
   overflow: auto;
   background: var(--bg);
 }
-.pboard-view.is-fs .pgrid-scroll,
-.pboard-view:fullscreen .pgrid-scroll,
-.tview.is-fs .tmap-scroll,
-.tview:fullscreen .tmap-scroll { max-height: calc(100vh - 5rem); }
+.tview.is-fs .tmap-scroll,.tview:fullscreen .tmap-scroll { max-height: calc(100vh - 5rem); }
 
 /* --------------------- paragon board: zoom and rotation ------------------ */
 /* --pz is the board's zoom. It scales the cell *size* rather than applying a
@@ -2459,13 +2376,7 @@ a.build-card { text-decoration: none; }
    working -- and the icons stay crisp because they are re-laid-out, not
    stretched. Cell and gutter are off-ramp on purpose for the same reason:
    both are multiplied by --pz, so they are a ratio of the cell, not a step. */
-.pgrid { --pz: 1; --cell: calc(2.3rem * var(--pz)); gap: calc(0.16rem * var(--pz)); }
-.pgrid-scroll { overflow: auto; max-height: min(78vh, 44rem); }
-.pgrid-rot {
-  width: max-content;
-  margin: 0 auto;
-  transition: transform var(--dur-2) var(--ease);
-}
+
 /* The reference draws its boards upright -- its tiles measure as unrotated 40px
    squares -- so upright is the default. This is the in-game diamond on demand:
    the grid turns 45 degrees and every node's artwork counter-rotates back to
@@ -2477,35 +2388,16 @@ a.build-card { text-decoration: none; }
    inside it. That keeps the whole diamond inside a scrollable layout box: a
    transform alone would spill above and to the left, where no scrollbar can
    reach. */
-.pgrid-rot[data-rot="45"] { position: relative; }
-.pgrid-rot[data-rot="45"] > .pgrid {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg) scale(0.7071);
-}
-.pgrid-rot[data-rot="45"] .pnode img,
-.pgrid-rot[data-rot="45"] .pnode.ph { transform: rotate(-45deg); }
 
 /* ------------------------- the glyph radius overlay ---------------------- */
 /* A Manhattan diamond around the socket: `in-rad` tints the region, `rad-edge`
    draws its outline at exactly the radius. Both classes land on empty cells too
    so the ring stays closed where the board has a hole. Radius comes from
    knowledge/paragon-notes.md; it is never guessed here. */
-.pgrid .in-rad { position: relative; }
-.pgrid .pe.in-rad { background: hsl(var(--cls) / 0.10); }
-.pgrid .rad-edge {
-  outline: 2px dashed hsl(var(--cls) / 0.85);
-  outline-offset: -2px;
-  z-index: 3;
-}
-.pgrid .pe.rad-edge { background: hsl(var(--cls) / 0.20); }
+
 /* nodes in range stay readable on a board that dims everything off the path,
    and the ring itself never dims -- an overlay you cannot see is not an overlay */
-.pgrid.has-path .pnode.in-rad { opacity: 0.44; }
-.pgrid.has-path .pnode.rad-edge { opacity: 0.78; filter: none; }
-.pgrid.has-path .pnode.in-rad.taken,
-.pgrid.has-path .pnode.rad-edge.taken { opacity: 1; }
+
 .pgrid-legend .sw.rad {
   border-style: dashed;
   border-color: hsl(var(--cls) / 0.75);
@@ -2519,11 +2411,7 @@ a.build-card { text-decoration: none; }
 
 /* the attachment gate is a real grid node in the feed; give it the weight the
    reference gives it, so the join between boards reads at a glance */
-.pnode.k-gate {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: 0 0 12px -4px var(--accent);
-}
+
 .chip.gate {
   border-color: var(--accent);
   color: var(--fg-soft);
@@ -2560,22 +2448,18 @@ a.build-card { text-decoration: none; }
 /* ------------------------------ node search ------------------------------ */
 /* The search dims everything that does not match and rings what does. It only
    ever adds and removes class names -- no markup is built from the query. */
-.tcanvas.searching .tn,
-.pgrid.searching .pnode { opacity: 0.12; filter: grayscale(1); }
-.tcanvas.searching .tn.hit,
-.pgrid.searching .pnode.hit {
+.tcanvas.searching .tn { opacity: 0.12; filter: grayscale(1); }
+.tcanvas.searching .tn.hit {
   opacity: 1;
   filter: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent-soft), 0 0 16px -2px var(--accent);
   z-index: 5;
 }
-.pgrid.searching .pe { opacity: 0.25; }
 
 /* dragging to pan: while a drag is live the cursor says so and text selection
    is suppressed so the pointer does not paint a selection across the canvas */
-.tmap-scroll.dragging,
-.pgrid-scroll.dragging { cursor: grabbing; user-select: none; }
+.tmap-scroll.dragging { cursor: grabbing; user-select: none; }
 
 @media (max-width: 44rem) {
   /* phones get the rail wrapped and the canvas shorter; panning is plain
@@ -2583,8 +2467,7 @@ a.build-card { text-decoration: none; }
   .pv-controls { gap: var(--s-1); padding: var(--s-1); }
   .pv-find { flex: 1 1 100%; }
   .pv-btn { padding: var(--s-2) var(--s-2); font-size: 0.6rem; }
-  .pgrid { --cell: calc(1.6rem * var(--pz)); }
-  .pgrid-scroll { max-height: min(60vh, 26rem); }
+
 }
 
 /* ======================================================================== */
@@ -2958,9 +2841,7 @@ a.build-card { text-decoration: none; }
 /* headings never leave a single word on the last line; prose never leaves a
    widow. Both degrade to nothing on browsers that do not know them. */
 h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
-.lede, .prose, .news-sum, .upd-text, .feed-note, .build-card .summary,
-.class-row .why, .boss .blurb, .cx-text, .board .b-note,
-.pboard .b-note, .merc .note, .mskill .note, .section-note {
+.lede,.prose,.news-sum,.upd-text,.feed-note,.build-card .summary,.class-row .why,.boss .blurb,.cx-text,.board .b-note,.merc .note,.mskill .note,.section-note {
   text-wrap: pretty;
 }
 /* running prose stops at a comfortable measure instead of spanning the frame */
@@ -3131,8 +3012,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
    5. Odds and ends the guidelines ask for
    -------------------------------------------------------------------------- */
 /* a full-screen graph is a modal surface: it must not scroll the page behind */
-.pboard-view.is-fs, .tview.is-fs,
-.pboard-view:fullscreen, .tview:fullscreen {
+.tview.is-fs,.tview:fullscreen {
   overscroll-behavior: contain;
   padding: max(var(--s-3), env(safe-area-inset-top))
            max(var(--s-3), env(safe-area-inset-right))
@@ -3141,7 +3021,7 @@ h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
 }
 /* while a canvas is being dragged, nothing inside it may be selected or
    dragged away as a ghost image */
-.tmap-scroll.dragging *, .pgrid-scroll.dragging * {
+.tmap-scroll.dragging * {
   -webkit-user-drag: none;
   user-select: none;
 }
@@ -3287,12 +3167,10 @@ body {
    --raised to --surface, and the 1px --sheen highlight that --e-1..--e-3 now
    carry. That is what makes a card look lit from above instead of printed.
    -------------------------------------------------------------------------- */
-.build-card, .news, .boss, .pboard, .board, .merc,
-.dcard, .skill-row, .alloc li, .mskill, .runs li, .callout,
-.whats-new, .ptr-banner, .empty {
+.build-card,.news,.boss,.board,.merc,.dcard,.skill-row,.alloc li,.mskill,.runs li,.callout,.whats-new,.ptr-banner,.empty {
   background-image: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
 }
-.build-card, .news, .boss, .pboard, .item-focus, .codex-detail, .filters {
+.build-card,.news,.boss,.item-focus,.codex-detail,.filters {
   border-radius: var(--r-lg);
 }
 .board, .merc, .dcard, .skill-row,
@@ -4701,7 +4579,6 @@ html:has(.build-page), body:has(.build-page) {
 .bp-sockets > summary:hover { color: var(--d4-fg); }
 .bp-sockets .sockets { margin-top: 10px; }
 
-
 /* ------------------- the tab panels' control bar (spec 3.4) -------------- */
 /* Measured from the reference's .skill__tree__header: the bar sits on the
    panel (#1a1b1f), every control on it is a 44px #26272d box with a 5px
@@ -4731,7 +4608,7 @@ html:has(.build-page), body:has(.build-page) {
   border: 0;
   border-radius: 0;
 }
-.build-page .pboard-view .pv-controls { margin-bottom: 10px; }
+
 /* exactly one control bar per tab (fix round 6, #14): the zoom stepper is
    a fullscreen-only control, and a rail nested inside a frame (a board's,
    a mercenary tree's, a war plan tree's) only appears inside that frame's
@@ -4925,62 +4802,6 @@ html:has(.build-page), body:has(.build-page) {
 /* the paragon boards: no card frame inside the panel, and the reference's
    board chip drawn over the canvas -- the index in its box, the name, the
    glyph in gold (fix round 6, #12) */
-.build-page .pboard {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
-.build-page .pboard + .pboard { margin-top: 20px; }
-.build-page .pboard-view { position: relative; }
-.build-page .pboard .b-head {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  z-index: 4;
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  max-width: calc(100% - 20px);
-  margin: 0;
-  padding: 5px 10px 5px 5px;
-  border-radius: 5px;
-  background: rgba(26, 27, 31, 0.85);
-  font-family: var(--d4-font);
-  font-size: 16px;
-  color: var(--d4-fg);
-  pointer-events: none;
-}
-.build-page .pboard .b-head .b-ord {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 34px;
-  height: 22px;
-  padding: 0 6px;
-  border: 1px solid var(--d4-line);
-  border-radius: 3px;
-  background: var(--d4-panel-2);
-  font-size: 14px;
-  color: var(--d4-fg-80);
-}
-.build-page .pboard .b-head .b-name { flex: 0 1 auto; font-size: 16px; color: var(--d4-fg); }
-.build-page .pboard .b-head .b-glyph { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; color: var(--d4-gold); }
-.build-page .pboard .b-head .b-glyph .icon { --icon-size: 20px; background: none; border: 0; box-shadow: none; }
-.build-page .pboard .b-head .chip.gate {
-  padding: 0;
-  border: 0;
-  background: none;
-  font-family: var(--d4-font);
-  font-size: 13px;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--d4-fg-40);
-}
-.build-page .pboard .pgrid-scroll { padding-top: 48px; border: 0; border-radius: 5px; }
-.build-page .pboard .b-note { font-size: 14px; color: var(--d4-fg-60); }
 
 /* the canvas area under the bar */
 .build-page .bp-canvas {
@@ -5042,4 +4863,297 @@ html:has(.build-page), body:has(.build-page) {
   .bp-runes { width: auto; margin: 10px auto 0; }
   .bp-stat-group { width: 100%; margin: 7.5px 0; }
   .bp-season { position: static; width: auto; margin: 0 0 15px; transform: none; }
+}
+
+/* ============== Paragon: one viewport, every board (fix wave 2) ============ */
+/* Measured from the reference: the panel is 952 wide, one 750px-tall viewport
+   under the bar, and inside it an absolutely positioned planner (scale 0.8 to
+   open) holding every board of the build as a connected chain. A board is a
+   1255px square with a 3px #7c2b2b border; tiles are 50px on a 55px pitch,
+   each a 40px ring (2px border, dim until taken) around a 30px icon. The
+   ground is drawn here -- no board image is loaded from anywhere. */
+.build-page .pview {
+  position: relative;
+  width: 100%;
+  max-width: 952px;
+  margin: 0 auto;
+  background: var(--d4-panel);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.build-page .pwrap {
+  position: relative;
+  height: 750px;
+  max-height: 80vh;
+  overflow: hidden;
+  outline: none;
+  background: #0d0e11;
+  cursor: grab;
+  touch-action: none;
+}
+.build-page .pwrap:focus-visible { box-shadow: inset 0 0 0 2px var(--d4-gold); }
+.build-page .pwrap.dragging { cursor: grabbing; user-select: none; }
+.build-page .pwrap.dragging * { pointer-events: none; }
+.build-page .pplanner {
+  --tile: 50px;
+  --pitch: 55px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1255px;
+  height: calc(var(--n) * 1255px);
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.build-page .pplanner.gliding { transition: transform 0.6s var(--ease); }
+.build-page .pboard {
+  position: absolute;
+  width: 1255px;
+  height: 1255px;
+  left: calc(var(--bx) * 1255px);
+  top: calc(var(--by) * 1255px);
+  box-sizing: border-box;
+  border: 3px solid #7c2b2b;
+  background:
+    radial-gradient(70% 70% at 50% 50%, rgba(255, 255, 255, 0.04), transparent 72%),
+    repeating-linear-gradient(37deg, rgba(255, 255, 255, 0.014) 0 5px, transparent 5px 13px),
+    repeating-linear-gradient(-52deg, rgba(0, 0, 0, 0.22) 0 3px, transparent 3px 9px),
+    repeating-radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.012) 0 2px, transparent 2px 7px),
+    #111216;
+}
+.build-page .pboard.unmapped {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+}
+.build-page .pboard.unmapped .b-unmapped {
+  margin: 0;
+  padding: 40px;
+  font-size: 30px;
+  text-align: center;
+}
+.build-page .pnode,
+.build-page .pe {
+  position: absolute;
+  width: var(--tile);
+  height: var(--tile);
+  left: calc(var(--mx) + var(--c) * var(--pitch));
+  top: calc(var(--my) + var(--r) * var(--pitch));
+  box-sizing: border-box;
+}
+.build-page .pnode {
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.38);
+}
+/* the ring: 40px, 2px border, dim until the build takes the node */
+.build-page .pnode::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  opacity: 0.3;
+}
+.build-page .pnode img,
+.build-page .pnode.ph::after {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  opacity: 0.45;
+}
+.build-page .pnode.ph::after {
+  content: "";
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+}
+.build-page .pnode.r-magic::before { border-color: #3d6fd6; }
+.build-page .pnode.r-rare::before { border-color: #d1a781; }
+.build-page .pnode.r-legendary::before { border-color: #d98c3c; opacity: 0.55; }
+.build-page .pnode.k-socket::before {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-color: #d1a781;
+  opacity: 0.7;
+}
+.build-page .pnode.k-gate::before,
+.build-page .pnode.k-start::before { border-color: #d98c3c; border-radius: 6px; opacity: 0.7; }
+.build-page .pnode.taken {
+  border-color: #7c2b2b;
+  background: rgba(124, 43, 43, 0.3);
+  box-shadow: 0 0 0 1px rgba(124, 43, 43, 0.55);
+}
+.build-page .pnode.taken::before { border-color: #7c2b2b; opacity: 1; }
+.build-page .pnode.taken.r-magic::before { border-color: #3d6fd6; }
+.build-page .pnode.taken.r-rare::before { border-color: #d1a781; }
+.build-page .pnode.taken.r-legendary::before,
+.build-page .pnode.taken.k-socket::before { border-color: #d98c3c; }
+.build-page .pnode.taken img,
+.build-page .pnode.taken.ph::after { opacity: 1; }
+/* a board with no recorded path has nothing to dim against */
+.build-page .pboard:not(.has-path) .pnode img,
+.build-page .pboard:not(.has-path) .pnode.ph::after { opacity: 0.75; }
+.build-page .pboard:not(.has-path) .pnode::before { opacity: 0.55; }
+/* the glyph radius: a Manhattan diamond around the socket, drawn on empty
+   cells too so it stays closed; the number is never guessed here */
+.build-page .pnode.in-rad,
+.build-page .pe.in-rad { background-color: rgba(209, 167, 129, 0.10); }
+.build-page .pnode.taken.in-rad { background-color: rgba(124, 43, 43, 0.3); }
+.build-page .rad-edge { outline: 2px dashed rgba(209, 167, 129, 0.8); outline-offset: -2px; z-index: 2; }
+/* search: dim everything, ring the hits */
+.build-page .pgrid.searching .pnode { opacity: 0.18; filter: grayscale(1); }
+.build-page .pgrid.searching .pnode.hit {
+  opacity: 1;
+  filter: none;
+  z-index: 5;
+  box-shadow: 0 0 0 3px var(--d4-gold), 0 0 20px 2px var(--d4-gold);
+}
+.build-page .pgrid.searching .pnode.hit img,
+.build-page .pgrid.searching .pnode.hit::before { opacity: 1; }
+/* the board chip, overlaid top-left: index box, name, glyph in gold */
+.build-page .pchip {
+  position: absolute;
+  z-index: 3;
+  top: 35px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  padding: 0 15px 0 5px;
+  background: rgba(38, 39, 45, 0.94);
+  border-radius: 5px;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+}
+.build-page .pchip .b-ord,
+.build-page .pnotes .b-ord {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 22px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  background: #1f2025;
+  border: 1px solid #444757;
+  border-radius: 3px;
+  font-family: var(--d4-font);
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--d4-fg);
+}
+.build-page .pchip .b-name { font-weight: 400; white-space: nowrap; }
+.build-page .pchip .b-glyph,
+.build-page .pnotes .b-glyph { color: var(--d4-gold); }
+/* the viewport's zoom stepper, in its corner */
+.build-page .pzoom {
+  position: absolute;
+  z-index: 3;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 5px;
+  background: rgba(38, 39, 45, 0.94);
+  border-radius: 5px;
+}
+.build-page .pz-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  font-family: var(--d4-font);
+  font-size: 14px;
+  color: var(--d4-fg-80);
+  cursor: pointer;
+}
+.build-page .pz-btn:hover { background: var(--d4-line); color: var(--d4-fg); }
+.build-page .pz-btn:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: 1px; }
+/* the boards' notes, a small list under the viewport */
+.build-page .pnotes {
+  display: grid;
+  gap: 6px;
+  margin: 15px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--d4-fg-60);
+}
+.build-page .pnotes li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.build-page .pnote-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--d4-fg);
+  cursor: pointer;
+}
+.build-page .pnote-jump:hover .b-name { text-decoration: underline; }
+.build-page .pnotes .chip.gate { font-size: 11px; }
+.build-page .pnotes .b-note { flex: 1 1 100%; padding-left: 42px; }
+.build-page .pradius { margin: 10px 0 0; }
+/* the bar's glyph chips are the board selector */
+.build-page .bp-glyph-group {
+  margin: 0;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.build-page .bp-glyph-group:hover { background: var(--d4-panel-2); }
+.build-page .bp-glyph-group[aria-pressed="true"] {
+  background: var(--d4-panel-2);
+  box-shadow: inset 0 0 0 1px var(--d4-gold);
+}
+.build-page .bp-glyph-group:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: 1px; }
+.build-page .bp-tabframe.is-fs .pview,
+.build-page .bp-tabframe:fullscreen .pview { max-width: none; }
+.build-page .bp-tabframe.is-fs .pwrap,
+.build-page .bp-tabframe:fullscreen .pwrap { height: calc(100vh - 150px); max-height: none; }
+@media (max-width: 44rem) {
+  .build-page .pwrap { height: 60vh; }
+  .build-page .pchip { top: 10px; font-size: 13px; height: 32px; }
+  .build-page .pnotes .b-note { padding-left: 0; }
+}
+
+/* --- the talisman's charm seats: portrait art, whole charm in view ------- */
+/* charm art is 43x64; a square box clips it and `.icon`'s percentage height
+   resolves against an auto grid row, so the box and the image are both
+   given the portrait size outright */
+.bp-charm .charm-icon {
+  --icon-size: 50px;
+  width: 34px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+.bp-charm .charm-icon img {
+  width: 34px;
+  height: 50px;
+  object-fit: contain;
 }
