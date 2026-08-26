@@ -102,6 +102,7 @@
 
     box.addEventListener("keydown", function (event) {
       var items = api.items();
+      if (!items.length) { return; }
       var pos = items.indexOf(document.activeElement);
       if (event.key === "ArrowDown") {
         event.preventDefault();
@@ -294,11 +295,14 @@
           applySection();
         });
         tab.addEventListener("keydown", function (event) {
-          var delta = event.key === "ArrowRight" ? 1
-            : event.key === "ArrowLeft" ? -1 : 0;
-          if (!delta) { return; }
+          var to = null;
+          if (event.key === "ArrowRight") { to = (index + 1) % tabs.length; }
+          else if (event.key === "ArrowLeft") { to = (index - 1 + tabs.length) % tabs.length; }
+          else if (event.key === "Home") { to = 0; }
+          else if (event.key === "End") { to = tabs.length - 1; }
+          if (to === null) { return; }
           event.preventDefault();
-          var next = tabs[(index + delta + tabs.length) % tabs.length];
+          var next = tabs[to];
           state.section = next.getAttribute("data-section");
           applySection();
           next.focus();
@@ -362,7 +366,21 @@
       });
     }
 
+    /* the URL carries the stage and the tab, so the Share button copies
+       the reader's place and a pasted link opens on it. replaceState: a
+       stage or tab is a view of one page, not a page in the history */
+    function syncUrl(stage, tab) {
+      if (!window.history || !window.history.replaceState) { return; }
+      var params = new URLSearchParams(window.location.search);
+      if (stage) { params.set("stage", stage); }
+      var query = params.toString();
+      var hash = tab ? "#" + tab : window.location.hash;
+      window.history.replaceState(null, "",
+        window.location.pathname + (query ? "?" + query : "") + hash);
+    }
+
     function applyStage(key) {
+      syncUrl(key, null);
       sections.forEach(function (section) {
         section.hidden = section.getAttribute("data-stage") !== key;
       });
@@ -421,6 +439,7 @@
     var panels = all(".bpanel");
 
     function selectTab(index) {
+      syncUrl(null, tabs[index].id);
       tabs.forEach(function (tab, i) {
         var on = i === index;
         tab.setAttribute("aria-selected", on ? "true" : "false");
@@ -457,7 +476,12 @@
       });
     });
 
-    if (tabs.length) { selectTab(0); }
+    if (tabs.length) {
+      var wantedTab = window.location.hash.slice(1);
+      var start = 0;
+      tabs.forEach(function (tab, i) { if (tab.id === wantedTab) { start = i; } });
+      selectTab(start);
+    }
   })();
 
   /* ------------------------- in-game item tooltips ------------------------ */
@@ -730,13 +754,20 @@
       if (open.anchor.contains(event.target) || open.card.contains(event.target)) { return; }
       close();
     });
-    window.addEventListener("resize", place);
+    /* a burst of resize/scroll events repositions the card once per frame */
+    var placing = false;
+    function placeSoon() {
+      if (placing || !open) { return; }
+      placing = true;
+      window.requestAnimationFrame(function () { placing = false; place(); });
+    }
+    window.addEventListener("resize", placeSoon);
     document.addEventListener("scroll", function (event) {
       if (!open) { return; }
       /* scrolling inside the card itself must not move it */
       if (event.target && event.target.nodeType === 1 &&
           open.card.contains(event.target)) { return; }
-      place();
+      placeSoon();
     }, true);
   })();
 
@@ -767,8 +798,13 @@
         iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
         iframe.setAttribute("allowfullscreen", "");
         iframe.setAttribute("loading", "lazy");
+        frame.tabIndex = -1;
+        wrap.setAttribute("aria-busy", "true");
+        iframe.addEventListener("load", function () { wrap.removeAttribute("aria-busy"); });
         frame.appendChild(iframe);
         wrap.replaceChild(frame, button);
+        /* the play button just left the document; focus stays on the video */
+        frame.focus();
       });
     });
   })();
@@ -789,6 +825,18 @@
       return ok;
     }
 
+    /* one live region announces every copy result to a screen reader */
+    var copyStatus = null;
+    function announce(text) {
+      if (!copyStatus) {
+        copyStatus = document.createElement("span");
+        copyStatus.className = "vh";
+        copyStatus.setAttribute("role", "status");
+        document.body.appendChild(copyStatus);
+      }
+      copyStatus.textContent = "";
+      window.setTimeout(function () { copyStatus.textContent = text; }, 0);
+    }
     all(".copy[data-copy]").forEach(function (button) {
       var label = button.textContent;
       button.addEventListener("click", function () {
@@ -798,6 +846,7 @@
         if (button.hasAttribute("data-copy-location")) { text = window.location.href; }
         function done(ok) {
           button.textContent = ok ? "Copied" : "Copy failed";
+          announce(ok ? "Link copied to the clipboard" : "Copy failed");
           window.setTimeout(function () { button.textContent = label; }, 1600);
         }
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -978,11 +1027,15 @@
     if (focusClear) { focusClear.addEventListener("click", clear); }
 
     applyFilters();
-    var hash = window.location.hash;
-    if (hash.indexOf("#item-") === 0) {
+    function fromHash() {
+      var hash = window.location.hash;
+      if (hash.indexOf("#item-") !== 0) { return; }
       var card = byId(hash.slice(1));
       if (card) { select(card.getAttribute("data-item"), true); }
     }
+    fromHash();
+    /* an in-page "#item-…" link or an edited hash selects too */
+    window.addEventListener("hashchange", fromHash);
   })();
 
   /* ------------------------------ codex page ------------------------------ */
@@ -1452,7 +1505,13 @@
         btn.setAttribute("aria-pressed", on ? "true" : "false");
         (label || btn).textContent = on ? "Exit fullscreen" : "Fullscreen";
       }
-      function fallbackOn() { view.classList.add("is-fs"); paint(); }
+      function fallbackOn() {
+        view.classList.add("is-fs");
+        paint();
+        /* the overlay covers the page: focus moves into it so Tab and
+           Escape act on the view rather than on what it hides */
+        if (view.focus) { view.focus(); }
+      }
       btn.addEventListener("click", function () {
         var on = document.fullscreenElement === view || view.classList.contains("is-fs");
         if (on) {
@@ -1472,8 +1531,9 @@
         }
       });
       document.addEventListener("fullscreenchange", paint);
-      /* Escape leaves the fallback overlay, matching what the real API does */
-      view.addEventListener("keydown", function (event) {
+      /* Escape leaves the fallback overlay, matching what the real API does;
+         listened for on the document so it works wherever focus ended up */
+      document.addEventListener("keydown", function (event) {
         if (event.key === "Escape" && view.classList.contains("is-fs")) {
           view.classList.remove("is-fs");
           paint();

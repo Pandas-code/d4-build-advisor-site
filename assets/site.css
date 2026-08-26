@@ -370,7 +370,7 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   color: var(--accent);
   border: 1px solid var(--line-strong);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--fs-sm);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1752,7 +1752,7 @@ a.build-card { text-decoration: none; }
   color: var(--accent);
 }
 .focus-head { display: flex; align-items: center; gap: var(--s-3); }
-.focus-head h3 {
+.focus-head h2 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
@@ -1832,7 +1832,7 @@ a.build-card { text-decoration: none; }
 
 .bhead { display: flex; align-items: center; gap: var(--s-3); }
 .bhead .bt { min-width: 0; }
-.bhead h3 {
+.bhead h2 {
   margin: 0 0 var(--s-1);
   font-family: var(--font-display);
   font-weight: 500;
@@ -2075,7 +2075,8 @@ a.build-card { text-decoration: none; }
   justify-content: space-between;
   gap: var(--s-2);
   margin: 0;
-  padding: 0;
+  padding: var(--s-1) 0;
+  min-height: 24px;
   background: transparent;
   border: none;
   color: var(--fg);
@@ -2719,7 +2720,7 @@ a.build-card { text-decoration: none; }
    -------------------------------------------------------------------------- */
 /* headings never leave a single word on the last line; prose never leaves a
    widow. Both degrade to nothing on browsers that do not know them. */
-h1, h2, h3, h4, .news h3, .bhead h3, .cx-dhead h2 { text-wrap: balance; }
+h1, h2, h3, h4, .news h3, .bhead h2, .cx-dhead h2 { text-wrap: balance; }
 .lede,.prose,.news-sum,.upd-text,.feed-note,.build-card .summary,.class-row .why,.boss .blurb,.cx-text,.board .b-note,.merc .note,.mskill .note,.section-note {
   text-wrap: pretty;
 }
@@ -2966,8 +2967,8 @@ body { font-synthesis-weight: none; letter-spacing: 0; }
 .page-head h1,
 .build-card h3,
 .news h3,
-.focus-head h3,
-.bhead h3,
+.focus-head h2,
+.bhead h2,
 .cx-dhead h2,
 .b-name,
 .merc .nm,
@@ -2994,7 +2995,7 @@ body { font-synthesis-weight: none; letter-spacing: 0; }
 .page-head h1 { font-weight: 800; letter-spacing: 0.01em; }
 .build-card h3 { font-weight: 700; letter-spacing: 0; line-height: 1.2; }
 .news h3 { font-weight: 700; letter-spacing: -0.005em; }
-.focus-head h3, .bhead h3, .cx-dhead h2 { font-weight: 700; letter-spacing: 0.01em; }
+.focus-head h2, .bhead h2, .cx-dhead h2 { font-weight: 700; letter-spacing: 0.01em; }
 
 /* section rules: a solid accent tick, then the label, then the hairline */
 .rule {
@@ -4612,7 +4613,7 @@ html:has(.build-page), body:has(.build-page) {
   color: var(--d4-fg-60);
   cursor: text;
 }
-.build-page .bp-search:focus-within { box-shadow: inset 0 0 0 1px var(--d4-line); }
+.build-page .bp-search:focus-within { box-shadow: inset 0 0 0 2px var(--d4-gold); }
 .build-page .bp-mag { flex: none; }
 .build-page .bp-search .pv-find {
   flex: 1 1 auto;
@@ -4872,7 +4873,7 @@ html:has(.build-page), body:has(.build-page) {
   cursor: grab;
   touch-action: none;
 }
-.build-page .pwrap:focus-visible { box-shadow: inset 0 0 0 2px var(--d4-gold); }
+.build-page .pwrap:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: -2px; }
 .build-page .pwrap.dragging { cursor: grabbing; user-select: none; }
 .build-page .pwrap.dragging * { pointer-events: none; }
 .build-page .pplanner {
@@ -5096,6 +5097,7 @@ html:has(.build-page), body:has(.build-page) {
   background: none;
   font: inherit;
   font-size: 14px;
+  min-height: 24px;
   color: var(--d4-fg);
   cursor: pointer;
 }
@@ -5123,7 +5125,9 @@ html:has(.build-page), body:has(.build-page) {
 .build-page .bp-tabframe.is-fs .pwrap,
 .build-page .bp-tabframe:fullscreen .pwrap { height: calc(100vh - 150px); max-height: none; }
 @media (max-width: 44rem) {
-  .build-page .pwrap { height: 60vh; }
+  /* a finger on the canvas scrolls the page, as on the tree planner; the
+     board is panned by the arrow keys, the zoom buttons or a pinch */
+  .build-page .pwrap { height: 60vh; touch-action: pan-y pinch-zoom; }
   .build-page .pchip { top: 10px; font-size: 13px; height: 32px; }
   .build-page .pnotes .b-note { padding-left: 0; }
 }
