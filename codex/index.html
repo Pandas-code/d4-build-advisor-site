@@ -55,14 +55,13 @@
 
 
 <main id="main" class="frame wide">
-<header class="page-head">
-  <div class="sigil" aria-hidden="true">&#128220;</div>
-  <h1>Codex</h1>
-  <p class="lede">The whole game database this advisor is built on, searchable.
-    Skills and their tree upgrades, paragon boards, nodes, thresholds and
-    glyphs, every affix, every aspect, every item.</p>
-  <p class="meta-line">14850 entries &#183; searched in the browser &#183; nothing
-    leaves this origin</p>
+<header class="page-head page-band">
+  <span class="band-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M15 8h-5"/><path d="M15 12h-5"/></svg></span>
+  <div class="band-body">
+    <h1>Codex</h1>
+    <p class="lede">The whole game database this advisor is built on, searchable: skills, paragon, affixes, aspects and items.</p>
+    <p class="meta-line">14850 entries &#183; searched in the browser &#183; nothing leaves this origin</p>
+  </div>
 </header>
 
 <section class="filters" aria-label="Search the codex">
@@ -139,7 +138,9 @@
     <code>codex/data/</code>.</p>
 </noscript>
 
-<p class="foot" id="foot">game database 3.1.0.72698 already imported: 4305 affixes, 685 aspects, 247 boss uniques, 19 bosses, 365 charms, 8 classes, 64 gems, 12 horadric seals, 45 item sets, 6765 items, 4 mercenaries, 76 mercenary skills, 84 mercenary tree nodes, 33 mythics, 79 paragon boards, 160 paragon glyphs, 561 paragon nodes, 52 runes, 35 seasonal socketables, 2228 skill tree nodes, 313 skills, 926 uniques, 7 warplan activities, 100 warplan nodes, 107 warplan tree nodes</p>
+<footer class="page-foot">
+  <p class="foot" id="foot">game database 3.1.0.72698 already imported: 4305 affixes, 685 aspects, 247 boss uniques, 19 bosses, 365 charms, 8 classes, 64 gems, 12 horadric seals, 45 item sets, 6765 items, 4 mercenaries, 76 mercenary skills, 84 mercenary tree nodes, 33 mythics, 79 paragon boards, 160 paragon glyphs, 561 paragon nodes, 52 runes, 35 seasonal socketables, 2228 skill tree nodes, 313 skills, 926 uniques, 7 warplan activities, 100 warplan nodes, 107 warplan tree nodes</p>
+</footer>
 
 <!-- Task 46: the in-game cards for item and aspect results. Every other page
      ships its cards rendered; this one builds its rows in the browser, so it
@@ -148,6 +149,6 @@
 
 </main>
 
-<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-08-25", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 852, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6765, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 685, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 4305, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}, {"count": 528, "domain": "socketables", "file": "data/socketables.json", "label": "Socketables"}], "total": 14850}</script>
+<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-08-26", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 852, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6765, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 685, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 4305, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}, {"count": 528, "domain": "socketables", "file": "data/socketables.json", "label": "Socketables"}], "total": 14850}</script>
 <script src="../assets/site.js"></script>
 </html>

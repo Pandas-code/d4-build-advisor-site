@@ -91,6 +91,7 @@
   --r-sm: 3px;
   --r-md: 5px;
   --r-lg: 9px;
+  --r-xl: 12px;     /* Task 47: cards on the index pages */
   --r-full: 999px;
 
   /* --- motion: three durations, two curves, nothing longer ------------- */
@@ -117,6 +118,7 @@
   --fg-dim: #58627e;
   --line: rgba(38, 62, 128, 0.16);
   --line-strong: rgba(38, 62, 128, 0.34);
+  --hairline: rgba(16, 26, 56, 0.08);
   --accent: #0d63ad;
   --accent-soft: rgba(13, 99, 173, 0.10);
   --accent-2: #a24a06;
@@ -188,6 +190,7 @@
   --fg-dim: #98a3bf;
   --line: rgba(122, 152, 224, 0.18);
   --line-strong: rgba(122, 152, 224, 0.40);
+  --hairline: rgba(255, 255, 255, 0.08);
   --accent: #56b6ff;
   --accent-soft: rgba(86, 182, 255, 0.14);
   --accent-2: #ffa447;
@@ -252,6 +255,7 @@
   --fg-dim: #98a3bf;
   --line: rgba(122, 152, 224, 0.18);
   --line-strong: rgba(122, 152, 224, 0.40);
+  --hairline: rgba(255, 255, 255, 0.08);
   --accent: #56b6ff;
   --accent-soft: rgba(86, 182, 255, 0.14);
   --accent-2: #ffa447;
@@ -1766,7 +1770,7 @@ a.build-card { text-decoration: none; }
   gap: var(--s-4);
   margin-top: var(--s-3);
 }
-.focus-cols h4 {
+.focus-cols h3 {
   margin: 0 0 var(--s-2);
   font-family: var(--font-mono);
   font-size: 0.64rem;
@@ -3016,7 +3020,7 @@ body { font-synthesis-weight: none; letter-spacing: 0; }
 .rule::after { background: linear-gradient(90deg, var(--line-strong), transparent); }
 .rule .rule-note { letter-spacing: 0.06em; color: var(--fg-dim); }
 
-.block > h3, .gear-col > h4, .focus-cols h4 { color: var(--accent); letter-spacing: 0.14em; }
+.block > h3, .gear-col > h4, .focus-cols h3 { color: var(--accent); letter-spacing: 0.14em; }
 
 /* nav, tabs and menus were wide serif caps; they are compact sans caps now */
 .brand-name { font-weight: 800; letter-spacing: 0.08em; }
@@ -3211,6 +3215,11 @@ body {
   .brand { padding-inline: 0 var(--s-1); }
   .topnav-in { gap: var(--s-micro); }
   .menubar { gap: var(--s-micro); }
+  /* below ~380px the links scroll inside the bar rather than pushing the
+     season chip past the viewport edge (the page must never scroll sideways) */
+  .menubar { flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .menubar::-webkit-scrollbar { display: none; }
+  .nav-season { flex: none; }
 }
 
 /* ==========================================================================
@@ -5442,3 +5451,417 @@ html:has(.build-page), body:has(.build-page) {
   width: 34px;
   height: 50px;
 }
+
+/* ==========================================================================
+   Task 47: the modern pass on the four index pages.
+
+   Home, tier list, codex and boss loot. The build page is not in here - it
+   matches d4builds by design and keeps every rule above. This layer sits last
+   in the cascade and touches only what those four pages compose:
+
+   1. the centered hero becomes a compact, left-aligned header band with an
+      inline SVG icon in a tinted square; the last-run line leaves the hero
+      for the footer;
+   2. surfaces over strokes: cards, rows and the filter bar are a tonal fill
+      with an 8% hairline (--hairline, declared in all three theme blocks)
+      instead of a bright frame, at --r-xl for cards and --r-lg for controls
+      and chips, on the one --e-1/--e-2 shadow pair;
+   3. type: section headers and labels in sentence case with normal tracking;
+      mono only where a number, a date or a key sits; nothing under --fs-xs.
+   Every colour resolves to a token already declared three times above.
+   ========================================================================== */
+
+/* --------------------------- 1. the header band ------------------------- */
+.page-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s-4);
+  min-height: 10rem;
+  padding: var(--s-7) 0 var(--s-6);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.page-band::after { content: none; }
+.band-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-top: var(--s-1);
+  border-radius: var(--r-lg);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.band-icon svg { width: var(--s-6); height: var(--s-6); display: block; }
+.band-body {
+  flex: 1 1 20rem;
+  min-width: 0;
+  display: grid;
+  gap: var(--s-1);
+}
+.page-band h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  text-shadow: none;
+}
+.page-band .lede {
+  margin: 0;
+  max-width: var(--measure);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--fg-soft);
+}
+.page-band .meta-line,
+.page-band .season-line {
+  margin: var(--s-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-dim);
+}
+.page-band .stale-warning { flex: 1 1 100%; margin: var(--s-2) 0 0; max-width: none; }
+
+/* the last-run box moved out of the hero: it is one muted line now */
+.page-foot {
+  margin-top: var(--s-8);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: var(--s-2);
+  text-align: center;
+}
+.page-foot .whats-new {
+  margin: 0;
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--fg-dim);
+  text-align: center;
+}
+.page-foot .whats-new .label {
+  display: inline;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-dim);
+}
+.page-foot .whats-new .label::after { content: "\00b7"; margin: 0 var(--s-2); }
+.page-foot .foot {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-dim);
+}
+
+/* ------------------------- 2. surfaces over strokes --------------------- */
+.news, .boss, .class-row, .build-card, .dcard, .item-focus, .codex-detail,
+.filters, .empty {
+  background-image: none;
+  background-color: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-1);
+}
+.upd, .runs li, .cx-row, .ptr-banner, .stale-warning {
+  background-image: none;
+  background-color: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: none;
+}
+.news:hover, .class-row:hover, .dcard:hover { box-shadow: var(--e-2); }
+.class-row:hover { transform: none; }
+.build-card:hover, .build-card:focus-visible {
+  border-color: hsl(var(--cls) / 0.35);
+  box-shadow: var(--e-2), 0 0 34px -14px hsl(var(--cls) / 0.7);
+}
+.upd:hover, .runs li:hover { background-color: var(--surface-2); border-color: var(--hairline); }
+.empty { background-color: var(--surface-2); border-style: solid; box-shadow: none; }
+.boss.pool { border-style: solid; }
+.boss.hit {
+  border-color: hsl(var(--boss) / 0.5);
+  box-shadow: var(--e-2), 0 0 34px -14px hsl(var(--boss) / 0.7);
+}
+.item-focus, .codex-detail {
+  background-image: radial-gradient(90% 120% at 0% 0%, var(--accent-soft), transparent 58%);
+  box-shadow: var(--e-3), var(--glow);
+}
+.ptr-banner {
+  border-color: color-mix(in srgb, var(--ptr) 35%, transparent);
+  background-color: var(--ptr-soft);
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+.stale-warning {
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+  background-color: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+
+/* the filter toolbar: flat, tonal, no accent frame */
+.filters {
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  align-items: flex-end;
+}
+.filters label {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-soft);
+}
+.filters input[type="search"], .filters select {
+  background-color: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: none;
+}
+.filters input[type="search"]:hover, .filters select:hover { border-color: var(--line-strong); }
+.filters input[type="search"]:focus-visible, .filters select:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.filters .sel::after { color: var(--fg-dim); }
+.filters .back, .back {
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+  box-shadow: none;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.filter-status {
+  margin-top: var(--s-3);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-dim);
+}
+
+/* chips: tinted fills, accent text, no outline */
+.chip, .news-kind, .badge-ptr {
+  border: 0;
+  border-radius: var(--r-lg);
+  padding: var(--s-1) var(--s-2);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.35;
+}
+.chip.wrap { font-size: var(--fs-xs); }
+.chip.cls { background: hsl(var(--cls) / 0.14); color: hsl(var(--cls)); }
+.chip.tier { background: hsl(var(--boss) / 0.14); color: hsl(var(--boss)); }
+.chip.myth, .chip.r-mythic, .chip.st-adjusted { background: var(--accent-2-soft); color: var(--accent-2); }
+.chip.r-unique, .chip.dom { background: var(--accent-soft); color: var(--accent); }
+.chip.r-set, .chip.conf-high { background: hsl(var(--t-a) / 0.14); color: hsl(var(--t-a)); }
+.chip.conf-medium { background: hsl(var(--t-s) / 0.14); color: hsl(var(--t-s)); }
+.chip.conf-low { background: hsl(var(--t-d) / 0.14); color: hsl(var(--t-d)); }
+.chip.st-unchanged { background: var(--surface-2); color: var(--fg-soft); }
+.chip.st-retired { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger); }
+.chip.ptr, .badge-ptr, .news.n-ptr .news-kind { background: var(--ptr-soft); color: var(--ptr); }
+.news.n-season .news-kind { background: var(--accent-2-soft); color: var(--accent-2); }
+
+/* ------------------------------ 3. type ---------------------------------- */
+.rule {
+  gap: var(--s-3);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--fg);
+}
+.rule::before { content: none; }
+.rule::after { background: var(--line); }
+.rule .rule-note {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--fg-dim);
+}
+.feed-note { font-size: var(--fs-base); color: var(--fg-dim); }
+
+/* labels: sentence case, sans, never under 12px; the value beside them keeps
+   mono only when it is a number or a date */
+.news-src .lbl, .bfacts dt, .cx-label, .focus-cols h3, .focus-kicker,
+.bsrc summary, .xref .note, .cx-meta, .upd-season, .news-head, .dbtn .dc,
+.cbuilds .sec, .no-hits, .runs .trigger, .history-toggle, .tier-legend,
+.cbuilds-none, .cx-id, .news-src, .news-src.none, .upd-date .n,
+.run-details-toggle, .build-card .go, .build-card .arch, .tabs button {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.news-src .lbl, .bfacts dt, .cx-label, .focus-cols h3 { font-weight: 600; color: var(--fg-dim); }
+.focus-kicker { font-weight: 600; color: var(--accent); }
+.bfacts .bf { padding-block: var(--s-micro); border-top: 0; }
+.bfacts { gap: var(--s-1); margin-top: var(--s-3); }
+.bfacts dd { font-size: var(--fs-base); }
+.boss .blurb { font-size: var(--fs-base); }
+.bhead h2 { font-size: var(--fs-xl); letter-spacing: -0.005em; }
+.icon.crest { border-radius: var(--r-lg); }
+
+.news-head { gap: var(--s-2); }
+.news-head time, .upd-date, .runs .when, .cbuilds .rk, .log .date {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0;
+}
+.upd-date { font-size: var(--fs-sm); text-transform: none; }
+.news-src { border-top: 0; padding-top: 0; margin-top: var(--s-3); color: var(--fg-dim); }
+.news-src.none { border-top: 0; padding-top: 0; }
+.news-sum { font-size: 1rem; line-height: 1.6; }
+.upd-head a { font-weight: 600; font-size: var(--fs-base); border-bottom: 0; }
+.upd-text { font-size: var(--fs-base); }
+
+.history-toggle { font-size: var(--fs-base); font-weight: 600; }
+.history-toggle .n { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0; }
+.run-details-toggle { color: var(--accent); font-weight: 600; }
+.run-details { font-size: var(--fs-sm); }
+
+/* codex rows and domain cards */
+.cx-row {
+  border-color: transparent;
+  padding: var(--s-2) var(--s-3);
+  transition: background-color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.cx-row:hover, .cx-row:focus-visible { background-color: var(--accent-soft); border-color: transparent; }
+.cx-name { font-weight: 600; letter-spacing: 0; }
+.cx-meta { color: var(--fg-dim); font-size: var(--fs-xs); }
+.cx-blurb { font-size: var(--fs-md); }
+.cx-text { font-size: 1rem; }
+.cx-dhead h2 { font-size: var(--fs-2xl); letter-spacing: -0.01em; }
+.dcard { padding: var(--s-4); gap: var(--s-1); transition: box-shadow var(--dur-2) var(--ease); }
+.dbtn .dn { font-size: var(--fs-base); font-weight: 600; letter-spacing: 0; text-transform: none; }
+.dbtn .dc { font-family: var(--font-mono); font-size: var(--fs-xs); }
+.dcard .db { font-size: var(--fs-md); }
+.vslot { border-radius: var(--r-sm); }
+
+/* loot grid cells: tonal, and they lift on hover */
+.loot-grid { gap: var(--s-2); }
+.loot-btn {
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-lg);
+  box-shadow: none;
+  transition: transform var(--dur-2) var(--ease),
+              box-shadow var(--dur-2) var(--ease),
+              background-color var(--dur-1) var(--ease),
+              border-color var(--dur-1) var(--ease);
+}
+.loot-btn:hover, .loot-btn:focus-visible {
+  transform: translateY(-1px);
+  background: var(--raised);
+  border-color: var(--hairline);
+  box-shadow: var(--e-1);
+  color: var(--fg);
+}
+.loot-btn:active { transform: none; }
+.loot.hit .loot-btn {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: none;
+  color: var(--accent);
+}
+.xref li { border-left: 0; border-radius: var(--r-md); padding: var(--s-2) var(--s-3); }
+
+/* ------------------------------ 4. tier list ----------------------------- */
+.tier-badge { border-radius: var(--r-xl); }
+.class-row {
+  padding: var(--s-4);
+  transition: box-shadow var(--dur-2) var(--ease);
+}
+.class-row .name {
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.class-row .name .icon { --icon-size: 1.75rem; }
+.class-row .name .star { margin-left: auto; font-size: 1rem; color: hsl(var(--t-s)); }
+.class-row .why {
+  margin-top: var(--s-2);
+  font-size: var(--fs-base);
+  line-height: 1.55;
+  color: var(--fg-soft);
+}
+.cbuilds { margin-top: var(--s-3); }
+.cbuilds a { border-radius: var(--r-md); border-color: transparent; }
+.cbuilds a:hover, .cbuilds a:focus-visible { background: hsl(var(--cls) / 0.1); border-color: transparent; }
+.cbuilds .bn { font-size: var(--fs-md); }
+.cbuilds .sec { font-size: var(--fs-xs); color: var(--fg-dim); }
+.tier-legend { font-size: var(--fs-sm); margin-top: var(--s-3); }
+
+/* tabs on the tier list: tinted pill when selected, no ring */
+.tabs { border-bottom: 0; padding-bottom: 0; }
+.tabs button { font-size: var(--fs-md); font-weight: 600; color: var(--fg-soft); }
+.tabs button .count { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0; opacity: 0.8; }
+.tabs button[aria-selected="true"] {
+  border-color: transparent;
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: none;
+}
+.build-card { padding: var(--s-4) var(--s-4) var(--s-5); border-top: 1px solid var(--hairline); }
+.build-card .arch { font-style: normal; color: var(--fg-dim); }
+.build-card .summary { font-size: var(--fs-md); }
+.build-card .go { font-weight: 600; color: hsl(var(--cls)); }
+
+/* --------------------------------- 5. nav -------------------------------- */
+.nav-link[aria-current="page"] { background: var(--accent-soft); box-shadow: none; }
+.nav-link[aria-current="page"]::after { content: none; }
+.menu-btn[aria-expanded="true"] { border-color: transparent; }
+
+/* ------------------------------ 6. small screens ------------------------- */
+@media (max-width: 44rem) {
+  .page-band { min-height: 0; padding: var(--s-6) 0 var(--s-5); gap: var(--s-3); }
+  .page-band h1 { font-size: 1.75rem; }
+  .page-band .lede { font-size: var(--fs-base); }
+  .rule { font-size: 1.2rem; letter-spacing: -0.005em; }
+  .tabs button { font-size: var(--fs-sm); letter-spacing: 0; }
+  .class-row { padding: var(--s-3) var(--s-4); }
+  .filters { padding: var(--s-3); }
+}
+@media (max-width: 34rem) {
+  .rule { font-size: 1.15rem; letter-spacing: -0.005em; }
+  .page-foot .foot { letter-spacing: 0; }
+}
+/* the kind of a news item lives in its chip, not in a coloured edge */
+.news.n-ptr, .news.n-season { border-left-color: var(--hairline); }
