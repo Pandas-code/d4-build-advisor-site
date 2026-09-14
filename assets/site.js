@@ -239,7 +239,7 @@
         if (s.ptr) {
           var badge = document.createElement("span");
           badge.className = "badge-ptr";
-          badge.textContent = "PTR";
+          badge.textContent = s.preview_label || "PTR";
           navSeason.appendChild(badge);
         }
       }
@@ -1034,7 +1034,7 @@
       if (card) { select(card.getAttribute("data-item"), true); }
     }
     fromHash();
-    /* an in-page "#item-…" link or an edited hash selects too */
+    /* an in-page "#item-..." link or an edited hash selects too */
     window.addEventListener("hashchange", fromHash);
   })();
 

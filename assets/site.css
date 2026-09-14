@@ -2562,6 +2562,7 @@ a.build-card { text-decoration: none; }
 .news:hover { box-shadow: var(--e-2); }
 .news.n-ptr { border-left-color: var(--ptr); }
 .news.n-season { border-left-color: var(--accent-2); }
+.news.n-announcement { border-left-color: hsl(var(--t-s)); }
 
 .news-head {
   display: flex;
@@ -2591,6 +2592,13 @@ a.build-card { text-decoration: none; }
   border-color: color-mix(in srgb, var(--accent-2) 55%, transparent);
   background: transparent;
   color: var(--accent-2);
+}
+/* announcements (reveals, dates) borrow the S-tier gold, the one warm token
+   the season chip's amber does not already own */
+.news.n-announcement .news-kind {
+  border-color: hsl(var(--t-s) / 0.55);
+  background: hsl(var(--t-s) / 0.14);
+  color: hsl(var(--t-s));
 }
 .news-head time { color: var(--fg-soft); letter-spacing: 0.1em; }
 
@@ -5691,6 +5699,7 @@ html:has(.build-page), body:has(.build-page) {
 .chip.st-retired { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger); }
 .chip.ptr, .badge-ptr, .news.n-ptr .news-kind { background: var(--ptr-soft); color: var(--ptr); }
 .news.n-season .news-kind { background: var(--accent-2-soft); color: var(--accent-2); }
+.news.n-announcement .news-kind { background: hsl(var(--t-s) / 0.14); color: hsl(var(--t-s)); }
 
 /* ------------------------------ 3. type ---------------------------------- */
 .rule {
@@ -5864,4 +5873,4 @@ html:has(.build-page), body:has(.build-page) {
   .page-foot .foot { letter-spacing: 0; }
 }
 /* the kind of a news item lives in its chip, not in a coloured edge */
-.news.n-ptr, .news.n-season { border-left-color: var(--hairline); }
+.news.n-ptr, .news.n-season, .news.n-announcement { border-left-color: var(--hairline); }
