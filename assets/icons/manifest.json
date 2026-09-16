@@ -10,7 +10,7 @@
     "classes",
     "socketables"
   ],
-  "generated": "2026-08-24",
+  "generated": "2026-09-16",
   "icons": {
     "aspects": {
       "LTE_Hibernal_legendary_generic_001": {
@@ -188,6 +188,33 @@
         "missing": true
       },
       "S09_Socketable_16": {
+        "missing": true
+      },
+      "S15_ChatGem": {
+        "missing": true
+      },
+      "S15_Socketable_Andariel": {
+        "missing": true
+      },
+      "S15_Socketable_Azmodan": {
+        "missing": true
+      },
+      "S15_Socketable_Belial": {
+        "missing": true
+      },
+      "S15_Socketable_BlackSoulstone": {
+        "missing": true
+      },
+      "S15_Socketable_Duriel": {
+        "missing": true
+      },
+      "S15_Socketable_Lilith": {
+        "missing": true
+      },
+      "S15_Socketable_NaKrul": {
+        "missing": true
+      },
+      "S15_Socketable_Skarn": {
         "missing": true
       },
       "Season_Socketable_Generic_01": {
@@ -1897,6 +1924,9 @@
       "legendary_warlock_031_x2": {
         "path": "aspects/legendary_warlock_031_x2.webp"
       },
+      "legendary_warlock_032_x2": {
+        "path": "aspects/legendary_warlock_032_x2.webp"
+      },
       "legendary_warlock_033_x2": {
         "path": "aspects/legendary_warlock_033_x2.webp"
       },
@@ -2194,6 +2224,9 @@
       "1HFlail_Unique_Warlock_001": {
         "path": "items/1HFlail_Unique_Warlock_001.webp"
       },
+      "1HFocus_Unique_Generic_001": {
+        "missing": true
+      },
       "1HFocus_Unique_Necro_100": {
         "path": "items/1HFocus_Unique_Necro_100.webp"
       },
@@ -2275,6 +2308,9 @@
       "1HSword_Unique_Generic_100": {
         "path": "items/1HSword_Unique_Generic_100.webp"
       },
+      "1HSword_Unique_Generic_103": {
+        "path": "items/1HSword_Unique_Generic_103.webp"
+      },
       "1HSword_Unique_Paladin_001": {
         "path": "items/1HSword_Unique_Paladin_001.webp"
       },
@@ -2301,6 +2337,9 @@
       },
       "2HAxe_Unique_Barb_001": {
         "path": "items/2HAxe_Unique_Barb_001.webp"
+      },
+      "2HAxe_Unique_Generic_001": {
+        "missing": true
       },
       "2HAxe_Unique_Paladin_001": {
         "path": "items/2HAxe_Unique_Paladin_001.webp"
@@ -2338,6 +2377,9 @@
       "2HMace_Unique_Druid_100_x2": {
         "path": "items/2HMace_Unique_Druid_100_x2.webp"
       },
+      "2HMace_Unique_Generic_001": {
+        "missing": true
+      },
       "2HMace_Unique_Warlock_001": {
         "path": "items/2HMace_Unique_Warlock_001.webp"
       },
@@ -2346,6 +2388,9 @@
       },
       "2HPolearm_Unique_Generic_001": {
         "path": "items/2HPolearm_Unique_Generic_001.webp"
+      },
+      "2HPolearm_Unique_Generic_002": {
+        "missing": true
       },
       "2HScythe_Unique_AF_001": {
         "path": "items/2HScythe_Unique_AF_001.webp"
@@ -2536,6 +2581,9 @@
       "Boots_Unique_Paladin_001": {
         "path": "items/Boots_Unique_Paladin_001.webp"
       },
+      "Boots_Unique_Paladin_96": {
+        "missing": true
+      },
       "Boots_Unique_Rogue_001_x2": {
         "path": "items/Boots_Unique_Rogue_001_x2.webp"
       },
@@ -2626,6 +2674,9 @@
       "Chest_Unique_Generic_103": {
         "path": "items/Chest_Unique_Generic_103.webp"
       },
+      "Chest_Unique_Generic_104": {
+        "path": "items/Chest_Unique_Generic_104.webp"
+      },
       "Chest_Unique_Generic_127": {
         "path": "items/Chest_Unique_Generic_127.webp"
       },
@@ -2640,6 +2691,9 @@
       },
       "Chest_Unique_Paladin_001": {
         "path": "items/Chest_Unique_Paladin_001.webp"
+      },
+      "Chest_Unique_Paladin_96": {
+        "missing": true
       },
       "Chest_Unique_Rogue_100": {
         "path": "items/Chest_Unique_Rogue_100.webp"
@@ -2688,6 +2742,9 @@
       },
       "Glove_Unique_Druid_99": {
         "path": "items/Glove_Unique_Druid_99.webp"
+      },
+      "Glove_Unique_Paladin_96": {
+        "missing": true
       },
       "Glove_Unique_Rogue_96": {
         "path": "items/Glove_Unique_Rogue_96.webp"
@@ -2745,6 +2802,9 @@
       },
       "Gloves_Unique_Generic_005": {
         "path": "items/Gloves_Unique_Generic_005.webp"
+      },
+      "Gloves_Unique_Generic_006": {
+        "path": "items/Gloves_Unique_Generic_006.webp"
       },
       "Gloves_Unique_Necro_100": {
         "path": "items/Gloves_Unique_Necro_100.webp"
@@ -2881,6 +2941,9 @@
       "Helm_Unique_Generic_004": {
         "path": "items/Helm_Unique_Generic_004.webp"
       },
+      "Helm_Unique_Generic_005": {
+        "path": "items/Helm_Unique_Generic_005.webp"
+      },
       "Helm_Unique_Necro_100": {
         "path": "items/Helm_Unique_Necro_100.webp"
       },
@@ -2898,6 +2961,9 @@
       },
       "Helm_Unique_Paladin_002": {
         "path": "items/Helm_Unique_Paladin_002.webp"
+      },
+      "Helm_Unique_Paladin_96": {
+        "missing": true
       },
       "Helm_Unique_Rogue_001": {
         "path": "items/Helm_Unique_Rogue_001.webp"
@@ -2953,6 +3019,9 @@
       "Helm_Unique_Warlock_95": {
         "path": "items/Helm_Unique_Warlock_95.webp"
       },
+      "OPAL_Amulet_Unique_Generic_100": {
+        "missing": true
+      },
       "OWCSMP_Crown": {
         "path": "items/OWCSMP_Crown.webp"
       },
@@ -3006,6 +3075,9 @@
       },
       "Pants_Unique_Paladin_002": {
         "path": "items/Pants_Unique_Paladin_002.webp"
+      },
+      "Pants_Unique_Paladin_96": {
+        "missing": true
       },
       "Pants_Unique_Rogue_001_x2": {
         "path": "items/Pants_Unique_Rogue_001_x2.webp"
@@ -3130,6 +3202,9 @@
       "Ring_Unique_Generic_106_x2": {
         "path": "items/Ring_Unique_Generic_106_x2.webp"
       },
+      "Ring_Unique_Generic_108": {
+        "path": "items/Ring_Unique_Generic_108.webp"
+      },
       "Ring_Unique_Necro_100": {
         "path": "items/Ring_Unique_Necro_100.webp"
       },
@@ -3213,6 +3288,258 @@
       },
       "Ring_Unique_Warlock_007": {
         "path": "items/Ring_Unique_Warlock_007.webp"
+      },
+      "Runeword_Ancients_Pledge_FocusBookOffHand": {
+        "path": "items/Runeword_Ancients_Pledge_FocusBookOffHand.webp"
+      },
+      "Runeword_Ancients_Pledge_OffHandTotem": {
+        "path": "items/Runeword_Ancients_Pledge_OffHandTotem.webp"
+      },
+      "Runeword_Ancients_Pledge_Shield": {
+        "path": "items/Runeword_Ancients_Pledge_Shield.webp"
+      },
+      "Runeword_CalltoArms": {
+        "path": "items/Runeword_CalltoArms.webp"
+      },
+      "Runeword_CalltoArms_Dagger": {
+        "path": "items/Runeword_CalltoArms_Dagger.webp"
+      },
+      "Runeword_CalltoArms_Flail": {
+        "path": "items/Runeword_CalltoArms_Flail.webp"
+      },
+      "Runeword_CalltoArms_Focus": {
+        "path": "items/Runeword_CalltoArms_Focus.webp"
+      },
+      "Runeword_CalltoArms_Mace": {
+        "path": "items/Runeword_CalltoArms_Mace.webp"
+      },
+      "Runeword_CalltoArms_OffHandTotem": {
+        "path": "items/Runeword_CalltoArms_OffHandTotem.webp"
+      },
+      "Runeword_CalltoArms_Scythe": {
+        "path": "items/Runeword_CalltoArms_Scythe.webp"
+      },
+      "Runeword_CalltoArms_Sword": {
+        "path": "items/Runeword_CalltoArms_Sword.webp"
+      },
+      "Runeword_CalltoArms_Wand": {
+        "path": "items/Runeword_CalltoArms_Wand.webp"
+      },
+      "Runeword_Edge_2HBow": {
+        "path": "items/Runeword_Edge_2HBow.webp"
+      },
+      "Runeword_Edge_Axe2H": {
+        "path": "items/Runeword_Edge_Axe2H.webp"
+      },
+      "Runeword_Edge_Crossbow2H": {
+        "path": "items/Runeword_Edge_Crossbow2H.webp"
+      },
+      "Runeword_Edge_Glaive": {
+        "path": "items/Runeword_Edge_Glaive.webp"
+      },
+      "Runeword_Edge_Mace2H": {
+        "path": "items/Runeword_Edge_Mace2H.webp"
+      },
+      "Runeword_Edge_Polearm": {
+        "path": "items/Runeword_Edge_Polearm.webp"
+      },
+      "Runeword_Edge_Quarterstaff": {
+        "path": "items/Runeword_Edge_Quarterstaff.webp"
+      },
+      "Runeword_Edge_Scythe2H": {
+        "path": "items/Runeword_Edge_Scythe2H.webp"
+      },
+      "Runeword_Edge_Staff": {
+        "path": "items/Runeword_Edge_Staff.webp"
+      },
+      "Runeword_Edge_Sword2H": {
+        "path": "items/Runeword_Edge_Sword2H.webp"
+      },
+      "Runeword_Enigma": {
+        "path": "items/Runeword_Enigma.webp"
+      },
+      "Runeword_Grief_1HSword": {
+        "path": "items/Runeword_Grief_1HSword.webp"
+      },
+      "Runeword_Grief_Axe": {
+        "path": "items/Runeword_Grief_Axe.webp"
+      },
+      "Runeword_HolyThunder": {
+        "path": "items/Runeword_HolyThunder.webp"
+      },
+      "Runeword_HolyThunder_Flail": {
+        "path": "items/Runeword_HolyThunder_Flail.webp"
+      },
+      "Runeword_Infinity_2HScythe": {
+        "path": "items/Runeword_Infinity_2HScythe.webp"
+      },
+      "Runeword_Infinity_Axe2H": {
+        "path": "items/Runeword_Infinity_Axe2H.webp"
+      },
+      "Runeword_Infinity_Bow": {
+        "path": "items/Runeword_Infinity_Bow.webp"
+      },
+      "Runeword_Infinity_Crossbow2H": {
+        "path": "items/Runeword_Infinity_Crossbow2H.webp"
+      },
+      "Runeword_Infinity_Glaive": {
+        "path": "items/Runeword_Infinity_Glaive.webp"
+      },
+      "Runeword_Infinity_Mace2H": {
+        "path": "items/Runeword_Infinity_Mace2H.webp"
+      },
+      "Runeword_Infinity_Polearm": {
+        "path": "items/Runeword_Infinity_Polearm.webp"
+      },
+      "Runeword_Infinity_Quarterstaff": {
+        "path": "items/Runeword_Infinity_Quarterstaff.webp"
+      },
+      "Runeword_Infinity_Staff": {
+        "path": "items/Runeword_Infinity_Staff.webp"
+      },
+      "Runeword_Infinity_Sword2H": {
+        "path": "items/Runeword_Infinity_Sword2H.webp"
+      },
+      "Runeword_Insight_2HStaff": {
+        "path": "items/Runeword_Insight_2HStaff.webp"
+      },
+      "Runeword_Insight_Bow": {
+        "path": "items/Runeword_Insight_Bow.webp"
+      },
+      "Runeword_Insight_Crossbow2H": {
+        "path": "items/Runeword_Insight_Crossbow2H.webp"
+      },
+      "Runeword_Insight_Glaive": {
+        "path": "items/Runeword_Insight_Glaive.webp"
+      },
+      "Runeword_Insight_Polearm": {
+        "path": "items/Runeword_Insight_Polearm.webp"
+      },
+      "Runeword_Insight_Quarterstaff": {
+        "path": "items/Runeword_Insight_Quarterstaff.webp"
+      },
+      "Runeword_Insight_Scythe2H": {
+        "path": "items/Runeword_Insight_Scythe2H.webp"
+      },
+      "Runeword_KingsGrace": {
+        "path": "items/Runeword_KingsGrace.webp"
+      },
+      "Runeword_KingsGrace_Flail": {
+        "path": "items/Runeword_KingsGrace_Flail.webp"
+      },
+      "Runeword_KingsGrace_Sword": {
+        "path": "items/Runeword_KingsGrace_Sword.webp"
+      },
+      "Runeword_Leaf": {
+        "path": "items/Runeword_Leaf.webp"
+      },
+      "Runeword_Lore": {
+        "path": "items/Runeword_Lore.webp"
+      },
+      "Runeword_Pattern": {
+        "path": "items/Runeword_Pattern.webp"
+      },
+      "Runeword_Phoenix_1HAxe": {
+        "path": "items/Runeword_Phoenix_1HAxe.webp"
+      },
+      "Runeword_Phoenix_1HDagger": {
+        "path": "items/Runeword_Phoenix_1HDagger.webp"
+      },
+      "Runeword_Phoenix_1HFlail": {
+        "path": "items/Runeword_Phoenix_1HFlail.webp"
+      },
+      "Runeword_Phoenix_1HFocus": {
+        "path": "items/Runeword_Phoenix_1HFocus.webp"
+      },
+      "Runeword_Phoenix_1HMace": {
+        "path": "items/Runeword_Phoenix_1HMace.webp"
+      },
+      "Runeword_Phoenix_1HScythe": {
+        "path": "items/Runeword_Phoenix_1HScythe.webp"
+      },
+      "Runeword_Phoenix_1HShield": {
+        "path": "items/Runeword_Phoenix_1HShield.webp"
+      },
+      "Runeword_Phoenix_1HSword": {
+        "path": "items/Runeword_Phoenix_1HSword.webp"
+      },
+      "Runeword_Phoenix_1HTotem": {
+        "path": "items/Runeword_Phoenix_1HTotem.webp"
+      },
+      "Runeword_Phoenix_Wand": {
+        "path": "items/Runeword_Phoenix_Wand.webp"
+      },
+      "Runeword_Prudence": {
+        "path": "items/Runeword_Prudence.webp"
+      },
+      "Runeword_Rain": {
+        "path": "items/Runeword_Rain.webp"
+      },
+      "Runeword_Spirit_1HSword": {
+        "path": "items/Runeword_Spirit_1HSword.webp"
+      },
+      "Runeword_Spirit_Axe": {
+        "path": "items/Runeword_Spirit_Axe.webp"
+      },
+      "Runeword_Spirit_Dagger": {
+        "path": "items/Runeword_Spirit_Dagger.webp"
+      },
+      "Runeword_Spirit_Flail": {
+        "path": "items/Runeword_Spirit_Flail.webp"
+      },
+      "Runeword_Spirit_FocusBookOffHand": {
+        "path": "items/Runeword_Spirit_FocusBookOffHand.webp"
+      },
+      "Runeword_Spirit_Mace": {
+        "path": "items/Runeword_Spirit_Mace.webp"
+      },
+      "Runeword_Spirit_OffHandTotem": {
+        "path": "items/Runeword_Spirit_OffHandTotem.webp"
+      },
+      "Runeword_Spirit_Scythe": {
+        "path": "items/Runeword_Spirit_Scythe.webp"
+      },
+      "Runeword_Spirit_Shield": {
+        "path": "items/Runeword_Spirit_Shield.webp"
+      },
+      "Runeword_Spirit_Wand": {
+        "path": "items/Runeword_Spirit_Wand.webp"
+      },
+      "Runeword_Stealth": {
+        "path": "items/Runeword_Stealth.webp"
+      },
+      "Runeword_Strength_1HMace": {
+        "path": "items/Runeword_Strength_1HMace.webp"
+      },
+      "Runeword_Strength_Axe": {
+        "path": "items/Runeword_Strength_Axe.webp"
+      },
+      "Runeword_Strength_Dagger": {
+        "path": "items/Runeword_Strength_Dagger.webp"
+      },
+      "Runeword_Strength_Flail": {
+        "path": "items/Runeword_Strength_Flail.webp"
+      },
+      "Runeword_Strength_Focus": {
+        "path": "items/Runeword_Strength_Focus.webp"
+      },
+      "Runeword_Strength_OffHandTotem": {
+        "path": "items/Runeword_Strength_OffHandTotem.webp"
+      },
+      "Runeword_Strength_Scythe": {
+        "path": "items/Runeword_Strength_Scythe.webp"
+      },
+      "Runeword_Strength_Sword": {
+        "path": "items/Runeword_Strength_Sword.webp"
+      },
+      "Runeword_Strength_Wand": {
+        "path": "items/Runeword_Strength_Wand.webp"
+      },
+      "Runeword_Zephyr_2HBow": {
+        "path": "items/Runeword_Zephyr_2HBow.webp"
+      },
+      "Runeword_Zephyr_Crossbow": {
+        "path": "items/Runeword_Zephyr_Crossbow.webp"
       },
       "S05_BSK_1HDagger_Unique_Necro_001": {
         "path": "items/S05_BSK_1HDagger_Unique_Necro_001.webp"
@@ -4594,6 +4921,15 @@
       "S14_Ring_Unique_Generic_104": {
         "path": "items/S14_Ring_Unique_Generic_104.webp"
       },
+      "S15_Charm_Unique_Annihilus": {
+        "path": "items/S15_Charm_Unique_Annihilus.webp"
+      },
+      "S15_Charm_Unique_HellfireTorch": {
+        "missing": true
+      },
+      "S15_GodlyPlateOfTheWhale": {
+        "path": "items/S15_GodlyPlateOfTheWhale.webp"
+      },
       "SMP_WishingWell_Ring": {
         "path": "items/SMP_WishingWell_Ring.webp"
       },
@@ -5344,6 +5680,18 @@
       "Talisman_Charm_Unique_1HDagger_Unique_Rogue_003_x2": {
         "path": "items/Talisman_Charm_Unique_1HDagger_Unique_Rogue_003_x2.webp"
       },
+      "Talisman_Charm_Unique_1HFocus_Unique_Generic_001": {
+        "path": "items/Talisman_Charm_Unique_1HFocus_Unique_Generic_001.webp"
+      },
+      "Talisman_Charm_Unique_1HFocus_Unique_Necro_100": {
+        "path": "items/Talisman_Charm_Unique_1HFocus_Unique_Necro_100.webp"
+      },
+      "Talisman_Charm_Unique_1HFocus_Unique_Warlock_001": {
+        "path": "items/Talisman_Charm_Unique_1HFocus_Unique_Warlock_001.webp"
+      },
+      "Talisman_Charm_Unique_1HFocus_Unique_Warlock_002": {
+        "path": "items/Talisman_Charm_Unique_1HFocus_Unique_Warlock_002.webp"
+      },
       "Talisman_Charm_Unique_1HMace_Unique_Sorc_100": {
         "path": "items/Talisman_Charm_Unique_1HMace_Unique_Sorc_100.webp"
       },
@@ -5371,6 +5719,9 @@
       "Talisman_Charm_Unique_1HSword_Unique_Generic_100": {
         "path": "items/Talisman_Charm_Unique_1HSword_Unique_Generic_100.webp"
       },
+      "Talisman_Charm_Unique_1HSword_Unique_Generic_103": {
+        "path": "items/Talisman_Charm_Unique_1HSword_Unique_Generic_103.webp"
+      },
       "Talisman_Charm_Unique_1HSword_Unique_Paladin_002": {
         "path": "items/Talisman_Charm_Unique_1HSword_Unique_Paladin_002.webp"
       },
@@ -5383,11 +5734,17 @@
       "Talisman_Charm_Unique_2HAxe_Unique_Warlock_001": {
         "path": "items/Talisman_Charm_Unique_2HAxe_Unique_Warlock_001.webp"
       },
+      "Talisman_Charm_Unique_2HMace_Unique_Generic_001": {
+        "path": "items/Talisman_Charm_Unique_2HMace_Unique_Generic_001.webp"
+      },
       "Talisman_Charm_Unique_2HMace_Unique_Warlock_001": {
         "path": "items/Talisman_Charm_Unique_2HMace_Unique_Warlock_001.webp"
       },
       "Talisman_Charm_Unique_2HPolearm_Unique_Generic_001": {
         "path": "items/Talisman_Charm_Unique_2HPolearm_Unique_Generic_001.webp"
+      },
+      "Talisman_Charm_Unique_2HPolearm_Unique_Generic_002": {
+        "path": "items/Talisman_Charm_Unique_2HPolearm_Unique_Generic_002.webp"
       },
       "Talisman_Charm_Unique_2HScythe_Unique_Necro_100": {
         "path": "items/Talisman_Charm_Unique_2HScythe_Unique_Necro_100.webp"
@@ -5452,6 +5809,9 @@
       "Talisman_Charm_Unique_Amulet_Unique_Warlock_003": {
         "path": "items/Talisman_Charm_Unique_Amulet_Unique_Warlock_003.webp"
       },
+      "Talisman_Charm_Unique_Amulet_Unique_Warlock_004": {
+        "path": "items/Talisman_Charm_Unique_Amulet_Unique_Warlock_004.webp"
+      },
       "Talisman_Charm_Unique_Boots_Unique_Barb_101": {
         "path": "items/Talisman_Charm_Unique_Boots_Unique_Barb_101.webp"
       },
@@ -5473,6 +5833,9 @@
       "Talisman_Charm_Unique_Boots_Unique_Sorc_100": {
         "path": "items/Talisman_Charm_Unique_Boots_Unique_Sorc_100.webp"
       },
+      "Talisman_Charm_Unique_Boots_Unique_Warlock_002": {
+        "path": "items/Talisman_Charm_Unique_Boots_Unique_Warlock_002.webp"
+      },
       "Talisman_Charm_Unique_Chest_Unique_Barb_100": {
         "path": "items/Talisman_Charm_Unique_Chest_Unique_Barb_100.webp"
       },
@@ -5484,6 +5847,9 @@
       },
       "Talisman_Charm_Unique_Chest_Unique_Generic_103": {
         "path": "items/Talisman_Charm_Unique_Chest_Unique_Generic_103.webp"
+      },
+      "Talisman_Charm_Unique_Chest_Unique_Generic_104": {
+        "path": "items/Talisman_Charm_Unique_Chest_Unique_Generic_104.webp"
       },
       "Talisman_Charm_Unique_Chest_Unique_Generic_127": {
         "path": "items/Talisman_Charm_Unique_Chest_Unique_Generic_127.webp"
@@ -5499,6 +5865,9 @@
       },
       "Talisman_Charm_Unique_Chest_Unique_Warlock_001": {
         "path": "items/Talisman_Charm_Unique_Chest_Unique_Warlock_001.webp"
+      },
+      "Talisman_Charm_Unique_Chest_Unique_Warlock_002": {
+        "path": "items/Talisman_Charm_Unique_Chest_Unique_Warlock_002.webp"
       },
       "Talisman_Charm_Unique_Glaive_Unique_Spiritborn_010_x1": {
         "path": "items/Talisman_Charm_Unique_Glaive_Unique_Spiritborn_010_x1.webp"
@@ -5518,6 +5887,9 @@
       "Talisman_Charm_Unique_Gloves_Unique_Generic_005": {
         "path": "items/Talisman_Charm_Unique_Gloves_Unique_Generic_005.webp"
       },
+      "Talisman_Charm_Unique_Gloves_Unique_Generic_006": {
+        "path": "items/Talisman_Charm_Unique_Gloves_Unique_Generic_006.webp"
+      },
       "Talisman_Charm_Unique_Gloves_Unique_Necro_105": {
         "path": "items/Talisman_Charm_Unique_Gloves_Unique_Necro_105.webp"
       },
@@ -5527,8 +5899,14 @@
       "Talisman_Charm_Unique_Gloves_Unique_Rogue_002_x2": {
         "path": "items/Talisman_Charm_Unique_Gloves_Unique_Rogue_002_x2.webp"
       },
+      "Talisman_Charm_Unique_Gloves_Unique_Rogue_100": {
+        "path": "items/Talisman_Charm_Unique_Gloves_Unique_Rogue_100.webp"
+      },
       "Talisman_Charm_Unique_Gloves_Unique_Rogue_98": {
         "path": "items/Talisman_Charm_Unique_Gloves_Unique_Rogue_98.webp"
+      },
+      "Talisman_Charm_Unique_Gloves_Unique_Warlock_002": {
+        "path": "items/Talisman_Charm_Unique_Gloves_Unique_Warlock_002.webp"
       },
       "Talisman_Charm_Unique_Helm_Unique_Barb_100": {
         "path": "items/Talisman_Charm_Unique_Helm_Unique_Barb_100.webp"
@@ -5556,6 +5934,9 @@
       },
       "Talisman_Charm_Unique_Helm_Unique_Spiritborn_011_x1": {
         "path": "items/Talisman_Charm_Unique_Helm_Unique_Spiritborn_011_x1.webp"
+      },
+      "Talisman_Charm_Unique_Helm_Unique_Warlock_004": {
+        "path": "items/Talisman_Charm_Unique_Helm_Unique_Warlock_004.webp"
       },
       "Talisman_Charm_Unique_Pants_Unique_Barb_100": {
         "path": "items/Talisman_Charm_Unique_Pants_Unique_Barb_100.webp"
@@ -5632,6 +6013,15 @@
       "Talisman_Charm_Unique_Ring_Unique_Generic_103": {
         "path": "items/Talisman_Charm_Unique_Ring_Unique_Generic_103.webp"
       },
+      "Talisman_Charm_Unique_Ring_Unique_Generic_104_x2": {
+        "path": "items/Talisman_Charm_Unique_Ring_Unique_Generic_104_x2.webp"
+      },
+      "Talisman_Charm_Unique_Ring_Unique_Generic_105_x2": {
+        "path": "items/Talisman_Charm_Unique_Ring_Unique_Generic_105_x2.webp"
+      },
+      "Talisman_Charm_Unique_Ring_Unique_Generic_108": {
+        "path": "items/Talisman_Charm_Unique_Ring_Unique_Generic_108.webp"
+      },
       "Talisman_Charm_Unique_Ring_Unique_Necro_100_x2": {
         "path": "items/Talisman_Charm_Unique_Ring_Unique_Necro_100_x2.webp"
       },
@@ -5680,8 +6070,23 @@
       "Talisman_Charm_Unique_Ring_Unique_Spiritborn_006_x1": {
         "path": "items/Talisman_Charm_Unique_Ring_Unique_Spiritborn_006_x1.webp"
       },
+      "Talisman_Charm_Unique_S05_BSK_1HDagger_Unique_Necro_001": {
+        "path": "items/Talisman_Charm_Unique_S05_BSK_1HDagger_Unique_Necro_001.webp"
+      },
       "Talisman_Charm_Unique_S05_BSK_1HDagger_Unique_Rogue_001": {
         "path": "items/Talisman_Charm_Unique_S05_BSK_1HDagger_Unique_Rogue_001.webp"
+      },
+      "Talisman_Charm_Unique_S05_BSK_1HSword_Unique_Barbarian_001": {
+        "path": "items/Talisman_Charm_Unique_S05_BSK_1HSword_Unique_Barbarian_001.webp"
+      },
+      "Talisman_Charm_Unique_S05_BSK_1HSword_Unique_Generic_001": {
+        "path": "items/Talisman_Charm_Unique_S05_BSK_1HSword_Unique_Generic_001.webp"
+      },
+      "Talisman_Charm_Unique_S05_BSK_2HStaff_Unique_Druid_001": {
+        "path": "items/Talisman_Charm_Unique_S05_BSK_2HStaff_Unique_Druid_001.webp"
+      },
+      "Talisman_Charm_Unique_S05_BSK_2HStaff_Unique_Sorcerer_001": {
+        "path": "items/Talisman_Charm_Unique_S05_BSK_2HStaff_Unique_Sorcerer_001.webp"
       },
       "Talisman_Charm_Unique_S05_BSK_Amulet_Unique_Generic_001": {
         "path": "items/Talisman_Charm_Unique_S05_BSK_Amulet_Unique_Generic_001.webp"
@@ -5766,6 +6171,9 @@
       },
       "generic_Axe2H": {
         "path": "items/generic_Axe2H.webp"
+      },
+      "generic_Axe_Berserker_Axe": {
+        "path": "items/generic_Axe_Berserker_Axe.webp"
       },
       "generic_Boots": {
         "path": "items/generic_Boots.webp"
@@ -5853,6 +6261,9 @@
       },
       "generic_Sword2H": {
         "path": "items/generic_Sword2H.webp"
+      },
+      "generic_Sword_Phase_Blade": {
+        "path": "items/generic_Sword_Phase_Blade.webp"
       },
       "generic_Wand": {
         "path": "items/generic_Wand.webp"
@@ -6577,6 +6988,12 @@
       },
       "Generic_Magic_DamageWhileHealthy": {
         "path": "paragon/Generic_Magic_DamageWhileHealthy.webp"
+      },
+      "Generic_Magic_DamageWithCentipede": {
+        "path": "paragon/Generic_Magic_DamageWithCentipede.webp"
+      },
+      "Generic_Magic_DamageWithEagle": {
+        "path": "paragon/Generic_Magic_DamageWithEagle.webp"
       },
       "Generic_Magic_DamageWithUltimates": {
         "path": "paragon/Generic_Magic_DamageWithUltimates.webp"
@@ -7685,6 +8102,9 @@
       "Rare_132_Strength_Side": {
         "path": "paragon/Rare_132_Strength_Side.webp"
       },
+      "Rare_133_Intelligence_Side": {
+        "path": "paragon/Rare_133_Intelligence_Side.webp"
+      },
       "Rare_Dex_Generic": {
         "path": "paragon/Rare_Dex_Generic.webp"
       },
@@ -7976,6 +8396,9 @@
       "Spiritborn_Legendary_008": {
         "path": "paragon/Spiritborn_Legendary_008.webp"
       },
+      "Spiritborn_Legendary_010": {
+        "path": "paragon/Spiritborn_Legendary_010.webp"
+      },
       "Spiritborn_Magic_Vigor": {
         "path": "paragon/Spiritborn_Magic_Vigor.webp"
       },
@@ -8071,6 +8494,12 @@
       },
       "Spiritborn_Rare_039": {
         "path": "paragon/Spiritborn_Rare_039.webp"
+      },
+      "Spiritborn_Rare_040": {
+        "path": "paragon/Spiritborn_Rare_040.webp"
+      },
+      "Spiritborn_Rare_041": {
+        "path": "paragon/Spiritborn_Rare_041.webp"
       },
       "StartNodeBarb": {
         "path": "paragon/StartNodeBarb.webp"
@@ -13787,6 +14216,45 @@
       },
       "Rune_Effect_Warlock_ChainPrison": {
         "path": "socketables/Rune_Effect_Warlock_ChainPrison.webp"
+      },
+      "S15_ChatGem": {
+        "path": "socketables/S15_ChatGem.webp"
+      },
+      "S15_Rune_Condition_Amn": {
+        "missing": true
+      },
+      "S15_Rune_Condition_Eth": {
+        "missing": true
+      },
+      "S15_Rune_Condition_Mal": {
+        "missing": true
+      },
+      "S15_Rune_Condition_Ort": {
+        "missing": true
+      },
+      "S15_Rune_Condition_Tal": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Ber": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Ist": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Ith": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Lo": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Ral": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Sol": {
+        "missing": true
+      },
+      "S15_Rune_Effect_Tir": {
+        "missing": true
       }
     },
     "warplans": {
