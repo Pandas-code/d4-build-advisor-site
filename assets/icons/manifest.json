@@ -10,7 +10,7 @@
     "classes",
     "socketables"
   ],
-  "generated": "2026-09-16",
+  "generated": "2026-09-18",
   "icons": {
     "aspects": {
       "LTE_Hibernal_legendary_generic_001": {
@@ -64,8 +64,14 @@
       "Legendary_Rogue_125": {
         "path": "aspects/Legendary_Rogue_125.webp"
       },
+      "Legendary_Sorc_133": {
+        "path": "aspects/Legendary_Sorc_133.webp"
+      },
       "Legendary_Sorc_134": {
         "path": "aspects/Legendary_Sorc_134.webp"
+      },
+      "Legendary_Sorc_135": {
+        "path": "aspects/Legendary_Sorc_135.webp"
       },
       "S05_BSK_Barbarian_001": {
         "path": "aspects/S05_BSK_Barbarian_001.webp"
@@ -499,6 +505,12 @@
       "legendary_barb_020": {
         "path": "aspects/legendary_barb_020.webp"
       },
+      "legendary_barb_021": {
+        "path": "aspects/legendary_barb_021.webp"
+      },
+      "legendary_barb_022": {
+        "path": "aspects/legendary_barb_022.webp"
+      },
       "legendary_barb_023": {
         "path": "aspects/legendary_barb_023.webp"
       },
@@ -546,6 +558,9 @@
       },
       "legendary_barb_105": {
         "path": "aspects/legendary_barb_105.webp"
+      },
+      "legendary_barb_106": {
+        "path": "aspects/legendary_barb_106.webp"
       },
       "legendary_barb_107": {
         "path": "aspects/legendary_barb_107.webp"
@@ -724,6 +739,9 @@
       "legendary_druid_108": {
         "path": "aspects/legendary_druid_108.webp"
       },
+      "legendary_druid_109": {
+        "missing": true
+      },
       "legendary_druid_109_x2": {
         "path": "aspects/legendary_druid_109_x2.webp"
       },
@@ -732,6 +750,9 @@
       },
       "legendary_druid_111": {
         "path": "aspects/legendary_druid_111.webp"
+      },
+      "legendary_druid_112": {
+        "path": "aspects/legendary_druid_112.webp"
       },
       "legendary_druid_113": {
         "missing": true
@@ -763,11 +784,20 @@
       "legendary_druid_127": {
         "path": "aspects/legendary_druid_127.webp"
       },
+      "legendary_druid_128": {
+        "missing": true
+      },
       "legendary_druid_128_x2": {
         "path": "aspects/legendary_druid_128_x2.webp"
       },
+      "legendary_druid_129": {
+        "path": "aspects/legendary_druid_129.webp"
+      },
       "legendary_druid_130": {
         "path": "aspects/legendary_druid_130.webp"
+      },
+      "legendary_druid_131": {
+        "path": "aspects/legendary_druid_131.webp"
       },
       "legendary_druid_132": {
         "path": "aspects/legendary_druid_132.webp"
@@ -901,6 +931,9 @@
       "legendary_generic_127": {
         "path": "aspects/legendary_generic_127.webp"
       },
+      "legendary_generic_128_x2": {
+        "path": "aspects/legendary_generic_128_x2.webp"
+      },
       "legendary_generic_129_x2": {
         "path": "aspects/legendary_generic_129_x2.webp"
       },
@@ -973,6 +1006,9 @@
       "legendary_necro_031": {
         "path": "aspects/legendary_necro_031.webp"
       },
+      "legendary_necro_032": {
+        "path": "aspects/legendary_necro_032.webp"
+      },
       "legendary_necro_036": {
         "path": "aspects/legendary_necro_036.webp"
       },
@@ -991,6 +1027,9 @@
       "legendary_necro_066": {
         "path": "aspects/legendary_necro_066.webp"
       },
+      "legendary_necro_067": {
+        "path": "aspects/legendary_necro_067.webp"
+      },
       "legendary_necro_067_x2": {
         "path": "aspects/legendary_necro_067_x2.webp"
       },
@@ -999,6 +1038,9 @@
       },
       "legendary_necro_101": {
         "path": "aspects/legendary_necro_101.webp"
+      },
+      "legendary_necro_102": {
+        "path": "aspects/legendary_necro_102.webp"
       },
       "legendary_necro_102_x2": {
         "path": "aspects/legendary_necro_102_x2.webp"
@@ -1024,17 +1066,26 @@
       "legendary_necro_109": {
         "path": "aspects/legendary_necro_109.webp"
       },
+      "legendary_necro_110": {
+        "path": "aspects/legendary_necro_110.webp"
+      },
       "legendary_necro_111": {
         "path": "aspects/legendary_necro_111.webp"
       },
       "legendary_necro_112": {
         "path": "aspects/legendary_necro_112.webp"
       },
+      "legendary_necro_113": {
+        "path": "aspects/legendary_necro_113.webp"
+      },
       "legendary_necro_114": {
         "path": "aspects/legendary_necro_114.webp"
       },
       "legendary_necro_115": {
         "path": "aspects/legendary_necro_115.webp"
+      },
+      "legendary_necro_116": {
+        "path": "aspects/legendary_necro_116.webp"
       },
       "legendary_necro_117": {
         "path": "aspects/legendary_necro_117.webp"
@@ -1065,6 +1116,9 @@
       },
       "legendary_necro_127": {
         "path": "aspects/legendary_necro_127.webp"
+      },
+      "legendary_necro_131": {
+        "path": "aspects/legendary_necro_131.webp"
       },
       "legendary_necro_132": {
         "path": "aspects/legendary_necro_132.webp"
@@ -1285,6 +1339,9 @@
       "legendary_rogue_020": {
         "path": "aspects/legendary_rogue_020.webp"
       },
+      "legendary_rogue_021": {
+        "path": "aspects/legendary_rogue_021.webp"
+      },
       "legendary_rogue_023": {
         "path": "aspects/legendary_rogue_023.webp"
       },
@@ -1411,6 +1468,9 @@
       "legendary_rogue_133": {
         "path": "aspects/legendary_rogue_133.webp"
       },
+      "legendary_rogue_134": {
+        "path": "aspects/legendary_rogue_134.webp"
+      },
       "legendary_rogue_135": {
         "path": "aspects/legendary_rogue_135.webp"
       },
@@ -1468,6 +1528,9 @@
       "legendary_rogue_153_x2": {
         "path": "aspects/legendary_rogue_153_x2.webp"
       },
+      "legendary_sorc_004": {
+        "path": "aspects/legendary_sorc_004.webp"
+      },
       "legendary_sorc_006": {
         "path": "aspects/legendary_sorc_006.webp"
       },
@@ -1495,8 +1558,17 @@
       "legendary_sorc_027": {
         "path": "aspects/legendary_sorc_027.webp"
       },
+      "legendary_sorc_034": {
+        "path": "aspects/legendary_sorc_034.webp"
+      },
+      "legendary_sorc_035": {
+        "path": "aspects/legendary_sorc_035.webp"
+      },
       "legendary_sorc_035_x2": {
         "path": "aspects/legendary_sorc_035_x2.webp"
+      },
+      "legendary_sorc_039": {
+        "path": "aspects/legendary_sorc_039.webp"
       },
       "legendary_sorc_039_x2": {
         "path": "aspects/legendary_sorc_039_x2.webp"
@@ -1506,6 +1578,12 @@
       },
       "legendary_sorc_043_x2": {
         "path": "aspects/legendary_sorc_043_x2.webp"
+      },
+      "legendary_sorc_100": {
+        "path": "aspects/legendary_sorc_100.webp"
+      },
+      "legendary_sorc_101": {
+        "path": "aspects/legendary_sorc_101.webp"
       },
       "legendary_sorc_101_x2": {
         "path": "aspects/legendary_sorc_101_x2.webp"
@@ -1519,11 +1597,23 @@
       "legendary_sorc_104": {
         "path": "aspects/legendary_sorc_104.webp"
       },
+      "legendary_sorc_105": {
+        "path": "aspects/legendary_sorc_105.webp"
+      },
+      "legendary_sorc_106": {
+        "path": "aspects/legendary_sorc_106.webp"
+      },
       "legendary_sorc_106_x2": {
         "path": "aspects/legendary_sorc_106_x2.webp"
       },
+      "legendary_sorc_107": {
+        "path": "aspects/legendary_sorc_107.webp"
+      },
       "legendary_sorc_107_x2": {
         "path": "aspects/legendary_sorc_107_x2.webp"
+      },
+      "legendary_sorc_108": {
+        "path": "aspects/legendary_sorc_108.webp"
       },
       "legendary_sorc_108_x2": {
         "path": "aspects/legendary_sorc_108_x2.webp"
@@ -1533,6 +1623,9 @@
       },
       "legendary_sorc_109_x2": {
         "path": "aspects/legendary_sorc_109_x2.webp"
+      },
+      "legendary_sorc_110": {
+        "path": "aspects/legendary_sorc_110.webp"
       },
       "legendary_sorc_110_x2": {
         "path": "aspects/legendary_sorc_110_x2.webp"
@@ -1564,11 +1657,17 @@
       "legendary_sorc_117_x2": {
         "path": "aspects/legendary_sorc_117_x2.webp"
       },
+      "legendary_sorc_118": {
+        "path": "aspects/legendary_sorc_118.webp"
+      },
       "legendary_sorc_118_x2": {
         "path": "aspects/legendary_sorc_118_x2.webp"
       },
       "legendary_sorc_119": {
         "path": "aspects/legendary_sorc_119.webp"
+      },
+      "legendary_sorc_120": {
+        "path": "aspects/legendary_sorc_120.webp"
       },
       "legendary_sorc_120_x2": {
         "path": "aspects/legendary_sorc_120_x2.webp"
@@ -1578,6 +1677,12 @@
       },
       "legendary_sorc_121_x2": {
         "path": "aspects/legendary_sorc_121_x2.webp"
+      },
+      "legendary_sorc_122": {
+        "path": "aspects/legendary_sorc_122.webp"
+      },
+      "legendary_sorc_123": {
+        "path": "aspects/legendary_sorc_123.webp"
       },
       "legendary_sorc_124": {
         "path": "aspects/legendary_sorc_124.webp"
@@ -1629,6 +1734,9 @@
       },
       "legendary_sorc_138_x2": {
         "path": "aspects/legendary_sorc_138_x2.webp"
+      },
+      "legendary_sorc_139": {
+        "path": "aspects/legendary_sorc_139.webp"
       },
       "legendary_sorc_139_x2": {
         "path": "aspects/legendary_sorc_139_x2.webp"
@@ -1714,6 +1822,9 @@
       "legendary_spiritborn_016_x1": {
         "path": "aspects/legendary_spiritborn_016_x1.webp"
       },
+      "legendary_spiritborn_017_x1": {
+        "path": "aspects/legendary_spiritborn_017_x1.webp"
+      },
       "legendary_spiritborn_018_x1": {
         "path": "aspects/legendary_spiritborn_018_x1.webp"
       },
@@ -1752,6 +1863,9 @@
       },
       "legendary_spiritborn_029_x1": {
         "path": "aspects/legendary_spiritborn_029_x1.webp"
+      },
+      "legendary_spiritborn_030_x1": {
+        "path": "aspects/legendary_spiritborn_030_x1.webp"
       },
       "legendary_spiritborn_031_x1": {
         "path": "aspects/legendary_spiritborn_031_x1.webp"
@@ -1872,6 +1986,12 @@
       },
       "legendary_warlock_012_x2": {
         "path": "aspects/legendary_warlock_012_x2.webp"
+      },
+      "legendary_warlock_013_x2": {
+        "path": "aspects/legendary_warlock_013_x2.webp"
+      },
+      "legendary_warlock_014_x2": {
+        "path": "aspects/legendary_warlock_014_x2.webp"
       },
       "legendary_warlock_015_x2": {
         "path": "aspects/legendary_warlock_015_x2.webp"
@@ -2023,6 +2143,9 @@
       "s01_orb_rare_rogue_001": {
         "missing": true
       },
+      "s01_orb_rare_sorcerer_001": {
+        "missing": true
+      },
       "s01_orb_utility_barbarian_001": {
         "missing": true
       },
@@ -2097,6 +2220,9 @@
       },
       "x1_legendary_sorc_141_x2": {
         "path": "aspects/x1_legendary_sorc_141_x2.webp"
+      },
+      "x1_legendary_sorc_142": {
+        "path": "aspects/x1_legendary_sorc_142.webp"
       }
     },
     "bosses": {
@@ -2225,7 +2351,7 @@
         "path": "items/1HFlail_Unique_Warlock_001.webp"
       },
       "1HFocus_Unique_Generic_001": {
-        "missing": true
+        "path": "items/1HFocus_Unique_Generic_001.webp"
       },
       "1HFocus_Unique_Necro_100": {
         "path": "items/1HFocus_Unique_Necro_100.webp"
@@ -2339,7 +2465,7 @@
         "path": "items/2HAxe_Unique_Barb_001.webp"
       },
       "2HAxe_Unique_Generic_001": {
-        "missing": true
+        "path": "items/2HAxe_Unique_Generic_001.webp"
       },
       "2HAxe_Unique_Paladin_001": {
         "path": "items/2HAxe_Unique_Paladin_001.webp"
@@ -2378,7 +2504,7 @@
         "path": "items/2HMace_Unique_Druid_100_x2.webp"
       },
       "2HMace_Unique_Generic_001": {
-        "missing": true
+        "path": "items/2HMace_Unique_Generic_001.webp"
       },
       "2HMace_Unique_Warlock_001": {
         "path": "items/2HMace_Unique_Warlock_001.webp"
@@ -2390,7 +2516,7 @@
         "path": "items/2HPolearm_Unique_Generic_001.webp"
       },
       "2HPolearm_Unique_Generic_002": {
-        "missing": true
+        "path": "items/2HPolearm_Unique_Generic_002.webp"
       },
       "2HScythe_Unique_AF_001": {
         "path": "items/2HScythe_Unique_AF_001.webp"
@@ -3020,7 +3146,7 @@
         "path": "items/Helm_Unique_Warlock_95.webp"
       },
       "OPAL_Amulet_Unique_Generic_100": {
-        "missing": true
+        "path": "items/OPAL_Amulet_Unique_Generic_100.webp"
       },
       "OWCSMP_Crown": {
         "path": "items/OWCSMP_Crown.webp"
@@ -4925,7 +5051,7 @@
         "path": "items/S15_Charm_Unique_Annihilus.webp"
       },
       "S15_Charm_Unique_HellfireTorch": {
-        "missing": true
+        "path": "items/S15_Charm_Unique_HellfireTorch.webp"
       },
       "S15_GodlyPlateOfTheWhale": {
         "path": "items/S15_GodlyPlateOfTheWhale.webp"
@@ -14221,40 +14347,40 @@
         "path": "socketables/S15_ChatGem.webp"
       },
       "S15_Rune_Condition_Amn": {
-        "missing": true
+        "path": "socketables/S15_Rune_Condition_Amn.webp"
       },
       "S15_Rune_Condition_Eth": {
-        "missing": true
+        "path": "socketables/S15_Rune_Condition_Eth.webp"
       },
       "S15_Rune_Condition_Mal": {
-        "missing": true
+        "path": "socketables/S15_Rune_Condition_Mal.webp"
       },
       "S15_Rune_Condition_Ort": {
-        "missing": true
+        "path": "socketables/S15_Rune_Condition_Ort.webp"
       },
       "S15_Rune_Condition_Tal": {
-        "missing": true
+        "path": "socketables/S15_Rune_Condition_Tal.webp"
       },
       "S15_Rune_Effect_Ber": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Ber.webp"
       },
       "S15_Rune_Effect_Ist": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Ist.webp"
       },
       "S15_Rune_Effect_Ith": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Ith.webp"
       },
       "S15_Rune_Effect_Lo": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Lo.webp"
       },
       "S15_Rune_Effect_Ral": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Ral.webp"
       },
       "S15_Rune_Effect_Sol": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Sol.webp"
       },
       "S15_Rune_Effect_Tir": {
-        "missing": true
+        "path": "socketables/S15_Rune_Effect_Tir.webp"
       }
     },
     "warplans": {
