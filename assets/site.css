@@ -928,6 +928,10 @@ button, a, select, input, summary, [role="tab"], [role="menuitem"] {
   flex-direction: column;
   gap: clamp(0.9rem, 2.2vw, 1.4rem);
   align-items: stretch;
+  /* the notes cite bare URLs ("[https://firestore.googleapis.com/v1/...]")
+     that are wider than a phone: break one only where it would overflow
+     (break-word leaves every box's min-content size alone) */
+  overflow-wrap: break-word;
 }
 .build-back { min-width: 0; }
 
@@ -1457,7 +1461,9 @@ a.build-card { text-decoration: none; }
 /* ------------------- skill rows, in the reference's format --------------- */
 /* icon + name + rank badge; upgrades sit indented under their skill with
    their own icons (manifest ids are namespaced "<skill_id>__<upgrade_id>") */
-.skill-rows { display: grid; gap: var(--s-1); }
+/* one column that never grows past its container: an auto track would take
+   the min-content of the widest row's note and push every row off a phone */
+.skill-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-1); }
 .skill-row {
   display: flex;
   align-items: center;
@@ -4180,7 +4186,7 @@ button.skill-row:focus-visible {
   outline: 2px solid var(--accent-2);
   outline-offset: 2px;
 }
-.skill-row-wrap { display: grid; gap: var(--s-1); }
+.skill-row-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-1); }
 .skill-row-wrap .note { margin: 0 0 0 var(--s-3); }
 
 /* ==========================================================================
@@ -5844,8 +5850,9 @@ html:has(.build-page), body:has(.build-page) {
 .build-page .bp-chip {
   display: inline-flex;
   align-items: center;
-  height: 40px;
-  padding: 0 12px;
+  min-height: 40px;
+  max-width: 100%;
+  padding: 4px 12px;
   border-radius: 5px;
   background: var(--d4-panel-2);
   border: 1px solid var(--d4-raised);
@@ -5853,6 +5860,9 @@ html:has(.build-page), body:has(.build-page) {
   color: var(--d4-fg-60);
   white-space: nowrap;
 }
+/* a long name ("Berserker's Crucible, Sescheron's Fury and Bloodletter
+   charms") wraps inside the pill rather than widening the page at 400px */
+.build-page .bp-chip .nm { white-space: normal; min-width: 0; overflow-wrap: anywhere; }
 .build-page .bp-tabframe.is-fs .mwrap,
 .build-page .bp-tabframe:fullscreen .mwrap { height: calc(100vh - 220px); max-height: none; }
 .build-page .bp-tabframe.is-fs .mview,
