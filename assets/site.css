@@ -1476,7 +1476,8 @@ a.build-card { text-decoration: none; }
   background: color-mix(in srgb, hsl(var(--cls)) 5%, var(--surface));
 }
 .skill-row.upgrade {
-  margin-left: clamp(0.9rem, 4vw, 2rem);
+  --up-indent: clamp(0.9rem, 4vw, 2rem);
+  margin-left: var(--up-indent);
   padding: var(--s-1) var(--s-3) var(--s-1) var(--s-2);
   background: var(--surface-2);
   border-left-color: hsl(var(--cls) / 0.32);
@@ -2350,7 +2351,7 @@ a.rw-rune:hover .rw-rnm, a.rw-rune:focus-visible .rw-rnm { color: var(--accent);
 
 @media (max-width: 44rem) {
 
-  .skill-row.upgrade { margin-left: var(--s-4); }
+  .skill-row.upgrade { --up-indent: var(--s-4); }
 }
 
 @media (max-width: 34rem) {
@@ -2562,17 +2563,16 @@ a.rw-rune:hover .rw-rnm, a.rw-rune:focus-visible .rw-rnm { color: var(--accent);
 /* "Allocated only": everything off the build's path drops away almost
    completely, which is what the toggle is for. */
 .tcanvas.alloc-only .tn:not(.lit):not(.on) { opacity: 0.07; filter: grayscale(1); }
-.tcanvas.alloc-only .tlinks .tl-base line { opacity: 0.35; }
+.tcanvas.alloc-only .tlinks .tl-base line,
+.tcanvas.alloc-only .tlinks .tl-inner line { opacity: 0.35; }
 
 /* ------------------------------ node search ------------------------------ */
-/* The search dims everything that does not match and rings what does. It only
-   ever adds and removes class names -- no markup is built from the query. */
-.tcanvas.searching .tn { opacity: 0.12; filter: grayscale(1); }
+/* The search rings what matches and dims nothing (the reference's
+   .filtered, spec 2026-09-20 section 2.3; the build page's rule sets the
+   glow). It only ever adds and removes class names -- no markup is built
+   from the query. */
 .tcanvas.searching .tn.hit {
-  opacity: 1;
-  filter: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-soft), 0 0 16px -2px var(--accent);
   z-index: 5;
 }
 
@@ -3970,6 +3970,9 @@ button.skill-row {
   appearance: none;
 }
 button.skill-row { width: 100%; text-align: left; }
+/* an upgrade row is indented: full width minus its own indent, or a phone
+   scrolls sideways by the indent */
+button.skill-row.upgrade { width: calc(100% - var(--up-indent)); }
 button.skill-row:focus-visible {
   outline: 2px solid var(--accent-2);
   outline-offset: 2px;
@@ -4007,6 +4010,31 @@ html:has(.build-page), body:has(.build-page) {
   --d4-fg-60: rgba(255, 255, 255, 0.6);
   --d4-fg-40: rgba(255, 255, 255, 0.4);
   --d4-font: Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* the skill tree's edge stack and allocated frame, measured on d4builds
+     (spec 2026-09-20 section 2.2): .skill-line-base / -inner /
+     -active-base / -active-inner strokes, and the red of the `_active`
+     frame art sampled off tree-1440-load / tree-fullscreen (median of the
+     allocated plate's ring, rgb(102, 2, 2)) */
+  --d4-tree-edge: #2d2d2d;
+  --d4-tree-edge-inner: #191b1f;
+  --d4-tree-path: #8e0e1d;
+  --d4-tree-path-inner: #540001;
+  --d4-tree-frame-on: #660202;
+  /* the accessibility floor on the tree's reds (ui-modernist, measured with
+     the WCAG script over these hexes on --d4-panel-2 #1f2025 / the canvas
+     #1a1b1f). The reference's counter numeral #7c2b2b reads 1.73:1 and its
+     allocated badge (white on rgba(255,68,68,.9)) 4.01:1 -- both under 4.5.
+     The red identity stays: the measured #7c2b2b becomes the counter's ring,
+     the numeral takes the reference's own badge red #ff4444 (4.77:1), and
+     the badge plate goes opaque at the lightest red white clears 4.5 on
+     (#d03434, 4.97:1) under the reference's #ff4444 border. */
+  --d4-tree-counter: #ff4444;
+  --d4-tree-counter-ring: #7c2b2b;
+  --d4-tree-badge-on: #d03434;
+  /* the dark halo either side of a focused node's gold ring: gold on it
+     8.78:1, it on the search glow's core 7.40:1 -- the ring stays >= 3:1
+     against whatever glow (gold search, white hover) sits beyond it */
+  --d4-focus-halo: #0d0e11;
 
   /* the site's tokens, re-pointed: dark in light, system and explicit dark */
   color-scheme: dark;
@@ -4955,7 +4983,17 @@ html:has(.build-page), body:has(.build-page) {
   font-weight: 500;
   color: var(--d4-gold);
 }
-.build-page .bp-remaining b[data-remaining] { color: #c4494c; }
+/* the skill tree's counter, as the reference measures it (spec 2026-09-20
+   section 2.3 "Chrome"): a 32x30 plate, #7c2b2b 15px/500 text */
+.build-page .bp-remaining b[data-remaining] {
+  box-sizing: border-box;
+  min-width: 32px;
+  height: 30px;
+  padding: 0 5px;
+  border-color: var(--d4-tree-counter-ring);
+  color: var(--d4-tree-counter);
+  font-variant-numeric: tabular-nums;
+}
 
 /* the paragon's glyph chips and the talisman's charm chips */
 .build-page .bp-glyphs {
@@ -5356,6 +5394,16 @@ html:has(.build-page), body:has(.build-page) {
 .build-page .pnote-jump:hover .b-name { text-decoration: underline; }
 .build-page .pnotes .chip.gate { font-size: 11px; }
 .build-page .pnotes .b-note { flex: 1 1 100%; padding-left: 42px; }
+/* the `[fragmented as published]` marker, lifted out of the note: a quiet
+   aside after it, not a warning -- the planner published it that way */
+.build-page .pnotes .chip.b-frag {
+  margin-left: 42px;
+  border-style: dashed;
+  border-color: var(--d4-line);
+  font-size: 11px;
+  color: var(--d4-fg-60);
+  cursor: help;
+}
 .build-page .pradius { margin: 10px 0 0; }
 /* the bar's glyph chips are the board selector */
 .build-page .bp-glyph-group {
@@ -5382,6 +5430,7 @@ html:has(.build-page), body:has(.build-page) {
   .build-page .pwrap { height: 60vh; touch-action: pan-y pinch-zoom; }
   .build-page .pchip { top: 10px; font-size: 13px; height: 32px; }
   .build-page .pnotes .b-note { padding-left: 0; }
+  .build-page .pnotes .chip.b-frag { margin-left: 0; }
 }
 
 /* --- the mercenary planner (owner defect): the reference's 952x640 viewport
@@ -5561,15 +5610,44 @@ html:has(.build-page), body:has(.build-page) {
 .build-page .twrap.dragging { cursor: grabbing; }
 .build-page .tview { position: relative; }
 .build-page .tview.bp-tabframe .pzoom { top: auto; bottom: 10px; right: 10px; }
-.build-page .tlinks .tl-base line {
-  stroke: #0e0f12;
-  stroke-width: 9;
+/* the reference's edge stack (spec 2026-09-20 section 2.3): every edge a
+   5px base under a 3px inner line, lit edges the 5px / 3px active pair on
+   top, round caps, nothing hidden or dimmed. Below ~0.4 zoom the 3px layers
+   fall under a device pixel and the stack reads as one line -- accepted. */
+.build-page .tlinks line {
+  fill: none;
   stroke-linecap: round;
 }
-.build-page .tlinks .tl-on line {
-  stroke: #9b2a2a;
+.build-page .tlinks .tl-base line {
+  stroke: var(--d4-tree-edge);
+  stroke-width: 5;
+  opacity: 0.8;
+}
+.build-page .tlinks .tl-inner line {
+  stroke: var(--d4-tree-edge-inner);
   stroke-width: 3;
-  stroke-linecap: round;
+  opacity: 0.6;
+}
+.build-page .tlinks .tl-on-base line {
+  stroke: var(--d4-tree-path);
+  stroke-width: 5;
+}
+.build-page .tlinks .tl-on-inner line {
+  stroke: var(--d4-tree-path-inner);
+  stroke-width: 3;
+}
+/* the hub-to-hub spine: the reference's 50px connector_large band, and its
+   red fill between two entered hubs -- drawn in CSS, not their PNGs */
+.build-page .tlinks .tl-spine line {
+  stroke: var(--d4-tree-edge);
+  stroke-width: 50;
+  opacity: 0.8;
+  stroke-linecap: square;
+}
+.build-page .tlinks .tl-spine-on line {
+  stroke: var(--d4-tree-path);
+  stroke-width: 34;
+  stroke-linecap: square;
 }
 .build-page .tn {
   background: var(--d4-panel-2);
@@ -5579,8 +5657,26 @@ html:has(.build-page), body:has(.build-page) {
   cursor: pointer;
 }
 .build-page .tn img { border-radius: inherit; }
+/* a node's hit area meets the --tap floor even where its art is smaller
+   (the 25px passive, the 26px diamond): an invisible square centred on the
+   node, the art untouched. The reference does not do this; we must. */
+.build-page .tn.tt-anchor::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, var(--tap));
+  height: max(100%, var(--tap));
+  transform: translate(-50%, -50%);
+}
 .build-page .tn.k-skill { --tn: 60px; border-radius: 4px; }
-.build-page .tn.k-circle { --tn: 36px; }
+/* .viewer-node plain passive: 25px icon in its 30px frame */
+.build-page .tn.k-circle { --tn: 30px; }
+.build-page .tn.k-circle img {
+  width: 25px;
+  height: 25px;
+  margin: 0.5px;
+}
 .build-page .tn.k-diamond {
   --tn: 26px;
   border-radius: 2px;
@@ -5597,6 +5693,19 @@ html:has(.build-page), body:has(.build-page) {
   transform: translate(-50%, -50%) rotate(45deg);
 }
 .build-page .tn.k-hub img { transform: rotate(-45deg) scale(0.8); }
+/* the cluster glyph: the reference's 70x70 .category-icon, counter-rotated
+   upright over the 50px rotated plate (gamedata/README.md, hub -> glyph) */
+.build-page .tn.k-hub .hub-glyph {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 70px;
+  height: 70px;
+  max-width: none;
+  border-radius: 0;
+  object-fit: contain;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
 .build-page .tn.k-hub::after {
   content: "";
   position: absolute;
@@ -5606,6 +5715,7 @@ html:has(.build-page), body:has(.build-page) {
   opacity: 0.7;
   pointer-events: none;
 }
+.build-page .tn.k-hub.has-glyph::after { display: none; }
 .build-page .tn.k-hub.wp-root { border-color: #5a5140; }
 .build-page .tn.k-hub.wp-root::after { display: none; }
 .build-page .tn.k-hub.on { border-color: #7c2b2b; box-shadow: inset 0 0 0 1px #0d0e11, 0 0 12px rgba(255, 68, 68, 0.4); }
@@ -5619,13 +5729,19 @@ html:has(.build-page), body:has(.build-page) {
   cursor: default;
   transform: translate(-50%, -50%) rotate(45deg);
 }
-.build-page .tn.k-conn.on { border-color: #9b2a2a; background: #2a1416; }
+/* .viewer-node.connector.active */
+.build-page .tn.k-conn.on {
+  border-color: var(--d4-tree-path);
+  background: #2a1416;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+}
 .build-page .tn.ph {
   background:
     radial-gradient(58% 58% at 50% 50%, var(--d4-fg-40, rgba(255, 255, 255, 0.4)) 0%, transparent 62%),
     var(--d4-panel-2);
 }
-/* the rank badge under the node: red when allocated, dim otherwise */
+/* the rank badge under the node: red when allocated, dim otherwise
+   (.node-rank-badge: Roboto 7px/700, padding 1 3, radius 3) */
 .build-page .tb {
   position: absolute;
   top: 100%;
@@ -5640,7 +5756,7 @@ html:has(.build-page), body:has(.build-page) {
   background: #1f2025;
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
   font-style: normal;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1.2;
@@ -5653,30 +5769,39 @@ html:has(.build-page), body:has(.build-page) {
 }
 .build-page .tn.k-skill .tb { left: auto; right: 0; transform: none; }
 .build-page .tn.k-diamond .tb { transform: translateX(-50%) rotate(-45deg); transform-origin: 50% -8px; }
-.build-page .tn.lit .tb { background: rgba(255, 68, 68, 0.9); border-color: #ff4444; color: #fff; }
-.build-page .tb.dim { color: rgba(255, 255, 255, 0.55); }
-.build-page .tcanvas.has-path .tn.k-skill,
-.build-page .tcanvas.has-path .tn.k-circle,
-.build-page .tcanvas.has-path .tn.k-diamond { opacity: 0.55; }
-.build-page .tcanvas.has-path .tn:not(.lit) img { filter: grayscale(0.6) brightness(0.8); }
-.build-page .tcanvas.has-path .tn.lit {
-  opacity: 1;
-  border-color: #c4494c;
-  box-shadow: inset 0 0 0 1px #0d0e11, 0 0 12px -2px rgba(196, 73, 76, 0.8);
-}
-.build-page .tcanvas.has-path .tn.lit img { filter: none; }
-.build-page .tn:hover, .build-page .tn:focus-visible { z-index: 4; }
-.build-page .tn.k-skill:hover, .build-page .tn.k-circle:hover,
-.build-page .tn.k-skill:focus-visible, .build-page .tn.k-circle:focus-visible { transform: translate(-50%, -50%) scale(1.08); }
-.build-page .tn.k-diamond:hover, .build-page .tn.k-diamond:focus-visible { transform: translate(-50%, -50%) rotate(45deg) scale(1.12); }
-.build-page .tn:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: 1px; }
-.build-page .tcanvas.searching .tn { opacity: 0.12; filter: grayscale(1); }
-.build-page .tcanvas.searching .tn.hit {
-  opacity: 1;
+.build-page .tn.lit .tb { background: var(--d4-tree-badge-on); border-color: #ff4444; color: #fff; }
+/* states (spec 2.3): an allocated node changes its frame and nothing else
+   -- no glow, no filter; the only unallocated cue is .locked (no point
+   could reach it next), whose art drops to .6 as the reference's does */
+.build-page .tn.lit {
+  border-color: var(--d4-tree-frame-on);
+  box-shadow: none;
   filter: none;
-  border-color: var(--d4-gold);
-  box-shadow: 0 0 0 2px rgba(209, 167, 129, 0.4);
-  z-index: 5;
+}
+.build-page .tn.locked img { opacity: 0.6; }
+/* hover and keyboard focus: the reference's white glow, lifted over its
+   neighbours, the node itself not moving (the card is placed off it) */
+.build-page .tn.tt-anchor:hover,
+.build-page .tn.tt-anchor:focus-visible {
+  z-index: 20;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+/* keyboard focus: the gold ring (7.83:1 on the canvas) between two dark
+   halos -- the 1px offset gap inside it and a 4px spread under it -- so the
+   ring holds >= 3:1 against its neighbours even when the node also carries
+   the white hover glow (gold on it alone: 2.90:1) or the gold search glow
+   (1.19:1). The glows start past the halo. */
+.build-page .tn:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: 1px; }
+.build-page .tn.tt-anchor:focus-visible {
+  box-shadow: 0 0 0 4px var(--d4-focus-halo), 0 0 10px 4px rgba(255, 255, 255, 0.3);
+}
+/* search: matches take the reference's gold glow; nothing else dims */
+.build-page .tcanvas.searching .tn.hit {
+  z-index: 25;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.4);
+}
+.build-page .tcanvas.searching .tn.hit:focus-visible {
+  box-shadow: 0 0 0 4px var(--d4-focus-halo), 0 0 15px 4px rgba(255, 215, 0, 0.7), 0 0 30px 4px rgba(255, 215, 0, 0.4);
 }
 .build-page .tcanvas.alloc-only .tn:not(.lit):not(.on) { opacity: 0.07; filter: grayscale(1); }
 .build-page .wp-notes { margin-top: 16px; }

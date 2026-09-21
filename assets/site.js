@@ -525,6 +525,12 @@
        card's own pointerenter cancels), leaving the card closes it. */
     var overCard = false;
     var graceTimer = 0;
+    /* qa-verifier: Escape closed a card, then the enter the browser sends
+       once the card no longer covers the row (or the pointer's next twitch
+       on it) opened it again. The anchor Escape dismissed stays shut to
+       hover until the pointer genuinely leaves it; focus, tap and click
+       still open it. */
+    var dismissed = null;
 
     function cancelGrace() {
       if (graceTimer) { window.clearTimeout(graceTimer); graceTimer = 0; }
@@ -598,16 +604,36 @@
          of it, so that page hands over the row's name instead. */
       var anchor = open.box.getBoundingClientRect();
       var box = card.getBoundingClientRect();
+      var left, top;
+      /* a skill-tree or war-plan node asks for the reference's placement
+         (spec 2026-09-20 section 2.3): above the node, horizontally centred,
+         GAP off, fixed while open; below it when there is no room above, and
+         the in-viewport clamp still has the last word */
+      if (open.anchor.getAttribute("data-tt-place") === "above") {
+        left = anchor.left + anchor.width / 2 - box.width / 2;
+        left = Math.max(GAP, Math.min(left, window.innerWidth - box.width - GAP));
+        top = anchor.top - box.height - GAP;
+        if (top < GAP) {
+          top = anchor.bottom + GAP;
+          if (top + box.height > window.innerHeight - GAP) {
+            top = window.innerHeight - box.height - GAP;
+          }
+        }
+        if (top < GAP) { top = GAP; }
+        card.style.left = Math.round(left) + "px";
+        card.style.top = Math.round(top) + "px";
+        return;
+      }
       /* flip to the other side when the card would leave the viewport, and
          clamp rather than overflow when neither side fits */
-      var left = anchor.right + GAP;
+      left = anchor.right + GAP;
       if (left + box.width > window.innerWidth - GAP) {
         left = anchor.left - box.width - GAP;
       }
       if (left < GAP) {
         left = Math.max(GAP, (window.innerWidth - box.width) / 2);
       }
-      var top = anchor.top;
+      top = anchor.top;
       if (top + box.height > window.innerHeight - GAP) {
         top = window.innerHeight - box.height - GAP;
       }
@@ -681,10 +707,13 @@
          show() is idempotent, so both firing is harmless. */
       function enter(event) {
         if (event && event.pointerType && event.pointerType !== "mouse") { return; }
+        if (dismissed === anchor) { return; }
         show(anchor, opts);
       }
       function leave(event) {
         if (event && event.pointerType && event.pointerType !== "mouse") { return; }
+        var gone = event && event.relatedTarget;
+        if (!(gone && gone.nodeType === 1 && anchor.contains(gone))) { dismissed = null; }
         if (pinned || !open) { return; }
         var to = event && event.relatedTarget;
         if (to && to.nodeType === 1 && open.card.contains(to)) { return; }
@@ -696,6 +725,7 @@
       anchor.addEventListener("mouseleave", leave);
       if (onClick !== "ignore") {
         anchor.addEventListener("click", function () {
+          dismissed = null;
           if (onClick === "close") { close(); return; }
           if (open && open.anchor === anchor && pinned) { close(); return; }
           show(anchor, opts);
@@ -743,6 +773,7 @@
          emits a focus event for the programmatic call. */
       var inside = document.activeElement === anchor ||
                    open.card.contains(document.activeElement);
+      dismissed = anchor;
       close();
       if (inside) {
         restoring = true;
@@ -2085,6 +2116,96 @@
       });
     });
 
+    /* tree-keys:begin */
+    /* --- the tree map's keyboard model (ui-modernist review): a tree is ONE
+       Tab stop, a roving tabindex over its nodes. The generator writes the
+       graph on each focusable node -- `data-ni` its index, `data-nb` the
+       focusable nodes one edge away (junctions, hubs and one spine hop
+       passed through), `data-ro` its reading-order place -- and the start
+       stop (tabindex 0). Here the arrow keys walk those edges to the
+       neighbour that best matches the arrow, Home/End jump to the ends of
+       the reading order, and the stop follows focus, so Tab leaves the tree
+       and comes back to the last node visited. Enter/Space stay the
+       button's own (its card), Escape the card controller's. Moving focus is
+       what pans: the planner's capture-phase focus handler brings the node
+       into view on every move. --- */
+    var TREE_STEP = { ArrowRight: [1, 0], ArrowLeft: [-1, 0],
+                      ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    /* "matches the arrow": within 45 degrees of it. Among those the nearest
+       wins; when none is, the smallest angle short of 90 degrees does (ties
+       to the nearest). A last tie goes to reading order. */
+    var TREE_CONE = Math.cos(Math.PI / 4) - 1e-9;
+    function pickTreeStep(from, cands, key) {
+      var dir = TREE_STEP[key];
+      if (!dir) { return null; }
+      var cone = [], wide = [];
+      cands.forEach(function (c) {
+        var dx = c.x - from.x, dy = c.y - from.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (!dist) { return; }
+        var cos = (dx * dir[0] + dy * dir[1]) / dist;
+        if (cos <= 1e-9) { return; }
+        var s = { c: c, cos: Math.round(cos * 1000), dist: Math.round(dist * 10) };
+        (cos >= TREE_CONE ? cone : wide).push(s);
+      });
+      var pool = cone.length ? cone : wide;
+      if (!pool.length) { return null; }
+      pool.sort(function (a, b) {
+        if (!cone.length && a.cos !== b.cos) { return b.cos - a.cos; }
+        return (a.dist - b.dist) || (a.c.ro - b.c.ro);
+      });
+      return pool[0].c;
+    }
+    function wireTreeKeys(canvas) {
+      var nodes = all("[data-ni]", canvas);
+      if (!nodes.length) { return; }
+      var byIndex = {};
+      nodes.forEach(function (n) { byIndex[n.getAttribute("data-ni")] = n; });
+      function info(n) {
+        return { el: n,
+                 x: parseFloat(n.style.getPropertyValue("--x")) || 0,
+                 y: parseFloat(n.style.getPropertyValue("--y")) || 0,
+                 ro: parseInt(n.getAttribute("data-ro"), 10) || 0 };
+      }
+      function own(el) {
+        return !!(el && el.getAttribute && byIndex[el.getAttribute("data-ni")] === el);
+      }
+      var order = nodes.slice().sort(function (a, b) { return info(a).ro - info(b).ro; });
+      var current = nodes.filter(function (n) {
+        return n.getAttribute("tabindex") === "0";
+      })[0] || order[0];
+      nodes.forEach(function (n) { n.setAttribute("tabindex", n === current ? "0" : "-1"); });
+      function rove(to) {
+        if (to === current) { return; }
+        current.setAttribute("tabindex", "-1");
+        to.setAttribute("tabindex", "0");
+        current = to;
+      }
+      /* a click or tap focuses a node too: the stop follows it */
+      canvas.addEventListener("focusin", function (event) {
+        if (own(event.target)) { rove(event.target); }
+      });
+      canvas.addEventListener("keydown", function (event) {
+        var node = event.target;
+        if (!own(node) || event.altKey || event.ctrlKey || event.metaKey) { return; }
+        var key = event.key, to = null;
+        if (key === "Home") { to = order[0]; }
+        else if (key === "End") { to = order[order.length - 1]; }
+        else if (TREE_STEP[key]) {
+          var cands = (node.getAttribute("data-nb") || "").split(" ")
+            .map(function (k) { return byIndex[k]; })
+            .filter(function (n) { return !!n; })
+            .map(info);
+          var pick = pickTreeStep(info(node), cands, key);
+          to = pick ? pick.el : null;
+        } else { return; }
+        /* consumed even with nowhere to go: no page scroll, no raw pan */
+        event.preventDefault();
+        if (to && to !== node) { rove(to); to.focus(); }
+      });
+    }
+    /* tree-keys:end */
+
     /* --- one planner for three trees (the mercenary's, the class skill
        tree, every war plan): the paragon's mechanics on a viewport holding
        one canvas -- opens fitted (to the canvas's `data-fit` box when the
@@ -2111,16 +2232,21 @@
         planner.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
         if (label) { label.textContent = Math.round(scale * 100) + "%"; }
       }
+      /* the zoom floor: PMIN, or lower when fitting the box needs it -- a
+         phone fits a whole allocation at under 0.2, and zooming out must be
+         able to get back to that view */
+      var floor = PMIN;
       function fit() {
         var w = wrap.clientWidth, h = wrap.clientHeight;
         if (!w || !h) { return; }
         scale = Math.min(1, (w - 40) / box.w, (h - 40) / box.h);
-        scale = Math.max(PMIN, Math.round(scale * 100) / 100);
+        scale = Math.max(0.05, Math.floor(scale * 100) / 100);
+        floor = Math.min(PMIN, scale);
         tx = (w - box.w * scale) / 2 - box.x * scale;
         ty = (h - box.h * scale) / 2 - box.y * scale;
         paint();
       }
-      function clampScale(z) { return Math.min(PMAX, Math.max(PMIN, Math.round(z * 100) / 100)); }
+      function clampScale(z) { return Math.min(PMAX, Math.max(floor, Math.round(z * 100) / 100)); }
       function zoomAt(factor, px, py) {
         var next = clampScale(scale * factor);
         if (next === scale) { return; }
@@ -2132,14 +2258,16 @@
       function zoomCentre(factor) { zoomAt(factor, wrap.clientWidth / 2, wrap.clientHeight / 2); }
 
       var lastW = 0, lastH = 0;
-      /* the class tree opens as the reference does: at 1:1 (60% on a
-         narrow screen) centred on the main cluster's hub, whose position the
-         generator wrote in data-open-at; Reset, 0 and fullscreen refit */
+      /* the class tree opens as the reference does: at 1:1 centred on the
+         main cluster's hub, whose position the generator wrote in
+         data-open-at. A phone (under 480px) opens fitted to the allocation
+         instead, the whole taken path in view (spec 2026-09-20 section 2.3,
+         departure 2); Reset, 0 and fullscreen refit the same box */
       var openAt = (planner.getAttribute("data-open-at") || "").split(" ").map(parseFloat);
       if (openAt.length !== 2 || openAt.some(function (n) { return isNaN(n); })) { openAt = null; }
       function openOnCluster() {
         var w = wrap.clientWidth, h = wrap.clientHeight;
-        scale = w < 480 ? 0.6 : 1;
+        scale = 1;
         tx = w / 2 - openAt[0] * scale;
         ty = h / 2 - openAt[1] * scale;
         paint();
@@ -2151,7 +2279,8 @@
         framed = true;
         lastW = wrap.clientWidth;
         lastH = wrap.clientHeight;
-        if (first && openAt && !document.fullscreenElement && !view.classList.contains("is-fs")) { openOnCluster(); }
+        if (first && openAt && wrap.clientWidth >= 480 && !document.fullscreenElement &&
+            !view.classList.contains("is-fs")) { openOnCluster(); }
         else { fit(); }
       }
       open();
@@ -2201,6 +2330,17 @@
         dragged = moved;
         wrap.classList.remove("dragging");
         try { wrap.releasePointerCapture(id); } catch (err) { /* already gone */ }
+        /* a phone opens fitted to the whole allocation (0.14 on the
+           Barbarian tree), where a node's 40px hit area draws 4-9px across:
+           under the --tap floor. A touch tap on empty canvas below 1:1 zooms
+           there to 1:1, where every node's hit area is back to >= 40px; a
+           tap on a node still opens its card. A mouse click never zooms. */
+        if (!moved && event && event.type === "pointerup" && event.pointerType &&
+            event.pointerType !== "mouse" && scale < 1 && event.target.closest &&
+            !event.target.closest(".tn, .mn, button, a, input")) {
+          var at = wrap.getBoundingClientRect();
+          zoomAt(1 / scale, event.clientX - at.left, event.clientY - at.top);
+        }
       }
       wrap.addEventListener("pointerup", stop);
       wrap.addEventListener("pointercancel", stop);
@@ -2211,6 +2351,8 @@
         event.preventDefault();
       }, true);
       wrap.addEventListener("keydown", function (event) {
+        /* a tree node already moved focus for this key (wireTreeKeys) */
+        if (event.defaultPrevented) { return; }
         var key = event.key;
         var handled = true;
         if (key === "ArrowLeft") { tx += PAN; }
@@ -2226,6 +2368,46 @@
         paint();
       });
       document.addEventListener("fullscreenchange", function () { if (framed) { fit(); } });
+
+      /* keyboard focus on a node the view has panned away (ui-modernist,
+         spec 2026-09-20 section 2.6): pan by the least that brings the node,
+         plus a margin, inside the window. Capture phase, so the pan lands
+         before the node's own focus handler places its card. The browser's
+         own scroll-into-view would otherwise scroll the overflow:hidden
+         window under the transform and leave the view half-shifted, so any
+         such scroll is folded back into the pan (unscroll). A pointer focus
+         (a click, a tap) never pans -- the node is already under it. */
+      var EDGE = 24;
+      /* fold any scroll the browser gave the window into the pan: what it
+         scrolled into view stays in view, and the offset returns to 0 */
+      function unscroll() {
+        var sl = wrap.scrollLeft, st = wrap.scrollTop;
+        if (!sl && !st) { return false; }
+        wrap.scrollLeft = 0; wrap.scrollTop = 0;
+        tx -= sl; ty -= st;
+        paint();
+        return true;
+      }
+      wrap.addEventListener("focus", function (event) {
+        var node = event.target;
+        if (node === wrap || !planner.contains(node)) { return; }
+        unscroll();
+        var visible = true;
+        try { visible = node.matches(":focus-visible"); } catch (err) { /* old engine: pan */ }
+        if (!visible) { return; }
+        var w = wrap.getBoundingClientRect(), r = node.getBoundingClientRect();
+        var mx = Math.min(EDGE, Math.max(0, (w.width - r.width) / 2));
+        var my = Math.min(EDGE, Math.max(0, (w.height - r.height) / 2));
+        var dx = 0, dy = 0;
+        if (r.left < w.left + mx) { dx = w.left + mx - r.left; }
+        else if (r.right > w.right - mx) { dx = w.right - mx - r.right; }
+        if (r.top < w.top + my) { dy = w.top + my - r.top; }
+        else if (r.bottom > w.bottom - my) { dy = w.bottom - my - r.bottom; }
+        if (!dx && !dy) { return; }
+        tx += dx; ty += dy;
+        paint();
+      }, true);
+      wrap.addEventListener("scroll", unscroll);
     }
 
     all("[data-mview]").forEach(function (view) {
@@ -2247,6 +2429,7 @@
       var nodes = all(".tn", canvas);
       if (input && hits) { wireSearch(input, hits, canvas, nodes, "nodes"); }
       wirePlanner(view, wrap, canvas);
+      wireTreeKeys(canvas);
       var fs = view.querySelector("[data-fullscreen]");
       if (fs && fs.closest("[data-bp-frame], [data-tview], [data-pview]") === view) {
         wireFullscreen(view, fs);
