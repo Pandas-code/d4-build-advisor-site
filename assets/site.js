@@ -1101,15 +1101,21 @@
        shard list declares them, entries in the order it wrote them, so items
        still lead with mythics and uniques). That is what an empty search box
        shows; a typed query sorts by match quality instead. */
-    function prepare(entry, position, shardIndex) {
+    function hayOf(entry) {
       var text = [entry.name, entry.kind].concat(entry.chips || []);
       (entry.detail || []).forEach(function (pair) { text.push(pair[1]); });
+      /* a recipe is found by what goes in and what comes out (spec 4.2) */
+      if (entry.rc) { text = text.concat(recipeHay(entry)); }
+      return text.concat(entry.keys).join(" \u2014 ").toLowerCase();
+    }
+
+    function prepare(entry, position, shardIndex) {
       /* a runeword's keys: its rune names in order, as one word, and the
          word "runeword" -- so "jah ith ber", "jahithber" and "runeword
          focus" all hit (spec 2026-09-20, 1.2) */
       entry.keys = (entry.keys || []).map(function (k) { return String(k).toLowerCase(); });
       entry.lname = String(entry.name || "").toLowerCase();
-      entry.hay = text.concat(entry.keys).join(" \u2014 ").toLowerCase();
+      entry.hay = hayOf(entry);
       entry.pos = position;
       entry.di = shardIndex;
       entries.push(entry);
@@ -1313,9 +1319,16 @@
       /* the rune sequence lives in the body column, not the blurb: under
          56rem the blurb is hidden and the sequence must survive on a phone */
       if (entry.rw) { body.appendChild(seqNode(entry, true)); }
+      /* a recipe's ingredient -> output line, same reason */
+      if (entry.rc) {
+        var io = ioNode(entry);
+        if (io) { body.appendChild(io); }
+      }
       row.appendChild(body);
 
-      var blurbText = entry.blurb || (entry.detail && entry.detail.length
+      /* a recipe's blurb is its category and first line, or nothing: its
+         first detail row is a door or a condition, not a summary */
+      var blurbText = entry.blurb || (!entry.rc && entry.detail && entry.detail.length
         ? String(entry.detail[0][1]) : "");
       if (blurbText) {
         var blurb = document.createElement("span");
@@ -1566,6 +1579,22 @@
         if (label === "How it is made") {
           block = lineBlock(frag, label);
           madeText(block, text);
+          /* the doors back to the recipes that make it (feature 4) */
+          var made = rw.recipes || (rw.upgrade && rw.upgrade.recipe
+            ? [[rw.upgrade.recipe, "its recipe"]] : []);
+          if (made.length) {
+            var back = document.createElement("div");
+            back.className = "cx-text rc-back";
+            back.appendChild(document.createTextNode(made.length > 1 ? "Recipes: " : "Recipe: "));
+            made.forEach(function (pair, i) {
+              if (i) { back.appendChild(document.createTextNode(", ")); }
+              var a = document.createElement("a");
+              a.setAttribute("href", "#recipes/" + encodeURIComponent(pair[0]));
+              a.textContent = pair[1] || pair[0];
+              back.appendChild(a);
+            });
+            block.appendChild(back);
+          }
           return;
         }
         var up = rw.upgrade;
@@ -1594,6 +1623,431 @@
       });
     }
 
+    /* ---- recipes (spec 2026-09-20, feature 4) ---------------------------
+       A recipe entry carries `rc` (see build_site.py, "codex: recipes"):
+       ingredients and output as positions in the shard's shared `refs`
+       list, slot conditions as positions in `conds`, a tempering manual's
+       tiers as Affixes-domain ids, the bundle tree as positions in the
+       shard. Everything below is createElement + textContent. */
+    var RC = { refs: [], conds: [], list: [], source: "", di: -1 };
+    var RC_HIDDEN = "A hidden recipe: the Horadric Cube lists it as ??? until "
+      + "the ingredients are in the cube.";
+
+    function rcRef(n) {
+      var ref = RC.refs[n] || [];
+      return { name: ref[0] || "", icon: ref[1] || null, link: ref[2] || null,
+               types: ref[3] || null };
+    }
+
+    function rcLabel(ref) {
+      if (ref.types) {
+        return ref.types.length ? "any " + ref.types.join(" or ") : "an unnamed item";
+      }
+      return ref.name;
+    }
+
+    function rcQty(q) { return q ? q.toLocaleString("en-US") : ""; }
+
+    /* the words an entry is found by beyond its name, kind and chips:
+       every ingredient ("3x rusty cow bell" as well as "3\u00d7 ..."),
+       the output, a manual's tiers and granted lines, "seasonal" */
+    function recipeHay(entry) {
+      var rc = entry.rc || {};
+      var text = [];
+      function ing(row) {
+        var ref = rcRef(row[0]);
+        var label = rcLabel(ref);
+        text.push(label);
+        if (row[1]) {
+          text.push(row[1] + "x " + label, row[1] + "\u00d7 " + label);
+        }
+      }
+      (rc.i || []).forEach(ing);
+      if (rc.o) { ing(rc.o); }
+      (rc.t || []).forEach(function (tier) {
+        text.push("tier " + tier[0]);
+        (tier[1] || []).forEach(function (affix) {
+          affixLines(affix).forEach(function (l) { text.push(l); });
+        });
+        (tier[2] || []).forEach(ing);
+      });
+      if (rc.s) { text.push("seasonal"); }
+      if (rc.h) { text.push("hidden"); }
+      return text;
+    }
+
+    /* a granted affix's lines: the Affixes entry's own resolved "Rolls"
+       rows (one fact, one home), or the lines the shard carried inline */
+    function affixLines(affix) {
+      if (Array.isArray(affix)) { return affix; }
+      var target = index[key("affixes", affix)];
+      if (!target) { return []; }
+      var rolls = (target.detail || []).filter(function (pair) { return pair[0] === "Rolls"; })
+        .map(function (pair) { return String(pair[1]); });
+      return rolls.length ? rolls : [String(target.name)];
+    }
+
+    /* a manual's hay names its affix lines, which live in the Affixes shard:
+       whichever of the two shards lands second rebuilds it */
+    function rehayManuals() {
+      RC.list.forEach(function (entry) {
+        if (entry.rc && entry.rc.t) { entry.hay = hayOf(entry); }
+      });
+    }
+
+    function rcItem(row, small) {
+      var ref = rcRef(row[0]);
+      var it = document.createElement("span");
+      it.className = "rc-it";
+      var label = rcLabel(ref);
+      var plate = iconNode({ icon: ref.icon,
+                             name: ref.types ? (ref.types[0] || "?") : ref.name }, "");
+      if (ref.types) { plate.title = label; }
+      it.appendChild(plate);
+      if (row[1] && (small ? row[1] !== 1 : true)) {
+        var q = document.createElement("span");
+        q.className = "rc-q";
+        q.textContent = small ? "\u00d7" + rcQty(row[1]) : rcQty(row[1]) + "\u00d7";
+        it.appendChild(q);
+      }
+      if (small) { it.title = (row[1] ? rcQty(row[1]) + "\u00d7 " : "") + label; }
+      return it;
+    }
+
+    function rcArrow() {
+      var arrow = document.createElement("span");
+      arrow.className = "rc-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      return arrow;
+    }
+
+    /* the row's ingredient -> output line (in .cx-body, so it survives the
+       phone collapse); a manual shows its tier chips instead */
+    function ioNode(entry) {
+      var rc = entry.rc || {};
+      var box = document.createElement("span");
+      box.className = "rc-io sm";
+      if (rc.t) {
+        rc.t.forEach(function (tier) { box.appendChild(chipNode("Tier " + tier[0], "rc-tier")); });
+        return box;
+      }
+      if (!(rc.i && rc.i.length) && !rc.o) { return null; }
+      var said = [];
+      var visual = document.createElement("span");
+      visual.className = "rc-vis";
+      visual.setAttribute("aria-hidden", "true");
+      (rc.i || []).forEach(function (row) {
+        visual.appendChild(rcItem(row, true));
+        said.push((row[1] ? rcQty(row[1]) + " " : "") + rcLabel(rcRef(row[0])));
+      });
+      var out = "";
+      if (rc.o) {
+        visual.appendChild(rcArrow());
+        visual.appendChild(rcItem(rc.o, true));
+        out = (rc.o[1] > 1 ? rcQty(rc.o[1]) + " " : "") + rcRef(rc.o[0]).name;
+      }
+      box.appendChild(visual);
+      var vh = document.createElement("span");
+      vh.className = "vh";
+      vh.textContent = (said.length ? "Put in " + said.join(", ") + (out ? "; " : "") : "")
+        + (out ? "get " + out : "");
+      box.appendChild(vh);
+      return box;
+    }
+
+    function hrefOf(link) { return "#" + link.split("/")[0] + "/"
+      + encodeURIComponent(link.slice(link.indexOf("/") + 1)); }
+
+    /* one "Put in" / "Get" line: the plate at 2rem, the quantity as text
+       (so it is read aloud), the name -- a link where the codex has it */
+    function rcLi(list, row, withCond) {
+      var ref = rcRef(row[0]);
+      var li = document.createElement("li");
+      li.appendChild(iconNode({ icon: ref.icon,
+                                name: ref.types ? (ref.types[0] || "?") : ref.name }, ""));
+      var body = document.createElement("span");
+      body.className = "rc-nm";
+      if (row[1]) {
+        var q = document.createElement("span");
+        q.className = "rc-q";
+        q.textContent = rcQty(row[1]) + "\u00d7 ";
+        body.appendChild(q);
+      }
+      if (ref.types) {
+        body.appendChild(document.createTextNode(ref.types.length ? "any of " : "an unnamed item"));
+        if (ref.types.length) {
+          var types = document.createElement("span");
+          types.className = "chips rc-types";
+          ref.types.forEach(function (t) { types.appendChild(chipNode(t, "wrap")); });
+          body.appendChild(types);
+        }
+      } else if (ref.link) {
+        var a = document.createElement("a");
+        a.setAttribute("href", hrefOf(ref.link));
+        a.textContent = ref.name;
+        body.appendChild(a);
+      } else {
+        body.appendChild(document.createTextNode(ref.name));
+      }
+      if (withCond && row.length > 2 && RC.conds[row[2]]) {
+        var cond = document.createElement("span");
+        cond.className = "rc-cond";
+        cond.textContent = "only when " + RC.conds[row[2]];
+        body.appendChild(cond);
+      }
+      li.appendChild(body);
+      list.appendChild(li);
+    }
+
+    function rcList(block, rows) {
+      var list = document.createElement("ul");
+      list.className = "rc-ingredients";
+      rows.forEach(function (row) { rcLi(list, row, true); });
+      block.appendChild(list);
+    }
+
+    function rcLinkTo(parent, target, text, cls) {
+      var a = document.createElement("a");
+      a.setAttribute("href", "#recipes/" + encodeURIComponent(target.id));
+      if (cls) { a.className = cls; }
+      a.textContent = text || target.name;
+      parent.appendChild(a);
+      return a;
+    }
+
+    function recipeDetail(entry, frag) {
+      var rc = entry.rc || {};
+      var rows = {};
+      (entry.detail || []).forEach(function (pair) { rows[pair[0]] = pair[1]; });
+      var block;
+
+      /* the door to the runeword (or rune-upgrade) card: one fact, one home */
+      var door = rows.Runeword ? "Runeword" : rows["Rune upgrade"] ? "Rune upgrade" : "";
+      if (door && rc.rw) {
+        block = lineBlock(frag, door);
+        var row = document.createElement("div");
+        row.className = "cx-text";
+        var a = document.createElement("a");
+        a.setAttribute("href", hrefOf(rc.rw));
+        a.textContent = rows[door];
+        row.appendChild(a);
+        row.appendChild(document.createTextNode(door === "Runeword"
+          ? " \u2014 its runes, bases, affixes and power are on its runeword card."
+          : " \u2014 its chain is on its runeword card."));
+        block.appendChild(row);
+      }
+
+      if (rc.i && rc.i.length) { rcList(lineBlock(frag, "Put in"), rc.i); }
+      if (rc.o) {
+        rcList(lineBlock(frag, entry.kind === "runeword"
+          ? "Get (a Unique \u2014 open its runeword card)" : "Get"), [rc.o]);
+      }
+
+      (rc.t || []).forEach(function (tier) {
+        block = lineBlock(frag, "Tier " + tier[0] + " grants");
+        var list = document.createElement("ul");
+        list.className = "rw-aflist rc-grants";
+        (tier[1] || []).forEach(function (affix) {
+          affixLines(affix).forEach(function (text, i) {
+            var li = document.createElement("li");
+            li.className = "rw-af";
+            var mk = document.createElement("span");
+            mk.className = "rw-mk";
+            mk.setAttribute("aria-hidden", "true");
+            mk.textContent = i ? "" : "\u25cb";
+            li.appendChild(mk);
+            var ln = document.createElement(Array.isArray(affix) ? "span" : "a");
+            ln.className = "rw-ln";
+            if (!Array.isArray(affix)) {
+              ln.setAttribute("href", "#affixes/" + encodeURIComponent(affix));
+            }
+            withSlots(ln, text);
+            li.appendChild(ln);
+            list.appendChild(li);
+          });
+          if (!Array.isArray(affix) && !affixLines(affix).length) {
+            var li = document.createElement("li");
+            li.className = "rw-af";
+            rcAffixPending(li, affix);
+            list.appendChild(li);
+          }
+        });
+        block.appendChild(list);
+        if (tier[2] && tier[2].length) {
+          var mats = document.createElement("div");
+          mats.className = "cx-text rc-mats";
+          mats.textContent = "materials: " + tier[2].map(function (row) {
+            var ref = rcRef(row[0]);
+            return rcLabel(ref) + (row[1] ? " \u00d7" + rcQty(row[1]) : "")
+              + (row.length > 2 && RC.conds[row[2]] ? " (" + RC.conds[row[2]] + ")" : "");
+          }).join(" \u00b7 ");
+          block.appendChild(mats);
+        }
+      });
+
+      if (rows.When) {
+        block = lineBlock(frag, "When");
+        line(block, "cx-text", rows.When, false, "div");
+      }
+      if (rc.h) {
+        block = lineBlock(frag, "Hidden");
+        madeText(block, rows.Hidden || RC_HIDDEN);
+      }
+
+      var parent = typeof rc.p === "number" ? RC.list[rc.p] : null;
+      var children = (rc.c || []).map(function (n) { return RC.list[n]; })
+        .filter(function (e) { return !!e; });
+      if (parent || children.length) {
+        block = lineBlock(frag, "Related");
+        if (parent) {
+          var up = document.createElement("div");
+          up.className = "cx-text";
+          up.appendChild(document.createTextNode("Part of "));
+          rcLinkTo(up, parent);
+          block.appendChild(up);
+        }
+        if (children.length) {
+          var kids = document.createElement("div");
+          kids.className = "chips rc-related";
+          kids.setAttribute("role", "list");
+          kids.setAttribute("aria-label", children.length + " recipes in this bundle");
+          children.forEach(function (child) {
+            var a = rcLinkTo(kids, child, null, "chip wrap");
+            a.setAttribute("role", "listitem");
+          });
+          block.appendChild(kids);
+        }
+      }
+
+      if (rows.Description) {
+        block = lineBlock(frag, "Description");
+        withSlots(line(block, "cx-text", "", false, "div"), rows.Description);
+      }
+      if (rows.Note) {
+        block = lineBlock(frag, "Note");
+        line(block, "cx-text", rows.Note, false, "div");
+      }
+    }
+
+    function rcAffixPending(li, affix) {
+      var a = document.createElement("a");
+      a.className = "rw-ln";
+      a.setAttribute("href", "#affixes/" + encodeURIComponent(affix));
+      a.textContent = affix;
+      li.appendChild(a);
+    }
+
+    /* ---- the Recipes filter row (spec 4.6) ---- */
+    var facetBox = byId("c-facets");
+    var kindSel = byId("c-kind");
+    var catSel = byId("c-cat");
+    var hiddenBtn = byId("c-hidden");
+    var seasonBtn = byId("c-seasonal");
+
+    function slug(text) {
+      return String(text || "").toLowerCase().replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+    function pressed(btn) { return !!btn && btn.getAttribute("aria-pressed") === "true"; }
+    function press(btn, on) { if (btn) { btn.setAttribute("aria-pressed", on ? "true" : "false"); } }
+
+    function facetsOn() {
+      return !!facetBox && !!domainSel && domainSel.value === "recipes";
+    }
+    function facets() {
+      if (!facetsOn()) { return null; }
+      return { kind: kindSel ? kindSel.value : "", cat: catSel ? catSel.value : "",
+               hidden: pressed(hiddenBtn), seasonal: pressed(seasonBtn) };
+    }
+    function facetMiss(entry, f) {
+      var rc = entry.rc || {};
+      if (f.kind && slug(entry.kind) !== f.kind) { return true; }
+      if (f.cat && rc.cat !== f.cat) { return true; }
+      if (f.hidden && !rc.h) { return true; }
+      if (f.seasonal && !rc.s) { return true; }
+      return false;
+    }
+
+    /* Category lists what exists under the chosen Kind, with those counts */
+    function narrowCategories() {
+      if (!catSel || !RC.list.length) { return; }
+      var want = catSel.value;
+      var kind = kindSel ? kindSel.value : "";
+      var counts = {};
+      var order = [];
+      RC.list.forEach(function (entry) {
+        var cat = (entry.rc || {}).cat;
+        if (!cat || (kind && slug(entry.kind) !== kind)) { return; }
+        if (!counts[cat]) { counts[cat] = 0; order.push(cat); }
+        counts[cat]++;
+      });
+      order.sort(function (a, b) { return a.toLowerCase() < b.toLowerCase() ? -1 : 1; });
+      var frag = document.createDocumentFragment();
+      var any = document.createElement("option");
+      any.value = "";
+      any.textContent = "Any category";
+      frag.appendChild(any);
+      order.forEach(function (cat) {
+        var op = document.createElement("option");
+        op.value = cat;
+        op.textContent = cat + " (" + counts[cat].toLocaleString("en-US") + ")";
+        frag.appendChild(op);
+      });
+      catSel.replaceChildren(frag);
+      catSel.value = counts[want] ? want : "";
+    }
+
+    function clearFacets() {
+      if (kindSel) { kindSel.value = ""; }
+      if (catSel) { catSel.value = ""; }
+      press(hiddenBtn, false);
+      press(seasonBtn, false);
+      narrowCategories();
+    }
+
+    function syncFacets() {
+      if (!facetBox) { return; }
+      var on = facetsOn();
+      if (!on && !facetBox.hidden) { clearFacets(); }
+      facetBox.hidden = !on;
+    }
+
+    /* shareable: ?domain=recipes&kind=...&cat=...&hidden=1&seasonal=1,
+       written with replaceState so the #recipes/<id> hash survives */
+    function writeQuery() {
+      if (!window.history || !window.history.replaceState || !window.URLSearchParams) { return; }
+      var params = new URLSearchParams(window.location.search);
+      ["domain", "kind", "cat", "hidden", "seasonal"].forEach(function (k) { params.delete(k); });
+      var f = facets();
+      if (f) {
+        params.set("domain", "recipes");
+        if (f.kind) { params.set("kind", f.kind); }
+        if (f.cat) { params.set("cat", f.cat); }
+        if (f.hidden) { params.set("hidden", "1"); }
+        if (f.seasonal) { params.set("seasonal", "1"); }
+      }
+      var qs = params.toString();
+      window.history.replaceState(null, "", window.location.pathname
+        + (qs ? "?" + qs : "") + window.location.hash);
+    }
+
+    function readQuery() {
+      if (!facetBox || !window.URLSearchParams) { return; }
+      var params = new URLSearchParams(window.location.search);
+      var any = ["kind", "cat", "hidden", "seasonal"].some(function (k) { return params.has(k); });
+      if (!any && params.get("domain") !== "recipes") { return; }
+      if (domainSel) { domainSel.value = "recipes"; }
+      if (kindSel && params.get("kind")) { kindSel.value = params.get("kind"); }
+      if (catSel && params.get("cat")) {
+        /* the option may not exist until the shard narrows the list */
+        catSel.setAttribute("data-want", params.get("cat"));
+        catSel.value = params.get("cat");
+      }
+      press(hiddenBtn, params.get("hidden") === "1");
+      press(seasonBtn, params.get("seasonal") === "1");
+      facetBox.hidden = false;
+    }
+
     function detailNode(entry) {
       var frag = document.createDocumentFragment();
       var head = document.createElement("div");
@@ -1618,6 +2072,20 @@
         if (entry.kind === "runeword") {
           (entry.classes || []).forEach(function (cls) { chips.appendChild(classChip(cls)); });
         }
+      } else if (entry.rc) {
+        /* dom, the kind, the category, the dashed "hidden", the amber
+           "Season N", then the classes (spec 4.5.1) */
+        if (entry.kind) { chips.appendChild(chipNode(entry.kind)); }
+        /* matched against the entry's own flags, never the chip's wording:
+           a game category can read "Season 03" without being a gate */
+        var rcf = entry.rc || {};
+        (entry.chips || []).forEach(function (text, i) {
+          var isCat = i === 0 && rcf.cat === text;
+          chips.appendChild(chipNode(text, isCat ? ""
+            : rcf.h && text === "hidden" ? "hidden"
+            : rcf.s && text === "Season " + rcf.s ? "season" : ""));
+        });
+        (entry.classes || []).forEach(function (cls) { chips.appendChild(classChip(cls)); });
       } else {
         if (entry.kind) { chips.appendChild(chipNode(entry.kind)); }
         (entry.classes || []).forEach(function (cls) { chips.appendChild(classChip(cls)); });
@@ -1636,6 +2104,8 @@
 
       if (entry.rw) {
         runewordDetail(entry, frag);
+      } else if (entry.rc) {
+        recipeDetail(entry, frag);
       } else {
         (entry.detail || []).forEach(function (pair) {
           var block = lineBlock(frag, pair[0]);
@@ -1648,7 +2118,8 @@
 
       var foot = document.createElement("p");
       foot.className = "cx-id";
-      foot.textContent = "game database id: " + entry.id;
+      foot.textContent = "game database id: " + entry.id
+        + (entry.rc && RC.source ? " \u00b7 " + RC.source : "");
       frag.appendChild(foot);
       return frag;
     }
@@ -1679,9 +2150,10 @@
       return false;
     }
 
-    function matches(entry, tokens, domain, cls) {
+    function matches(entry, tokens, domain, cls, f) {
       if (domain && entry.domain !== domain) { return -1; }
       if (cls && (entry.classes || []).indexOf(cls) < 0) { return -1; }
+      if (f && facetMiss(entry, f)) { return -1; }
       if (!tokens.length) { return 3; }
       /* 0: the whole query is this entry's own keys -- "jah ith ber" is
             Enigma's recipe, typed -- which beats a name that merely starts
@@ -1709,9 +2181,10 @@
         .filter(function (t) { return !!t; });
       var domain = domainSel ? domainSel.value : "";
       var cls = classSel ? classSel.value : "";
+      var f = facets();
       var hits = [];
       for (var i = 0; i < entries.length; i++) {
-        var rank = matches(entries[i], tokens, domain, cls);
+        var rank = matches(entries[i], tokens, domain, cls, f);
         if (rank >= 0) { hits.push([rank, entries[i]]); }
       }
       var browsing = !tokens.length;
@@ -1775,15 +2248,35 @@
       return true;
     }
 
+    function refacet() {
+      syncFacets();
+      writeQuery();
+      schedule();
+    }
+
     input.addEventListener("input", schedule);
-    if (domainSel) { domainSel.addEventListener("change", schedule); }
+    if (domainSel) { domainSel.addEventListener("change", refacet); }
     if (classSel) { classSel.addEventListener("change", schedule); }
+    if (kindSel) {
+      kindSel.addEventListener("change", function () { narrowCategories(); refacet(); });
+    }
+    if (catSel) { catSel.addEventListener("change", refacet); }
+    [hiddenBtn, seasonBtn].forEach(function (btn) {
+      if (!btn) { return; }
+      btn.addEventListener("click", function () {
+        press(btn, !pressed(btn));
+        refacet();
+      });
+    });
     if (reset) {
       reset.addEventListener("click", function () {
         input.value = "";
         if (domainSel) { domainSel.value = ""; }
         if (classSel) { classSel.value = ""; }
+        clearFacets();
+        syncFacets();
         show(null);
+        writeQuery();
         run();
         input.focus();
       });
@@ -1791,6 +2284,8 @@
     all(".dbtn").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (domainSel) { domainSel.value = btn.getAttribute("data-domain"); }
+        syncFacets();
+        writeQuery();
         run();
         if (results.scrollIntoView) {
           results.scrollIntoView({ block: "start", behavior: "auto" });
@@ -1817,9 +2312,28 @@
           return response.json();
         })
         .then(function (payload) {
+          /* the recipes shard carries its shared tables beside its entries;
+             they must be in hand before its entries' search text is built */
+          if (payload.refs) {
+            RC.refs = payload.refs;
+            RC.conds = payload.conds || [];
+            RC.list = payload.entries || [];
+            RC.source = payload.source || "";
+            RC.di = shardIndex;
+          }
           (payload.entries || []).forEach(function (entry, position) {
             prepare(entry, position, shardIndex);
           });
+          if (payload.domain === "affixes" || payload.refs) { rehayManuals(); }
+          if (payload.refs) {
+            var want = catSel ? catSel.getAttribute("data-want") : null;
+            narrowCategories();
+            if (want && catSel) {
+              catSel.removeAttribute("data-want");
+              catSel.value = want;
+              if (catSel.value !== want) { catSel.value = ""; }
+            }
+          }
           done++;
           run();
           fromHash(true);
@@ -1831,6 +2345,7 @@
         });
     });
 
+    readQuery();
     run();
   })();
 

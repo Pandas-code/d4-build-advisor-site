@@ -2327,6 +2327,173 @@ a.rw-rune:hover .rw-rnm, a.rw-rune:focus-visible .rw-rnm { color: var(--accent);
 .rw-step.on .rw-qty { color: var(--accent); }
 .codex-detail .rw-chain { margin-top: var(--s-1); }
 
+/* ---- recipes (spec 2026-09-20, feature 4) --------------------------------
+   The row's ingredient -> output line (.rc-io.sm, in .cx-body so it survives
+   the phone collapse), the panel's Put in / Get lists, the dashed `hidden`
+   chip variant, and the second filter row. No new colour: every value is a
+   token defined in all three theme blocks. Icon steps: 1.25rem in a row (the
+   .rw-seq.sm step), 2rem in the panel (the rune-plate phone step); the arrow
+   reuses feature 1's --s-4 connector. */
+.rc-io {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1);
+  margin-top: var(--s-1);
+}
+.rc-io .rc-vis {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1);
+}
+.rc-it {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: var(--s-micro);
+}
+.rc-io.sm .icon { --icon-size: 1.25rem; }
+.rc-q {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.02em;
+  color: var(--fg-soft);
+  line-height: 1;
+  white-space: nowrap;
+}
+/* the connector before the output: a hairline and a chevron, --s-4 wide */
+.rc-arrow {
+  position: relative;
+  display: inline-block;
+  width: var(--s-4);
+  height: 1.25rem;
+  flex: 0 0 auto;
+}
+.rc-arrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 3px;
+  top: 50%;
+  height: 1px;
+  background: var(--line-strong);
+}
+.rc-arrow::after {
+  content: "";
+  position: absolute;
+  right: 1px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-top: 1px solid var(--fg-dim);
+  border-right: 1px solid var(--fg-dim);
+  transform: translateY(-50%) rotate(45deg);
+}
+.rc-io .chip.rc-tier { padding: 0 var(--s-2); letter-spacing: 0.06em; }
+
+.rc-ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-2);
+}
+.rc-ingredients li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: 0.94rem;
+  color: var(--fg-soft);
+}
+.rc-ingredients .icon { --icon-size: 2rem; flex: 0 0 auto; }
+.rc-ingredients .rc-nm { min-width: 0; overflow-wrap: anywhere; }
+.rc-ingredients a { color: var(--fg); }
+.rc-ingredients .rc-types { display: flex; margin-top: var(--s-1); }
+.rc-cond {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+}
+.cx-text.rc-mats {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.02em;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+}
+.rc-grants a.rw-ln { color: var(--fg-soft); }
+.rc-grants a.rw-ln:hover, .rc-grants a.rw-ln:focus-visible { color: var(--accent); }
+.rc-related { gap: var(--s-1); }
+.rc-related a.chip { text-decoration: none; }
+.rc-related a.chip:hover, .rc-related a.chip:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.rc-back { margin-top: var(--s-2); }
+/* the doors in a recipe panel (Runeword, Part of, Recipes:) read as links
+   in the site's own accent, not the UA's blue */
+.codex-detail .cx-text:not(.rw-io) > a { color: var(--accent); }
+.codex-detail .cx-text:not(.rw-io) > a:hover { color: var(--fg); }
+.rc-ledger { color: var(--fg-soft); }
+
+/* a hidden recipe: the chip primitive's dashed-outline variant, no fill.
+   The dash is --fg-dim, not --line-strong: the hairline token is ~1.9:1 on
+   --surface and a dash must clear 3:1 (spec 4.9 #11). */
+.chip.hidden {
+  border: 1px dashed var(--fg-dim);
+  background: transparent;
+  color: var(--fg-soft);
+}
+
+/* the Recipes filter row: the same .filters component, one step quieter --
+   not sticky (the main bar already is), no accent top rule */
+.filters.sub {
+  position: static;
+  margin-top: var(--s-2);
+  border-top-width: 1px;
+  border-top-color: var(--line);
+  box-shadow: none;
+}
+.fpills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-2);
+}
+.fpill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: var(--tap);
+  padding: 0 var(--s-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--fg-soft);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease),
+              border-color var(--dur-1) var(--ease),
+              color var(--dur-1) var(--ease);
+}
+.fpill .n { font-weight: 400; color: var(--fg-dim); }
+.fpill:hover { border-color: var(--accent); color: var(--fg); }
+.fpill:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fpill[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+.fpill[aria-pressed="true"] .n { color: var(--surface); }
+
 @media (max-width: 56rem) {
   .rw-seq .rw-rune .icon { --icon-size: 2rem; }
   .rw-plus { height: 2rem; }
@@ -2381,6 +2548,10 @@ a.rw-rune:hover .rw-rnm, a.rw-rune:focus-visible .rw-rnm { color: var(--accent);
   .filters { position: static; padding: var(--s-3) var(--s-3); }
   .filters .field { min-width: 0; flex: 1 1 100%; }
   .filters .back { width: 100%; }
+  /* the Recipes row: selects full-width, the two pills share a line at
+     the 44px touch floor */
+  .fpills { flex: 1 1 100%; flex-wrap: nowrap; }
+  .fpill { flex: 1 1 0; justify-content: center; min-height: 2.75rem; padding: 0 var(--s-2); }
   .bfacts .bf { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .loot-grid { grid-template-columns: minmax(0, 1fr); }
   .page-head .lede { font-size: 0.92rem; }

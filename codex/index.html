@@ -58,8 +58,8 @@
   <span class="band-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M15 8h-5"/><path d="M15 12h-5"/></svg></span>
   <div class="band-body">
     <h1>Codex</h1>
-    <p class="lede">The whole game database this advisor is built on, searchable: skills, paragon, affixes, aspects and items.</p>
-    <p class="meta-line">14650 entries &#183; searched in the browser &#183; nothing leaves this origin</p>
+    <p class="lede">The whole game database this advisor is built on, searchable: skills, paragon, affixes, aspects, items, runewords and every crafting recipe.</p>
+    <p class="meta-line">16640 entries &#183; searched in the browser &#183; nothing leaves this origin</p>
   </div>
 </header>
 
@@ -81,6 +81,7 @@
           <option value="affixes">Affixes (3895)</option>
           <option value="socketables">Socketables (598)</option>
           <option value="runewords">Runewords (33)</option>
+          <option value="recipes">Recipes (1990)</option>
       </select>
     </div>
   </div>
@@ -103,6 +104,107 @@
   <button id="c-reset" class="back" type="button">Reset</button>
 </section>
 
+<!-- Recipes (spec 2026-09-20 section 4.6): a second filter row, shown only
+     while the Domain select is Recipes. Server-rendered with the shard's own
+     counts; site.js narrows Category to the chosen Kind and keeps all four
+     in the query string (?kind=tempering-manual&hidden=1). -->
+<section id="c-facets" class="filters sub" aria-label="Filter recipes" hidden>
+  <div class="field">
+    <label for="c-kind">Kind</label>
+    <div class="sel">
+      <select id="c-kind">
+        <option value="">Any kind</option>
+          <option value="tempering-manual">Tempering manual (187)</option>
+          <option value="runeword">Runeword (168)</option>
+          <option value="rune-upgrade">Rune upgrade (14)</option>
+          <option value="hidden-cube-recipe">Hidden cube recipe (5)</option>
+          <option value="cube-transmutation">Cube transmutation (1,066)</option>
+          <option value="pit-tier">Pit tier (150)</option>
+          <option value="boss-summoning">Boss summoning (12)</option>
+          <option value="war-plan">War plan (6)</option>
+          <option value="seasonal">Seasonal (81)</option>
+          <option value="crafting">Crafting (301)</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="c-cat">Category</label>
+    <div class="sel">
+      <select id="c-cat">
+        <option value="">Any category</option>
+          <option value="Affix Modification">Affix Modification (1)</option>
+          <option value="Amethyst">Amethyst (7)</option>
+          <option value="Arcane">Arcane (4)</option>
+          <option value="Basic Elixirs">Basic Elixirs (2)</option>
+          <option value="Bloodforged">Bloodforged (1)</option>
+          <option value="Caches">Caches (3)</option>
+          <option value="Caged Heart">Caged Heart (4)</option>
+          <option value="Catalytic">Catalytic (4)</option>
+          <option value="Cosmetics">Cosmetics (6)</option>
+          <option value="Craft Ring">Craft Ring (7)</option>
+          <option value="Crafting Materials">Crafting Materials (5)</option>
+          <option value="Defensive">Defensive (23)</option>
+          <option value="Diamond">Diamond (6)</option>
+          <option value="Dungeon Keys">Dungeon Keys (3)</option>
+          <option value="Elixir">Elixir (1)</option>
+          <option value="Emerald">Emerald (7)</option>
+          <option value="Enrich Scrap">Enrich Scrap (2)</option>
+          <option value="Forge Magic Armor">Forge Magic Armor (5)</option>
+          <option value="Forge Magic Weapon">Forge Magic Weapon (20)</option>
+          <option value="Forge Rare Armor">Forge Rare Armor (5)</option>
+          <option value="Forge Rare Weapon">Forge Rare Weapon (20)</option>
+          <option value="Gear Modification">Gear Modification (68)</option>
+          <option value="Gem Fragments">Gem Fragments (7)</option>
+          <option value="Infernal Hordes">Infernal Hordes (1)</option>
+          <option value="Infernal Host">Infernal Host (2)</option>
+          <option value="Infused">Infused (2)</option>
+          <option value="Invoker">Invoker (5)</option>
+          <option value="Item Modification">Item Modification (8)</option>
+          <option value="Item Transmutation">Item Transmutation (40)</option>
+          <option value="Jewelry Crafting">Jewelry Crafting (7)</option>
+          <option value="Miscellany">Miscellany (6)</option>
+          <option value="Mobility">Mobility (8)</option>
+          <option value="Mythic Unique">Mythic Unique (2)</option>
+          <option value="Mythic Uniques">Mythic Uniques (10)</option>
+          <option value="Occult Most Peculiar">Occult Most Peculiar (2)</option>
+          <option value="Offensive">Offensive (39)</option>
+          <option value="Quest Elixir">Quest Elixir (2)</option>
+          <option value="Refine Materials">Refine Materials (2)</option>
+          <option value="Reforge Legendary Runes of Invocation">Reforge Legendary Runes of Invocation (5)</option>
+          <option value="Reforge Legendary Runes of Ritual">Reforge Legendary Runes of Ritual (4)</option>
+          <option value="Reforge Magic Runes of Invocation">Reforge Magic Runes of Invocation (8)</option>
+          <option value="Reforge Magic Runes of Ritual">Reforge Magic Runes of Ritual (4)</option>
+          <option value="Reforge Rare Runes of Invocation">Reforge Rare Runes of Invocation (6)</option>
+          <option value="Reforge Rare Runes of Ritual">Reforge Rare Runes of Ritual (5)</option>
+          <option value="Resistance Incense">Resistance Incense (1)</option>
+          <option value="Resource">Resource (28)</option>
+          <option value="Ruby">Ruby (6)</option>
+          <option value="Rune Crafting">Rune Crafting (9)</option>
+          <option value="Sapphire">Sapphire (7)</option>
+          <option value="Scrolls">Scrolls (6)</option>
+          <option value="Season 03">Season 03 (1)</option>
+          <option value="Seasonal">Seasonal (1)</option>
+          <option value="Skull">Skull (6)</option>
+          <option value="Stygian Stone Conversion">Stygian Stone Conversion (1)</option>
+          <option value="Summoning Item">Summoning Item (14)</option>
+          <option value="Test">Test (1)</option>
+          <option value="The Pit">The Pit (150)</option>
+          <option value="Topaz">Topaz (7)</option>
+          <option value="Transmutation">Transmutation (264)</option>
+          <option value="Utility">Utility (38)</option>
+          <option value="Vol. I - The Dreaming Occult">Vol. I - The Dreaming Occult (7)</option>
+          <option value="Vol. II - The Waking Occult">Vol. II - The Waking Occult (6)</option>
+          <option value="Vol. III - The Awakened Occult">Vol. III - The Awakened Occult (6)</option>
+          <option value="Weapons">Weapons (51)</option>
+      </select>
+    </div>
+  </div>
+  <div class="fpills" role="group" aria-label="Recipe flags">
+    <button id="c-hidden" class="fpill" type="button" aria-pressed="false">Hidden only <span class="n">187</span></button>
+    <button id="c-seasonal" class="fpill" type="button" aria-pressed="false">Seasonal only <span class="n">15</span></button>
+  </div>
+</section>
+
 <p id="c-status" class="filter-status" role="status">Loading the index&#8230;</p>
 
 <article id="c-detail" class="codex-detail" aria-live="polite" hidden></article>
@@ -119,6 +221,7 @@
     <li class="dcard"><button class="dbtn" type="button" data-domain="affixes"><span class="dn">Affixes</span><span class="dc">3895 entries</span></button><span class="db">Gear, tempering, talisman and seasonal affix pools.</span></li>
     <li class="dcard"><button class="dbtn" type="button" data-domain="socketables"><span class="dn">Socketables</span><span class="dc">598 entries</span></button><span class="db">Gems, Runes of Ritual and Invocation, charms and Horadric Seals.</span></li>
     <li class="dcard"><button class="dbtn" type="button" data-domain="runewords"><span class="dn">Runewords</span><span class="dc">33 entries</span></button><span class="db">The nineteen hidden Horadric Cube runewords, and the Season 15 rune-upgrade chains.</span></li>
+    <li class="dcard"><button class="dbtn" type="button" data-domain="recipes"><span class="dn">Recipes</span><span class="dc">1990 entries</span></button><span class="db">Every crafting recipe in the game: tempering manuals and the affixes they grant, Horadric Cube transmutations including the hidden ones, the crafters&#x27; menus, and the Pit&#x27;s tiers.</span></li>
   </ul>
   <p class="prose">Every entry keeps the game database&#8217;s own wording, with its
     numbers resolved from the game database&#8217;s own roll formulas at maximum item
@@ -131,6 +234,7 @@
     <span class="vslot">{x}</span> &#8212; this site never invents the number
     behind it. A few of those are filled in from published tables instead, and
     each one names its source.</p>
+  <p class="prose rc-ledger"><strong>Recipes</strong> lists every crafting recipe the game ships (1,990), with the 552 tempering tiers folded into their 187 manuals. 222 of them have an ingredient list the game data leaves empty or open, and each says so on its entry rather than guessing. 193 have no name in the game and no output to be named by, so they keep their game key. Which crafter and tab a recipe sits under, and salvage yields, are not read out of the game yet, so neither is shown.</p>
 </section>
 
 <!-- Runewords (spec 2026-09-20, feature 1): the two rune-upgrade rails,
@@ -160,6 +264,6 @@
 
 </main>
 
-<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-09-21", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 859, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6828, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 722, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 3895, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}, {"count": 598, "domain": "socketables", "file": "data/socketables.json", "label": "Socketables"}, {"count": 33, "domain": "runewords", "file": "data/runewords.json", "label": "Runewords"}], "total": 14650}</script>
+<script id="page-data" type="application/json">{"classes": ["barbarian", "druid", "necromancer", "paladin", "rogue", "sorcerer", "spiritborn", "warlock"], "icon_base": "../assets/icons/", "kind": "codex", "last_success_date": "2026-09-21", "shards": [{"count": 1715, "domain": "skills", "file": "data/skills.json", "label": "Skills"}, {"count": 859, "domain": "paragon", "file": "data/paragon.json", "label": "Paragon"}, {"count": 6828, "domain": "items", "file": "data/items.json", "label": "Items"}, {"count": 722, "domain": "aspects", "file": "data/aspects.json", "label": "Aspects"}, {"count": 3895, "domain": "affixes", "file": "data/affixes.json", "label": "Affixes"}, {"count": 598, "domain": "socketables", "file": "data/socketables.json", "label": "Socketables"}, {"count": 33, "domain": "runewords", "file": "data/runewords.json", "label": "Runewords"}, {"count": 1990, "domain": "recipes", "file": "data/recipes.json", "label": "Recipes"}], "total": 16640}</script>
 <script src="../assets/site.js"></script>
 </html>
