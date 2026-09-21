@@ -1177,6 +1177,50 @@
       return target;
     }
 
+    /* an affix the game ships as a bare placeholder (gamedata/README.md,
+       `derived_name`) carries `ph`: "id" when its name is read off the
+       internal id, "none" when it is only the readable fallback. Either way
+       it has no game text and no value, and the name says so wherever it
+       shows: the short words visible, the whole sentence as the title and,
+       for a screen reader, as hidden text. build_site.py: AFFIX_PH_NOTE */
+    var PH_NOTE = {
+      id: ["named from internal id",
+           "Effect named from the game's internal id; its value is not in the game data."],
+      none: ["value not in game data",
+             "The game data carries no text and no value for this effect."]
+    };
+    /* the panel's "Affix" row and the result row's blurb for the same
+       entries; the shard carries only `ph`, not 1,003 copies of these.
+       build_site.py: AFFIX_PH_DETAIL, AFFIX_PH_BLURB */
+    var PH_DETAIL = {
+      id: "The game data carries no text and no value for this affix, only a "
+        + "placeholder. The name shown is read from its internal id, not taken "
+        + "from the game.",
+      none: "The game data carries no text and no value for this affix, only a "
+        + "placeholder."
+    };
+    var PH_BLURB = {
+      id: "Named from the internal id \u00b7 no game text or value",
+      none: "No game text or value in the game data"
+    };
+
+    function phNote(entry) {
+      var words = entry && PH_NOTE.hasOwnProperty(entry.ph) ? PH_NOTE[entry.ph] : null;
+      if (!words) { return null; }
+      var note = document.createElement("span");
+      note.className = "ph-note";
+      note.setAttribute("title", words[1]);
+      var shown = document.createElement("span");
+      shown.setAttribute("aria-hidden", "true");
+      shown.textContent = words[0];
+      note.appendChild(shown);
+      var said = document.createElement("span");
+      said.className = "vh";
+      said.textContent = " (" + words[1] + ")";
+      note.appendChild(said);
+      return note;
+    }
+
     function chipNode(text, extra) {
       var chip = document.createElement("span");
       chip.className = extra ? "chip " + extra : "chip";
@@ -1306,6 +1350,10 @@
       /* an affix with no prefix/suffix is named by its own rolled attribute,
          so a name can carry a value slot too */
       withSlots(name, entry.name);
+      var rowNote = phNote(entry);
+      if (rowNote) {
+        name.appendChild(rowNote);
+      }
       body.appendChild(name);
 
       var meta = document.createElement("span");
@@ -1329,7 +1377,8 @@
       /* a recipe's blurb is its category and first line, or nothing: its
          first detail row is a door or a condition, not a summary */
       var blurbText = entry.blurb || (!entry.rc && entry.detail && entry.detail.length
-        ? String(entry.detail[0][1]) : "");
+        ? String(entry.detail[0][1]) : "")
+        || (PH_BLURB.hasOwnProperty(entry.ph) ? PH_BLURB[entry.ph] : "");
       if (blurbText) {
         var blurb = document.createElement("span");
         blurb.className = "cx-blurb";
@@ -1792,7 +1841,7 @@
       if (withCond && row.length > 2 && RC.conds[row[2]]) {
         var cond = document.createElement("span");
         cond.className = "rc-cond";
-        cond.textContent = "only when " + RC.conds[row[2]];
+        cond.textContent = RC.conds[row[2]];
         body.appendChild(cond);
       }
       li.appendChild(body);
@@ -1862,6 +1911,11 @@
               ln.setAttribute("href", "#affixes/" + encodeURIComponent(affix));
             }
             withSlots(ln, text);
+            var grantNote = Array.isArray(affix) ? null
+              : phNote(index[key("affixes", affix)]);
+            if (grantNote) {
+              ln.appendChild(grantNote);
+            }
             li.appendChild(ln);
             list.appendChild(li);
           });
@@ -2012,13 +2066,18 @@
       facetBox.hidden = !on;
     }
 
-    /* shareable: ?domain=recipes&kind=...&cat=...&hidden=1&seasonal=1,
-       written with replaceState so the #recipes/<id> hash survives */
-    function writeQuery() {
-      if (!window.history || !window.history.replaceState || !window.URLSearchParams) { return; }
-      var params = new URLSearchParams(window.location.search);
-      ["domain", "kind", "cat", "hidden", "seasonal"].forEach(function (k) { params.delete(k); });
-      var f = facets();
+    /* shareable: ?q=...&domain=recipes&kind=...&cat=...&hidden=1&seasonal=1,
+       written with replaceState so the #<domain>/<id> hash survives. The two
+       pure halves -- what goes after the "?" and what a "?" restores -- are
+       run under node by tests/js/codex_url_harness.js. Any parameter this
+       page does not own is kept. */
+    function queryFor(search, q, f) {
+      var params = new URLSearchParams(search);
+      ["q", "domain", "kind", "cat", "hidden", "seasonal"].forEach(function (k) {
+        params.delete(k);
+      });
+      var text = String(q || "").trim();
+      if (text) { params.set("q", text); }
       if (f) {
         params.set("domain", "recipes");
         if (f.kind) { params.set("kind", f.kind); }
@@ -2026,25 +2085,51 @@
         if (f.hidden) { params.set("hidden", "1"); }
         if (f.seasonal) { params.set("seasonal", "1"); }
       }
-      var qs = params.toString();
+      return params.toString();
+    }
+    function queryState(search) {
+      var params = new URLSearchParams(search);
+      var recipes = params.get("domain") === "recipes" ||
+        ["kind", "cat", "hidden", "seasonal"].some(function (k) { return params.has(k); });
+      return { q: params.get("q") || "", recipes: recipes,
+               kind: params.get("kind") || "", cat: params.get("cat") || "",
+               hidden: params.get("hidden") === "1",
+               seasonal: params.get("seasonal") === "1" };
+    }
+
+    function writeQuery() {
+      if (!window.history || !window.history.replaceState || !window.URLSearchParams) { return; }
+      var qs = queryFor(window.location.search, input.value, facets());
       window.history.replaceState(null, "", window.location.pathname
         + (qs ? "?" + qs : "") + window.location.hash);
     }
 
+    /* typing writes the URL after a pause, not per keystroke: the results
+       still follow every key (schedule), the address bar the settled text */
+    var URL_DEBOUNCE = 300;
+    var urlTimer = null;
+    function cancelWrite() {
+      if (urlTimer) { window.clearTimeout(urlTimer); urlTimer = null; }
+    }
+    function scheduleWrite() {
+      cancelWrite();
+      urlTimer = window.setTimeout(function () { urlTimer = null; writeQuery(); }, URL_DEBOUNCE);
+    }
+
     function readQuery() {
-      if (!facetBox || !window.URLSearchParams) { return; }
-      var params = new URLSearchParams(window.location.search);
-      var any = ["kind", "cat", "hidden", "seasonal"].some(function (k) { return params.has(k); });
-      if (!any && params.get("domain") !== "recipes") { return; }
+      if (!window.URLSearchParams) { return; }
+      var state = queryState(window.location.search);
+      if (state.q) { input.value = state.q; }
+      if (!facetBox || !state.recipes) { return; }
       if (domainSel) { domainSel.value = "recipes"; }
-      if (kindSel && params.get("kind")) { kindSel.value = params.get("kind"); }
-      if (catSel && params.get("cat")) {
+      if (kindSel && state.kind) { kindSel.value = state.kind; }
+      if (catSel && state.cat) {
         /* the option may not exist until the shard narrows the list */
-        catSel.setAttribute("data-want", params.get("cat"));
-        catSel.value = params.get("cat");
+        catSel.setAttribute("data-want", state.cat);
+        catSel.value = state.cat;
       }
-      press(hiddenBtn, params.get("hidden") === "1");
-      press(seasonBtn, params.get("seasonal") === "1");
+      press(hiddenBtn, state.hidden);
+      press(seasonBtn, state.seasonal);
       facetBox.hidden = false;
     }
 
@@ -2058,6 +2143,13 @@
       var title = document.createElement("h2");
       withSlots(title, entry.name);
       titles.appendChild(title);
+      var titleNote = phNote(entry);
+      if (titleNote) {
+        var noteLine = document.createElement("p");
+        noteLine.className = "cx-phline";
+        noteLine.appendChild(titleNote);
+        titles.appendChild(noteLine);
+      }
       var chips = document.createElement("div");
       chips.className = "chips";
       chips.appendChild(chipNode(entry.domain, "dom"));
@@ -2107,6 +2199,9 @@
       } else if (entry.rc) {
         recipeDetail(entry, frag);
       } else {
+        if (PH_DETAIL.hasOwnProperty(entry.ph)) {
+          line(lineBlock(frag, "Affix"), "cx-text", PH_DETAIL[entry.ph], false, "div");
+        }
         (entry.detail || []).forEach(function (pair) {
           var block = lineBlock(frag, pair[0]);
           var text = document.createElement("div");
@@ -2120,7 +2215,9 @@
       foot.className = "cx-id";
       foot.textContent = "game database id: " + entry.id
         + (entry.rc && RC.source ? " \u00b7 " + RC.source : "");
-      frag.appendChild(foot);
+      /* a placeholder affix named by nothing but its key shows the key once,
+         as its title */
+      if (!(entry.ph && entry.name === entry.id)) { frag.appendChild(foot); }
       return frag;
     }
 
@@ -2254,7 +2351,7 @@
       schedule();
     }
 
-    input.addEventListener("input", schedule);
+    input.addEventListener("input", function () { schedule(); scheduleWrite(); });
     if (domainSel) { domainSel.addEventListener("change", refacet); }
     if (classSel) { classSel.addEventListener("change", schedule); }
     if (kindSel) {
@@ -2276,6 +2373,9 @@
         clearFacets();
         syncFacets();
         show(null);
+        /* a write still pending from the last keystroke would put the old
+           text back */
+        cancelWrite();
         writeQuery();
         run();
         input.focus();
@@ -3014,6 +3114,8 @@
       var planner = view.querySelector("[data-mplanner]");
       if (!wrap || !planner) { return; }
       wirePlanner(view, wrap, planner);
+      /* one Tab stop, arrows along the connections: the class tree's model */
+      wireTreeKeys(planner);
     });
 
     /* the class skill tree and every war plan tree: the planner above, plus

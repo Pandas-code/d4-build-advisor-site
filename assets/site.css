@@ -105,6 +105,7 @@
   --nav-h: 3.5rem;
   --measure: 68ch;          /* comfortable reading width for running prose */
   --tap: 2.5rem;            /* minimum comfortable hit target */
+  --tap-touch: 2.75rem;     /* the 44px touch floor for phone-layout controls */
 
   /* --- light theme: the indigo family run cool and bright --------------- */
   --bg: #eaeef7;
@@ -2054,6 +2055,32 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.02em;
 }
 
+/* an affix the game ships as a bare placeholder: its name is not game text
+   (read off the internal id, or only the fallback) and it has no value. The
+   note is dim and dotted -- quieter than a value slot, which is a number the
+   game supplies, and never mistaken for one */
+.ph-note {
+  display: inline-block;
+  margin-left: 0.45em;
+  padding: 0 0.4em;
+  border: 1px dotted var(--line-strong);
+  border-radius: var(--r-sm);
+  color: var(--fg-dim);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-transform: none;
+  white-space: nowrap;
+  vertical-align: 0.08em;
+  cursor: help;
+}
+.cx-phline { margin: 0 0 var(--s-2); }
+.cx-phline .ph-note { margin-left: 0; }
+.rc-grants a.rw-ln .ph-note { text-decoration: none; }
+
 .codex-intro { margin-top: var(--s-7); }
 .domain-cards {
   margin: 0;
@@ -2548,10 +2575,15 @@ a.rw-rune:hover .rw-rnm, a.rw-rune:focus-visible .rw-rnm { color: var(--accent);
   .filters { position: static; padding: var(--s-3) var(--s-3); }
   .filters .field { min-width: 0; flex: 1 1 100%; }
   .filters .back { width: 100%; }
-  /* the Recipes row: selects full-width, the two pills share a line at
-     the 44px touch floor */
+  /* on a phone every filter control -- search, the selects (the Recipes
+     Kind and Category among them), Reset and the two pills -- meets the
+     44px touch floor; --tap (40px) is the desktop pointer's */
+  .filters input[type="search"],
+  .filters select,
+  .filters .back { min-height: var(--tap-touch); }
+  /* the Recipes row: selects full-width, the two pills share a line */
   .fpills { flex: 1 1 100%; flex-wrap: nowrap; }
-  .fpill { flex: 1 1 0; justify-content: center; min-height: 2.75rem; padding: 0 var(--s-2); }
+  .fpill { flex: 1 1 0; justify-content: center; min-height: var(--tap-touch); padding: 0 var(--s-2); }
   .bfacts .bf { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .loot-grid { grid-template-columns: minmax(0, 1fr); }
   .page-head .lede { font-size: 0.92rem; }
