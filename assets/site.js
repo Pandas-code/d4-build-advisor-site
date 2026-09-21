@@ -1177,50 +1177,6 @@
       return target;
     }
 
-    /* an affix the game ships as a bare placeholder (gamedata/README.md,
-       `derived_name`) carries `ph`: "id" when its name is read off the
-       internal id, "none" when it is only the readable fallback. Either way
-       it has no game text and no value, and the name says so wherever it
-       shows: the short words visible, the whole sentence as the title and,
-       for a screen reader, as hidden text. build_site.py: AFFIX_PH_NOTE */
-    var PH_NOTE = {
-      id: ["named from internal id",
-           "Effect named from the game's internal id; its value is not in the game data."],
-      none: ["value not in game data",
-             "The game data carries no text and no value for this effect."]
-    };
-    /* the panel's "Affix" row and the result row's blurb for the same
-       entries; the shard carries only `ph`, not 1,003 copies of these.
-       build_site.py: AFFIX_PH_DETAIL, AFFIX_PH_BLURB */
-    var PH_DETAIL = {
-      id: "The game data carries no text and no value for this affix, only a "
-        + "placeholder. The name shown is read from its internal id, not taken "
-        + "from the game.",
-      none: "The game data carries no text and no value for this affix, only a "
-        + "placeholder."
-    };
-    var PH_BLURB = {
-      id: "Named from the internal id \u00b7 no game text or value",
-      none: "No game text or value in the game data"
-    };
-
-    function phNote(entry) {
-      var words = entry && PH_NOTE.hasOwnProperty(entry.ph) ? PH_NOTE[entry.ph] : null;
-      if (!words) { return null; }
-      var note = document.createElement("span");
-      note.className = "ph-note";
-      note.setAttribute("title", words[1]);
-      var shown = document.createElement("span");
-      shown.setAttribute("aria-hidden", "true");
-      shown.textContent = words[0];
-      note.appendChild(shown);
-      var said = document.createElement("span");
-      said.className = "vh";
-      said.textContent = " (" + words[1] + ")";
-      note.appendChild(said);
-      return note;
-    }
-
     function chipNode(text, extra) {
       var chip = document.createElement("span");
       chip.className = extra ? "chip " + extra : "chip";
@@ -1350,10 +1306,6 @@
       /* an affix with no prefix/suffix is named by its own rolled attribute,
          so a name can carry a value slot too */
       withSlots(name, entry.name);
-      var rowNote = phNote(entry);
-      if (rowNote) {
-        name.appendChild(rowNote);
-      }
       body.appendChild(name);
 
       var meta = document.createElement("span");
@@ -1377,8 +1329,7 @@
       /* a recipe's blurb is its category and first line, or nothing: its
          first detail row is a door or a condition, not a summary */
       var blurbText = entry.blurb || (!entry.rc && entry.detail && entry.detail.length
-        ? String(entry.detail[0][1]) : "")
-        || (PH_BLURB.hasOwnProperty(entry.ph) ? PH_BLURB[entry.ph] : "");
+        ? String(entry.detail[0][1]) : "");
       if (blurbText) {
         var blurb = document.createElement("span");
         blurb.className = "cx-blurb";
@@ -1911,11 +1862,6 @@
               ln.setAttribute("href", "#affixes/" + encodeURIComponent(affix));
             }
             withSlots(ln, text);
-            var grantNote = Array.isArray(affix) ? null
-              : phNote(index[key("affixes", affix)]);
-            if (grantNote) {
-              ln.appendChild(grantNote);
-            }
             li.appendChild(ln);
             list.appendChild(li);
           });
@@ -2143,13 +2089,6 @@
       var title = document.createElement("h2");
       withSlots(title, entry.name);
       titles.appendChild(title);
-      var titleNote = phNote(entry);
-      if (titleNote) {
-        var noteLine = document.createElement("p");
-        noteLine.className = "cx-phline";
-        noteLine.appendChild(titleNote);
-        titles.appendChild(noteLine);
-      }
       var chips = document.createElement("div");
       chips.className = "chips";
       chips.appendChild(chipNode(entry.domain, "dom"));
@@ -2199,9 +2138,6 @@
       } else if (entry.rc) {
         recipeDetail(entry, frag);
       } else {
-        if (PH_DETAIL.hasOwnProperty(entry.ph)) {
-          line(lineBlock(frag, "Affix"), "cx-text", PH_DETAIL[entry.ph], false, "div");
-        }
         (entry.detail || []).forEach(function (pair) {
           var block = lineBlock(frag, pair[0]);
           var text = document.createElement("div");
@@ -2215,9 +2151,7 @@
       foot.className = "cx-id";
       foot.textContent = "game database id: " + entry.id
         + (entry.rc && RC.source ? " \u00b7 " + RC.source : "");
-      /* a placeholder affix named by nothing but its key shows the key once,
-         as its title */
-      if (!(entry.ph && entry.name === entry.id)) { frag.appendChild(foot); }
+      frag.appendChild(foot);
       return frag;
     }
 

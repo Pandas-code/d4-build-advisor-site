@@ -2065,32 +2065,6 @@ a.build-card { text-decoration: none; }
   letter-spacing: 0.02em;
 }
 
-/* an affix the game ships as a bare placeholder: its name is not game text
-   (read off the internal id, or only the fallback) and it has no value. The
-   note is dim and dotted -- quieter than a value slot, which is a number the
-   game supplies, and never mistaken for one */
-.ph-note {
-  display: inline-block;
-  margin-left: 0.45em;
-  padding: 0 0.4em;
-  border: 1px dotted var(--line-strong);
-  border-radius: var(--r-sm);
-  color: var(--fg-dim);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 400;
-  font-style: normal;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-  text-transform: none;
-  white-space: nowrap;
-  vertical-align: 0.08em;
-  cursor: help;
-}
-.cx-phline { margin: 0 0 var(--s-2); }
-.cx-phline .ph-note { margin-left: 0; }
-.rc-grants a.rw-ln .ph-note { text-decoration: none; }
-
 .codex-intro { margin-top: var(--s-7); }
 .domain-cards {
   margin: 0;
