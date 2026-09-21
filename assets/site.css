@@ -5166,26 +5166,36 @@ html:has(.build-page), body:has(.build-page) {
 .build-page .pwrap:focus-visible { outline: 2px solid var(--d4-gold); outline-offset: -2px; }
 .build-page .pwrap.dragging { cursor: grabbing; user-select: none; }
 .build-page .pwrap.dragging * { pointer-events: none; }
+/* The lattice (spec 2026-09-20 section 3.3.2, measured on d4builds 2026-09-20):
+   every board of the stage on one canvas at its attachment position, a 1261px
+   box (1255px content + a 3px border) on a 1258px pitch, so neighbours share
+   the border and nothing is drawn between them. The generator sizes the
+   planner to the lattice's bounding box (inline width/height). */
 .build-page .pplanner {
   --tile: 50px;
   --pitch: 55px;
+  --board-pitch: 1258px;
   position: absolute;
   top: 0;
   left: 0;
-  width: 1255px;
-  height: calc(var(--n) * 1255px);
   transform-origin: 0 0;
   will-change: transform;
 }
 .build-page .pplanner.gliding { transition: transform 0.6s var(--ease); }
+/* a board turns as a whole by its recorded rotation (clockwise, about its
+   centre) and every tile turns back by the same angle, so the art stays
+   upright -- the reference's inline rotate / inverse rotate pair */
 .build-page .pboard {
+  --rot: 0;
   position: absolute;
   width: 1255px;
   height: 1255px;
-  left: calc(var(--bx) * 1255px);
-  top: calc(var(--by) * 1255px);
-  box-sizing: border-box;
+  left: calc(var(--bx) * var(--board-pitch));
+  top: calc(var(--by) * var(--board-pitch));
+  box-sizing: content-box;
   border: 3px solid #7c2b2b;
+  transform: rotate(calc(var(--rot) * 1deg));
+  transform-origin: 50% 50%;
   background:
     radial-gradient(70% 70% at 50% 50%, rgba(255, 255, 255, 0.04), transparent 72%),
     repeating-linear-gradient(37deg, rgba(255, 255, 255, 0.014) 0 5px, transparent 5px 13px),
@@ -5214,14 +5224,21 @@ html:has(.build-page), body:has(.build-page) {
   top: calc(var(--my) + var(--r) * var(--pitch));
   box-sizing: border-box;
 }
+/* the tile: 50px, radius 0, a 1px border that is transparent until the
+   build takes the node (then #444757), no shadow */
 .build-page .pnode {
   display: block;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0;
   background: rgba(0, 0, 0, 0.38);
+  color: inherit;
+  rotate: calc(var(--rot) * -1deg);
 }
-/* the ring: 40px, 2px border, dim until the build takes the node */
-.build-page .pnode::before {
-  content: "";
+/* the wrapper: a 40px ring, 2px #7c2b2b, around the 30px art. Ring and art
+   are ONE plate, so an unallocated tile dims them together (0.3) */
+.build-page .pnode .pw {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -5229,12 +5246,11 @@ html:has(.build-page), body:has(.build-page) {
   height: 40px;
   margin: -20px 0 0 -20px;
   box-sizing: border-box;
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  border: 2px solid #7c2b2b;
   border-radius: 50%;
-  opacity: 0.3;
 }
-.build-page .pnode img,
-.build-page .pnode.ph::after {
+.build-page .pnode .pw img,
+.build-page .pnode.ph .pw::after {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -5242,55 +5258,71 @@ html:has(.build-page), body:has(.build-page) {
   height: 30px;
   transform: translate(-50%, -50%);
   object-fit: contain;
-  opacity: 0.45;
 }
-.build-page .pnode.ph::after {
+.build-page .pnode.ph .pw::after {
   content: "";
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
 }
-.build-page .pnode.r-magic::before { border-color: #3d6fd6; }
-.build-page .pnode.r-rare::before { border-color: #d1a781; }
-.build-page .pnode.r-legendary::before { border-color: #d98c3c; opacity: 0.55; }
-.build-page .pnode.k-socket::before {
-  width: 46px;
-  height: 46px;
-  margin: -23px 0 0 -23px;
+/* rarity: the reference paints it in the plate art we cannot copy; the ring
+   hue is the stand-in (section 3.3.1 -- present, not measured) */
+.build-page .pnode.r-magic .pw { border-color: #3d6fd6; }
+.build-page .pnode.r-rare .pw { border-color: #d1a781; }
+.build-page .pnode.r-legendary .pw { border-color: #d98c3c; }
+/* the socket's plate is 50px; a Legendary glyph (level 51+) rings it orange */
+.build-page .pnode.k-socket .pw {
+  width: 50px;
+  height: 50px;
+  margin: -25px 0 0 -25px;
   border-color: #d1a781;
-  opacity: 0.7;
 }
-.build-page .pnode.k-gate::before,
-.build-page .pnode.k-start::before { border-color: #d98c3c; border-radius: 6px; opacity: 0.7; }
-/* a tile is its card's anchor: a button, so it takes focus and a tap */
+.build-page .pnode.k-socket.glyph-lg .pw { border-color: #d98c3c; }
+.build-page .pnode.k-socket .pw img { width: 30px; height: 30px; }
+/* gates keep the squared ring as the stand-in for the gate plate */
+.build-page .pnode.k-gate .pw { border-color: #d98c3c; border-radius: 6px; }
+/* the start node: the reference's 80px starting plate, under its neighbours */
+.build-page .pnode.k-start { z-index: -1; }
+.build-page .pnode.k-start .pw {
+  width: 80px;
+  height: 80px;
+  margin: -40px 0 0 -40px;
+  border-color: #d98c3c;
+  border-radius: 6px;
+}
+/* a tile is its card's anchor: a button, so it takes a tap and -- on the
+   roving stop -- the keyboard. The focus ring sits on the tile, outside the
+   dimmed wrapper, so it is full strength on an unallocated tile too: the
+   gold ring (7.83:1 on the board) between two dark halos, as on the tree */
 .build-page .pnode.tt-anchor { cursor: pointer; }
 .build-page .pnode.tt-anchor:focus-visible {
+  z-index: 6;
   outline: 2px solid var(--d4-gold);
   outline-offset: 1px;
-  z-index: 4;
+  box-shadow: 0 0 0 4px var(--d4-focus-halo);
 }
 .build-page .pwrap.dragging .pnode { cursor: grabbing; }
-.build-page .pnode.taken {
-  border-color: #7c2b2b;
+/* allocated: the #444757 tile border, the red fill standing in for the
+   reference's `_active` art, the wrapper at full strength with its ring
+   transparent (rarity and kind keep their stand-in hues). A gate that joins
+   two boards reads as allocated -- the only mark between boards. */
+.build-page .pnode.taken,
+.build-page .pnode.gate-on {
+  border-color: #444757;
   background: rgba(124, 43, 43, 0.3);
-  box-shadow: 0 0 0 1px rgba(124, 43, 43, 0.55);
 }
-.build-page .pnode.taken::before { border-color: #7c2b2b; opacity: 1; }
-.build-page .pnode.taken.r-magic::before { border-color: #3d6fd6; }
-.build-page .pnode.taken.r-rare::before { border-color: #d1a781; }
-.build-page .pnode.taken.r-legendary::before,
-.build-page .pnode.taken.k-socket::before { border-color: #d98c3c; }
-.build-page .pnode.taken img,
-.build-page .pnode.taken.ph::after { opacity: 1; }
+.build-page .pnode.taken.r-normal:not(.k-socket):not(.k-gate):not(.k-start) .pw { border-color: transparent; }
+/* unallocated on a board with a path: the wrapper at 0.3, ring and art as one */
+.build-page .pboard.has-path .pnode:not(.taken):not(.gate-on) .pw { opacity: 0.3; }
 /* a board with no recorded path has nothing to dim against */
-.build-page .pboard:not(.has-path) .pnode img,
-.build-page .pboard:not(.has-path) .pnode.ph::after { opacity: 0.75; }
-.build-page .pboard:not(.has-path) .pnode::before { opacity: 0.55; }
+.build-page .pboard:not(.has-path) .pnode .pw { opacity: 0.75; }
 /* the glyph radius: a Manhattan diamond around the socket, drawn on empty
-   cells too so it stays closed; the number is never guessed here */
+   cells too so it stays closed; the number is never guessed here. The
+   reference draws it as a raster at 0.5; ours is the cell-drawn diamond in
+   its red, a faint wash inside and a 0.5 #7c2b2b edge */
 .build-page .pnode.in-rad,
-.build-page .pe.in-rad { background-color: rgba(209, 167, 129, 0.10); }
+.build-page .pe.in-rad { background-color: rgba(124, 43, 43, 0.1); }
 .build-page .pnode.taken.in-rad { background-color: rgba(124, 43, 43, 0.3); }
-.build-page .rad-edge { outline: 2px dashed rgba(209, 167, 129, 0.8); outline-offset: -2px; z-index: 2; }
+.build-page .rad-edge { outline: 2px solid rgba(124, 43, 43, 0.5); outline-offset: -2px; z-index: 2; }
 /* search: dim everything, ring the hits */
 .build-page .pgrid.searching .pnode { opacity: 0.18; filter: grayscale(1); }
 .build-page .pgrid.searching .pnode.hit {
@@ -5299,26 +5331,40 @@ html:has(.build-page), body:has(.build-page) {
   z-index: 5;
   box-shadow: 0 0 0 3px var(--d4-gold), 0 0 20px 2px var(--d4-gold);
 }
-.build-page .pgrid.searching .pnode.hit img,
-.build-page .pgrid.searching .pnode.hit::before { opacity: 1; }
-/* the board chip, overlaid top-left: index box, name, glyph in gold */
-.build-page .pchip {
+.build-page .pgrid.searching .pnode.hit .pw { opacity: 1; }
+/* the board's own plate, the reference's `.paragon__board__name`: inside the
+   board at 8px/8px, #26272d, radius 5, padding 8, 16px/400 at .8 white, the
+   glyph in #f1f25c. It turns back with the tiles -- about its own top-left
+   corner, placed at whichever corner of the turned board shows top-left --
+   so it is upright and top-left on every board (the reference's turns with
+   the board, upside-down at 180: a defect we do not copy). */
+.build-page .pboard-name {
   position: absolute;
   z-index: 3;
-  top: 35px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 38px;
-  padding: 0 15px 0 5px;
-  background: rgba(38, 39, 45, 0.94);
+  gap: 8px;
+  padding: 8px;
+  background: #26272d;
   border-radius: 5px;
+  font-family: var(--d4-font);
   font-size: 16px;
-  color: #fff;
+  font-weight: 400;
+  line-height: 18px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
   pointer-events: none;
+  transform-origin: 0 0;
+  rotate: calc(var(--rot) * -1deg);
 }
-.build-page .pchip .b-ord,
+.build-page .pboard[data-rot="90"] > .pboard-name { top: calc(100% - 8px); left: 8px; }
+.build-page .pboard[data-rot="180"] > .pboard-name { top: calc(100% - 8px); left: calc(100% - 8px); }
+.build-page .pboard[data-rot="270"] > .pboard-name { top: 8px; left: calc(100% - 8px); }
+.build-page .pboard-name .b-glyph { color: #f1f25c; }
+.build-page .pboard-name .b-lvl { color: rgba(255, 255, 255, 0.8); }
+.build-page .pboard-name .b-ord,
 .build-page .pnotes .b-ord {
   display: inline-flex;
   align-items: center;
@@ -5335,8 +5381,6 @@ html:has(.build-page), body:has(.build-page) {
   letter-spacing: 0;
   color: var(--d4-fg);
 }
-.build-page .pchip .b-name { font-weight: 400; white-space: nowrap; }
-.build-page .pchip .b-glyph,
 .build-page .pnotes .b-glyph { color: var(--d4-gold); }
 /* the viewport's zoom stepper, in its corner */
 .build-page .pzoom {
@@ -5405,6 +5449,34 @@ html:has(.build-page), body:has(.build-page) {
   cursor: help;
 }
 .build-page .pradius { margin: 10px 0 0; }
+/* the notes row's numbers: taken count and the lit rare/legendary names --
+   the planner's text alternative. --d4-fg-60 (6.9:1 on the panel), not the
+   brief's --d4-fg-40 (3.8:1, under the 4.5:1 text floor) */
+.build-page .pnotes .b-count {
+  flex: 1 1 100%;
+  padding-left: 42px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--d4-fg-60);
+}
+/* the Paragon tab's legend: the five swatches in the tiles' own stand-ins,
+   labels at --d4-fg-60 for the same floor */
+.build-page .bp-canvas > .pgrid-legend { color: var(--d4-fg-60); }
+.build-page .pgrid-legend .sw {
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+  border: 2px solid #7c2b2b;
+  border-radius: 50%;
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+.build-page .pgrid-legend .sw.taken { border: 1px solid #444757; border-radius: 0; background: rgba(124, 43, 43, 0.6); }
+.build-page .pgrid-legend .sw.rad { border: 2px solid rgba(124, 43, 43, 0.9); border-radius: 0; background: rgba(124, 43, 43, 0.25); }
+.build-page .pgrid-legend .sw.gate { border-color: #d98c3c; border-radius: 3px; }
+.build-page .pgrid-legend .sw.legendary { border-color: #d98c3c; }
+.build-page .pgrid-legend .sw.socket { border-color: #d1a781; }
 /* the bar's glyph chips are the board selector */
 .build-page .bp-glyph-group {
   margin: 0;
@@ -5428,8 +5500,20 @@ html:has(.build-page), body:has(.build-page) {
   /* a finger on the canvas scrolls the page, as on the tree planner; the
      board is panned by the arrow keys, the zoom buttons or a pinch */
   .build-page .pwrap { height: 60vh; touch-action: pan-y pinch-zoom; }
-  .build-page .pchip { top: 10px; font-size: 13px; height: 32px; }
-  .build-page .pnotes .b-note { padding-left: 0; }
+  /* the paragon takes its own pinch (site.js, two pointers); a vertical
+     swipe still scrolls the page */
+  .build-page .pview .pwrap { touch-action: pan-y; }
+  /* the paragon's glyph chips scroll in their own box, as the tab strip
+     does, instead of wrapping the bar */
+  .build-page .bp-glyphs:has(> .bp-glyph-group) {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .build-page .pnotes .b-note,
+  .build-page .pnotes .b-count { padding-left: 0; }
   .build-page .pnotes .chip.b-frag { margin-left: 0; }
 }
 

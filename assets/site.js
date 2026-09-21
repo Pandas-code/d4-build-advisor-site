@@ -1930,55 +1930,63 @@
       });
     }
 
-    /* --- the paragon planner (fix wave 2): ONE viewport per stage holding
-       every board of the build. The planner is a single absolutely
-       positioned box moved with one transform: drag (or the arrow keys) to
-       pan, wheel, +/- or the corner stepper to zoom, the bar's glyph chips
-       to glide to a board. The chip over the viewport always names the board
-       nearest its centre. Nothing here builds markup: the chip is updated
-       with textContent from data the generator put on the boards. --- */
-    all("[data-pview]").forEach(function (view) {
-      var wrap = view.querySelector(".pwrap");
-      var planner = view.querySelector("[data-pplanner]");
-      if (!wrap || !planner) { return; }
+    /* paragon-planner:begin */
+    /* --- the paragon planner (spec 2026-09-20 section 3): ONE viewport per
+       stage holding every board of the build on the reference's lattice
+       (--bx/--by in 1258px steps, each board turned by --rot). The planner
+       is a single absolutely positioned box moved with one transform: drag
+       to pan, pinch / wheel / +/- / the corner stepper to zoom, the bar's
+       glyph chips and the notes' board buttons to glide to a board. It opens
+       as the reference does -- 0.8, the start board framed -- and on a phone
+       fitted to the start board's taken path (the generator's `data-fit`
+       box) with a 0.3 floor; Reset and 0 go back to that view. The stage is
+       ONE Tab stop: the tiles carry a roving tabindex (wireTreeKeys) and a
+       keyboard move pans the tile into view (wireFocusPan). Nothing here
+       builds markup. --- */
+    function wireParagon(view, wrap, planner) {
       var boards = all(".pboard", planner);
-      var frame = view.closest("[data-bp-frame]");
+      var frame = view.closest ? view.closest("[data-bp-frame]") : null;
       var chips = frame ? all(".bp-glyph-group[data-board]", frame) : [];
       var jumps = frame ? all(".pnote-jump[data-board]", frame) : [];
-      var chipOrd = view.querySelector("[data-chip-ord]");
-      var chipName = view.querySelector("[data-chip-name]");
-      var chipGlyph = view.querySelector("[data-chip-glyph]");
       var label = view.querySelector("[data-zoomlabel]");
-      var BOARD = 1255, PAD = 10, OPEN = 0.8, PMIN = 0.25, PMAX = 2, PAN = 60;
+      var PITCH = 1258, BOX = 1261, PAD = 10, OPEN = 0.8, PMIN = 0.25, PMAX = 2, PAN = 60;
+      /* a phone: under 480px the view opens fitted, never under 0.3, and a
+         tap below 0.5 -- where a tile draws under 25px, too small to aim
+         at -- zooms in instead of opening a card (spec 3.3.8) */
+      var PHONE = 480, FLOOR = 0.3, TAP = 0.5;
+      /* the corner zoom stepper's height plus its margin: the fitted path
+         is framed above it, not under it */
+      var STEPPER = 46;
       var scale = OPEN, tx = 0, ty = 0, current = -1, framed = false;
+      var fitBox = null;
+      var f = (planner.getAttribute("data-fit") || "").split(" ").map(parseFloat);
+      if (f.length === 4 && f.every(function (n) { return !isNaN(n); }) &&
+          f[2] > f[0] && f[3] > f[1]) {
+        fitBox = { x: f[0], y: f[1], w: f[2] - f[0], h: f[3] - f[1] };
+      }
 
       function boardXY(board) {
         var bx = parseFloat(board.style.getPropertyValue("--bx")) || 0;
         var by = parseFloat(board.style.getPropertyValue("--by")) || 0;
-        return [bx * BOARD, by * BOARD];
+        return [bx * PITCH, by * PITCH];
       }
       function nearest() {
         var cx = wrap.clientWidth / 2, cy = wrap.clientHeight / 2;
         var best = -1, bestD = Infinity;
         boards.forEach(function (board, i) {
           var xy = boardXY(board);
-          var x = (xy[0] + BOARD / 2) * scale + tx;
-          var y = (xy[1] + BOARD / 2) * scale + ty;
+          var x = (xy[0] + BOX / 2) * scale + tx;
+          var y = (xy[1] + BOX / 2) * scale + ty;
           var d = (x - cx) * (x - cx) + (y - cy) * (y - cy);
           if (d < bestD) { bestD = d; best = i; }
         });
         return best;
       }
-      function nameBoard(i) {
-        if (i === current || !boards[i]) { return; }
+      /* the glyph chip of the board nearest the centre reads as pressed;
+         each board names itself in its own plate, so there is no chip text */
+      function mark(i) {
+        if (i === current) { return; }
         current = i;
-        var board = boards[i];
-        if (chipOrd) { chipOrd.textContent = board.getAttribute("data-ord") || String(i + 1); }
-        if (chipName) { chipName.textContent = board.getAttribute("data-board-name") || ""; }
-        if (chipGlyph) {
-          var glyph = board.getAttribute("data-glyph") || "";
-          chipGlyph.textContent = glyph ? "(" + glyph + ")" : "";
-        }
         chips.forEach(function (chip) {
           chip.setAttribute("aria-pressed", chip.getAttribute("data-board") === String(i) ? "true" : "false");
         });
@@ -1987,37 +1995,54 @@
         planner.classList.toggle("gliding", !!glide);
         planner.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
         if (label) { label.textContent = Math.round(scale * 100) + "%"; }
-        nameBoard(nearest());
+        mark(nearest());
       }
       /* the reference's framing: the board centred, its top edge just under
-         the viewport's top, so the chip sits over the board's frame */
+         the viewport's top */
       function frameBoard(i, glide) {
         var board = boards[i];
         if (!board || !wrap.clientWidth) { return; }
         var xy = boardXY(board);
-        tx = wrap.clientWidth / 2 - (xy[0] + BOARD / 2) * scale;
+        tx = wrap.clientWidth / 2 - (xy[0] + BOX / 2) * scale;
         ty = PAD - xy[1] * scale;
         paint(glide);
       }
+      function phone() { return wrap.clientWidth < PHONE; }
+      /* the phone's view: the start board's path across the window, never
+         under FLOOR (a whole 1261px board at 0.3 is 378px) nor over OPEN */
+      function fitPath(glide) {
+        var w = wrap.clientWidth, h = wrap.clientHeight - STEPPER;
+        if (!fitBox || !w || h <= 0) { scale = OPEN; frameBoard(0, glide); return; }
+        var z = Math.min(OPEN, (w - 2 * PAD) / fitBox.w, (h - 2 * PAD) / fitBox.h);
+        scale = Math.max(FLOOR, Math.floor(z * 100) / 100);
+        tx = (w - fitBox.w * scale) / 2 - fitBox.x * scale;
+        ty = (h - fitBox.h * scale) / 2 - fitBox.y * scale;
+        paint(glide);
+      }
+      function home(glide) {
+        if (phone()) { fitPath(glide); return; }
+        scale = OPEN;
+        frameBoard(0, glide);
+      }
       function clampScale(z) { return Math.min(PMAX, Math.max(PMIN, Math.round(z * 100) / 100)); }
       /* zoom about a viewport point, so what is under the pointer stays put */
-      function zoomAt(factor, px, py) {
-        var next = clampScale(scale * factor);
+      function zoomTo(z, px, py) {
+        var next = clampScale(z);
         if (next === scale) { return; }
         tx = px - (px - tx) * (next / scale);
         ty = py - (py - ty) * (next / scale);
         scale = next;
         paint(false);
       }
+      function zoomAt(factor, px, py) { zoomTo(scale * factor, px, py); }
       function zoomCentre(factor) { zoomAt(factor, wrap.clientWidth / 2, wrap.clientHeight / 2); }
-      function reset() { scale = OPEN; frameBoard(0, true); }
 
-      /* opening view: the start board, once the viewport has a size (a
-         hidden tab panel has none yet) */
+      /* the opening view, once the viewport has a size (a hidden tab panel
+         has none yet) */
       function open() {
         if (framed || !wrap.clientWidth) { return; }
         framed = true;
-        frameBoard(0, false);
+        home(false);
       }
       open();
       if (!framed && window.ResizeObserver) {
@@ -2030,7 +2055,7 @@
       all("[data-zoom]", view).forEach(function (btn) {
         var kind = btn.getAttribute("data-zoom");
         btn.addEventListener("click", function () {
-          if (kind === "reset") { reset(); }
+          if (kind === "reset") { home(true); }
           else { zoomCentre(kind === "in" ? 1.2 : 1 / 1.2); }
         });
       });
@@ -2040,19 +2065,47 @@
         zoomAt(event.deltaY < 0 ? 1.1 : 1 / 1.1, event.clientX - box.left, event.clientY - box.top);
       }, { passive: false });
 
-      /* drag to pan */
+      /* drag to pan; two pointers pinch */
       var live = false, id = null, sx = 0, sy = 0, ox = 0, oy = 0, moved = false;
+      var points = {}, pinch = null, dragged = false, swallow = false;
+      function pointList() {
+        return Object.keys(points).map(function (k) { return points[k]; });
+      }
+      function spread(p) {
+        var dx = p[0][0] - p[1][0], dy = p[0][1] - p[1][1];
+        return Math.sqrt(dx * dx + dy * dy) || 1;
+      }
       wrap.addEventListener("pointerdown", function (event) {
         /* a tile is a button too (its card's anchor), and most of a board is
            tiles: a drag may start on one -- only the bar's own controls are
            exempt */
         if (event.button !== 0 || event.target.closest("button:not(.pnode), a, input")) { return; }
+        points[event.pointerId] = [event.clientX, event.clientY];
+        var p = pointList();
+        if (p.length === 2) {
+          /* the second finger turns the drag into a pinch; neither finger
+             then counts as a tap */
+          pinch = { d: spread(p), s: scale };
+          live = false; moved = true; dragged = true;
+          wrap.classList.remove("dragging");
+          return;
+        }
+        if (p.length > 2) { return; }
         live = true; moved = false;
         id = event.pointerId;
         sx = event.clientX; sy = event.clientY; ox = tx; oy = ty;
         planner.classList.remove("gliding");
       });
       wrap.addEventListener("pointermove", function (event) {
+        if (points[event.pointerId]) { points[event.pointerId] = [event.clientX, event.clientY]; }
+        if (pinch) {
+          var p = pointList();
+          if (p.length < 2) { return; }
+          var box = wrap.getBoundingClientRect();
+          zoomTo(pinch.s * spread(p) / pinch.d,
+                 (p[0][0] + p[1][0]) / 2 - box.left, (p[0][1] + p[1][1]) / 2 - box.top);
+          return;
+        }
         if (!live || event.pointerId !== id) { return; }
         var dx = event.clientX - sx, dy = event.clientY - sy;
         if (!moved && Math.abs(dx) + Math.abs(dy) > 4) {
@@ -2064,26 +2117,42 @@
         tx = ox + dx; ty = oy + dy;
         paint(false);
       });
-      var dragged = false;
       function stop(event) {
-        if (!live || (event && event.pointerId !== id)) { return; }
+        var was = !!points[event.pointerId];
+        delete points[event.pointerId];
+        if (pinch) {
+          if (pointList().length < 2) { pinch = null; }
+          return;
+        }
+        if (!was || !live || event.pointerId !== id) { return; }
         live = false;
         dragged = moved;
         wrap.classList.remove("dragging");
         try { wrap.releasePointerCapture(id); } catch (err) { /* already gone */ }
+        /* a touch tap below TAP scale zooms there to the opening scale; the
+           tile's card waits for a view where the tile can be aimed at */
+        if (!moved && event.type === "pointerup" && event.pointerType &&
+            event.pointerType !== "mouse" && scale < TAP) {
+          var at = wrap.getBoundingClientRect();
+          zoomTo(OPEN, event.clientX - at.left, event.clientY - at.top);
+          swallow = true;
+        }
       }
       wrap.addEventListener("pointerup", stop);
       wrap.addEventListener("pointercancel", stop);
-      /* the click a drag ends on must not pin the tile's card */
+      /* the click a drag, a pinch or a zooming tap ends on must not pin the
+         tile's card */
       wrap.addEventListener("click", function (event) {
-        if (!dragged) { return; }
-        dragged = false;
+        if (!dragged && !swallow) { return; }
+        dragged = false; swallow = false;
         event.stopPropagation();
         event.preventDefault();
       }, true);
 
-      /* keyboard: arrows pan, +/- zoom, 0 resets */
+      /* keyboard: on a tile the arrows walk the path (wireTreeKeys consumed
+         the key); on the bare viewport they pan. +/- zoom, 0 goes home. */
       wrap.addEventListener("keydown", function (event) {
+        if (event.defaultPrevented) { return; }
         var key = event.key;
         var handled = true;
         if (key === "ArrowLeft") { tx += PAN; }
@@ -2092,12 +2161,17 @@
         else if (key === "ArrowDown") { ty -= PAN; }
         else if (key === "+" || key === "=") { zoomCentre(1.2); return; }
         else if (key === "-" || key === "_") { zoomCentre(1 / 1.2); return; }
-        else if (key === "0") { reset(); return; }
+        else if (key === "0") { home(false); return; }
         else { handled = false; }
         if (!handled) { return; }
         event.preventDefault();
         paint(false);
       });
+      wireFocusPan(wrap, planner, function (dx, dy) {
+        tx += dx; ty += dy;
+        paint(false);
+      });
+      wireTreeKeys(planner);
 
       /* the glyph chips and the notes' board buttons glide to their board */
       chips.concat(jumps).forEach(function (btn) {
@@ -2109,11 +2183,16 @@
           if (btn.classList.contains("pnote-jump")) { wrap.focus(); }
         });
       });
-      /* a stage or tab that was hidden when the page loaded opens on the start
-         board the first time it gets a size (the fallback above) */
       document.addEventListener("fullscreenchange", function () {
         if (current >= 0) { frameBoard(current, false); }
       });
+    }
+    /* paragon-planner:end */
+
+    all("[data-pview]").forEach(function (view) {
+      var wrap = view.querySelector(".pwrap");
+      var planner = view.querySelector("[data-pplanner]");
+      if (wrap && planner) { wireParagon(view, wrap, planner); }
     });
 
     /* tree-keys:begin */
@@ -2369,23 +2448,29 @@
       });
       document.addEventListener("fullscreenchange", function () { if (framed) { fit(); } });
 
-      /* keyboard focus on a node the view has panned away (ui-modernist,
-         spec 2026-09-20 section 2.6): pan by the least that brings the node,
-         plus a margin, inside the window. Capture phase, so the pan lands
-         before the node's own focus handler places its card. The browser's
-         own scroll-into-view would otherwise scroll the overflow:hidden
-         window under the transform and leave the view half-shifted, so any
-         such scroll is folded back into the pan (unscroll). A pointer focus
-         (a click, a tap) never pans -- the node is already under it. */
+      wireFocusPan(wrap, planner, function (dx, dy) {
+        tx += dx; ty += dy;
+        paint();
+      });
+    }
+
+    /* keyboard focus on a node the view has panned away (ui-modernist,
+       spec 2026-09-20 section 2.6), shared by the tree planner above and the
+       paragon's: pan by the least that brings the node, plus a margin,
+       inside the window. Capture phase, so the pan lands before the node's
+       own focus handler places its card. The browser's own scroll-into-view
+       would otherwise scroll the overflow:hidden window under the transform
+       and leave the view half-shifted, so any such scroll is folded back
+       into the pan (unscroll). A pointer focus (a click, a tap) never pans
+       -- the node is already under it. `nudge(dx, dy)` moves the planner's
+       translation by that many screen px and repaints. */
+    function wireFocusPan(wrap, planner, nudge) {
       var EDGE = 24;
-      /* fold any scroll the browser gave the window into the pan: what it
-         scrolled into view stays in view, and the offset returns to 0 */
       function unscroll() {
         var sl = wrap.scrollLeft, st = wrap.scrollTop;
         if (!sl && !st) { return false; }
         wrap.scrollLeft = 0; wrap.scrollTop = 0;
-        tx -= sl; ty -= st;
-        paint();
+        nudge(-sl, -st);
         return true;
       }
       wrap.addEventListener("focus", function (event) {
@@ -2404,8 +2489,7 @@
         if (r.top < w.top + my) { dy = w.top + my - r.top; }
         else if (r.bottom > w.bottom - my) { dy = w.bottom - my - r.bottom; }
         if (!dx && !dy) { return; }
-        tx += dx; ty += dy;
-        paint();
+        nudge(dx, dy);
       }, true);
       wrap.addEventListener("scroll", unscroll);
     }
