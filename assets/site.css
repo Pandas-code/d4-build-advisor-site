@@ -6509,3 +6509,58 @@ html:has(.build-page), body:has(.build-page) {
 }
 /* the kind of a news item lives in its chip, not in a coloured edge */
 .news.n-ptr, .news.n-season, .news.n-announcement { border-left-color: var(--hairline); }
+
+/* QA 2026-09-21: the codex's "only what is in the game today" note lives in
+   the page head as one muted line; the per-kind counts sit behind a native
+   disclosure (keyboard + screen reader for free). */
+.page-band .retired-note {
+  margin: var(--s-2) 0 0;
+  max-width: var(--measure);
+  font-size: var(--fs-sm);
+  color: var(--fg-dim);
+}
+.retired-note > summary {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--s-1);
+  min-height: var(--tap);
+  padding: var(--s-1) var(--s-2);
+  margin-left: calc(var(--s-2) * -1);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
+}
+.retired-note > summary::-webkit-details-marker { display: none; }
+.retired-note > summary::after {
+  content: "";
+  width: 0.4em;
+  height: 0.4em;
+  margin-left: var(--s-1);
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-0.15em) rotate(45deg);
+  transition: transform var(--dur-1) var(--ease);
+}
+.retired-note[open] > summary::after { transform: translateY(0.1em) rotate(-135deg); }
+.retired-note > summary:hover { color: var(--accent); background: var(--accent-soft); }
+.retired-note .n { font-variant-numeric: tabular-nums; color: var(--fg-soft); font-weight: 600; }
+.retired-note > ul {
+  margin: var(--s-1) 0 0;
+  padding: 0 0 0 var(--s-3);
+  border-left: 2px solid var(--line-strong);
+  list-style: none;
+  line-height: 1.55;
+  color: var(--fg-soft);
+}
+.retired-note > ul > li + li { margin-top: var(--s-1); }
+@media (max-width: 720px) {
+  .retired-note > summary { min-height: var(--tap-touch); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .retired-note > summary, .retired-note > summary::after { transition: none; }
+}
+
+/* a changelog entry written on the test server says so in words */
+.log .log-origin { color: var(--fg-dim); white-space: nowrap; }
