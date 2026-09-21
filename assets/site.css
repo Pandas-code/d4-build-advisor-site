@@ -346,6 +346,10 @@ body::before {
   z-index: 1;
   max-width: 68rem;
   margin: 0 auto;
+  /* prose on every page cites bare URLs wider than a phone (a tier-list
+     card's summary made the page 401px at 400): break one only where it
+     would overflow -- break-word leaves min-content sizes alone */
+  overflow-wrap: break-word;
   padding: clamp(1rem, 3vw, 2.5rem) max(clamp(0.9rem, 3vw, 2rem), env(safe-area-inset-right)) calc(5rem + env(safe-area-inset-bottom)) max(clamp(0.9rem, 3vw, 2rem), env(safe-area-inset-left));
 }
 .frame.wide { max-width: 76rem; }
