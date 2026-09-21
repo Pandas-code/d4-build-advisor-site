@@ -8,9 +8,11 @@
     "paragon",
     "bosses",
     "classes",
-    "socketables"
+    "socketables",
+    "skilltree",
+    "materials"
   ],
-  "generated": "2026-09-20",
+  "generated": "2026-09-21",
   "icons": {
     "aspects": {
       "LTE_Hibernal_legendary_generic_001": {
@@ -6225,6 +6227,590 @@
       },
       "zzRing_PvP_DebugBuffRefresh": {
         "path": "items/zzRing_PvP_DebugBuffRefresh.webp"
+      }
+    },
+    "materials": {
+      "BSK_CoreStats_Elixir": {
+        "path": "materials/BSK_CoreStats_Elixir.webp"
+      },
+      "BSK_Crafting_Material": {
+        "path": "materials/BSK_Crafting_Material.webp"
+      },
+      "BSK_Resistance_Elixir": {
+        "path": "materials/BSK_Resistance_Elixir.webp"
+      },
+      "BossSummoning_Andariel_A": {
+        "path": "materials/BossSummoning_Andariel_A.webp"
+      },
+      "BossSummoning_Andariel_B": {
+        "path": "materials/BossSummoning_Andariel_B.webp"
+      },
+      "BossSummoning_GigaBeliel": {
+        "path": "materials/BossSummoning_GigaBeliel.webp"
+      },
+      "BossSummoning_Greater_LairKey": {
+        "path": "materials/BossSummoning_Greater_LairKey.webp"
+      },
+      "BossSummoning_HarbingerOfHatred": {
+        "path": "materials/BossSummoning_HarbingerOfHatred.webp"
+      },
+      "BossSummoning_Hardmode": {
+        "path": "materials/BossSummoning_Hardmode.webp"
+      },
+      "BossSummoning_InfernalSteel": {
+        "path": "materials/BossSummoning_InfernalSteel.webp"
+      },
+      "BossSummoning_Initiate_LairKey": {
+        "path": "materials/BossSummoning_Initiate_LairKey.webp"
+      },
+      "BossSummoning_Mephisto": {
+        "path": "materials/BossSummoning_Mephisto.webp"
+      },
+      "BossSummoning_NightmareDungeon": {
+        "path": "materials/BossSummoning_NightmareDungeon.webp"
+      },
+      "BossSummoning_Superior_LairKey": {
+        "path": "materials/BossSummoning_Superior_LairKey.webp"
+      },
+      "BossSummoning_UberDuriel_A": {
+        "path": "materials/BossSummoning_UberDuriel_A.webp"
+      },
+      "BossSummoning_UberDuriel_B": {
+        "path": "materials/BossSummoning_UberDuriel_B.webp"
+      },
+      "BossSummoning_Urivar": {
+        "path": "materials/BossSummoning_Urivar.webp"
+      },
+      "BossSummoning_VampireLord": {
+        "path": "materials/BossSummoning_VampireLord.webp"
+      },
+      "BountyMeta_Cache_Chaos": {
+        "path": "materials/BountyMeta_Cache_Chaos.webp"
+      },
+      "Collection_Item_Andariel_B": {
+        "path": "materials/Collection_Item_Andariel_B.webp"
+      },
+      "Collection_Item_Astaroth": {
+        "path": "materials/Collection_Item_Astaroth.webp"
+      },
+      "Collection_Item_Bartuc": {
+        "path": "materials/Collection_Item_Bartuc.webp"
+      },
+      "Collection_Item_BeastInTheIce": {
+        "path": "materials/Collection_Item_BeastInTheIce.webp"
+      },
+      "Collection_Item_Butcher": {
+        "path": "materials/Collection_Item_Butcher.webp"
+      },
+      "Collection_Item_Grigoire": {
+        "path": "materials/Collection_Item_Grigoire.webp"
+      },
+      "Collection_Item_HarbingerOfHatred": {
+        "path": "materials/Collection_Item_HarbingerOfHatred.webp"
+      },
+      "Collection_Item_LordZir": {
+        "path": "materials/Collection_Item_LordZir.webp"
+      },
+      "Collection_Item_UberDuriel_B": {
+        "path": "materials/Collection_Item_UberDuriel_B.webp"
+      },
+      "Collection_Item_Urivar": {
+        "path": "materials/Collection_Item_Urivar.webp"
+      },
+      "Collection_Item_Varshan": {
+        "path": "materials/Collection_Item_Varshan.webp"
+      },
+      "CraftingMaterial_Herb_Common": {
+        "path": "materials/CraftingMaterial_Herb_Common.webp"
+      },
+      "CraftingMaterial_Herb_Rare": {
+        "path": "materials/CraftingMaterial_Herb_Rare.webp"
+      },
+      "CraftingMaterial_Leather_Common": {
+        "path": "materials/CraftingMaterial_Leather_Common.webp"
+      },
+      "CraftingMaterial_Masterworking_Legendary": {
+        "path": "materials/CraftingMaterial_Masterworking_Legendary.webp"
+      },
+      "CraftingMaterial_Masterworking_Normal": {
+        "path": "materials/CraftingMaterial_Masterworking_Normal.webp"
+      },
+      "CraftingMaterial_Masterworking_Rare": {
+        "path": "materials/CraftingMaterial_Masterworking_Rare.webp"
+      },
+      "CraftingMaterial_Masterworking_Reset": {
+        "path": "materials/CraftingMaterial_Masterworking_Reset.webp"
+      },
+      "CraftingMaterial_MonsterDrop_Demon_Heart": {
+        "path": "materials/CraftingMaterial_MonsterDrop_Demon_Heart.webp"
+      },
+      "CraftingMaterial_MonsterDrop_Human_Tongue": {
+        "path": "materials/CraftingMaterial_MonsterDrop_Human_Tongue.webp"
+      },
+      "CraftingMaterial_MonsterDrop_Undead_Dust": {
+        "path": "materials/CraftingMaterial_MonsterDrop_Undead_Dust.webp"
+      },
+      "CraftingMaterial_MonsterDrop_Wildlife_Bones": {
+        "missing": true
+      },
+      "CraftingMaterial_Ore_Common": {
+        "path": "materials/CraftingMaterial_Ore_Common.webp"
+      },
+      "CraftingMaterial_Rare_ScatteredPrism": {
+        "path": "materials/CraftingMaterial_Rare_ScatteredPrism.webp"
+      },
+      "CraftingMaterial_Salvage_Legendary_Armor": {
+        "path": "materials/CraftingMaterial_Salvage_Legendary_Armor.webp"
+      },
+      "CraftingMaterial_Salvage_Legendary_Jewelry": {
+        "path": "materials/CraftingMaterial_Salvage_Legendary_Jewelry.webp"
+      },
+      "CraftingMaterial_Salvage_Legendary_Weapon": {
+        "path": "materials/CraftingMaterial_Salvage_Legendary_Weapon.webp"
+      },
+      "CraftingMaterial_Salvage_Nightmare_Sigil_Powder": {
+        "path": "materials/CraftingMaterial_Salvage_Nightmare_Sigil_Powder.webp"
+      },
+      "CraftingMaterial_Salvage_Rare": {
+        "path": "materials/CraftingMaterial_Salvage_Rare.webp"
+      },
+      "CraftingMaterial_Salvage_Sacred_Legendary": {
+        "path": "materials/CraftingMaterial_Salvage_Sacred_Legendary.webp"
+      },
+      "CraftingMaterial_Salvage_Uber_Unique": {
+        "path": "materials/CraftingMaterial_Salvage_Uber_Unique.webp"
+      },
+      "CraftingMaterial_ShieldBearer_Stone_Common": {
+        "path": "materials/CraftingMaterial_ShieldBearer_Stone_Common.webp"
+      },
+      "DungeonKey": {
+        "path": "materials/DungeonKey.webp"
+      },
+      "Elixir_Cheat_Death": {
+        "path": "materials/Elixir_Cheat_Death.webp"
+      },
+      "Elixir_ColdResist_1": {
+        "path": "materials/Elixir_ColdResist_1.webp"
+      },
+      "Elixir_Curative": {
+        "path": "materials/Elixir_Curative.webp"
+      },
+      "Elixir_HollowSlaying": {
+        "path": "materials/Elixir_HollowSlaying.webp"
+      },
+      "Elixir_Ironbarb_1": {
+        "path": "materials/Elixir_Ironbarb_1.webp"
+      },
+      "GamblingCurrency1": {
+        "path": "materials/GamblingCurrency1.webp"
+      },
+      "GemMaterial_Amethyst": {
+        "path": "materials/GemMaterial_Amethyst.webp"
+      },
+      "GemMaterial_Diamond": {
+        "path": "materials/GemMaterial_Diamond.webp"
+      },
+      "GemMaterial_Emerald": {
+        "path": "materials/GemMaterial_Emerald.webp"
+      },
+      "GemMaterial_Ruby": {
+        "path": "materials/GemMaterial_Ruby.webp"
+      },
+      "GemMaterial_Sapphire": {
+        "path": "materials/GemMaterial_Sapphire.webp"
+      },
+      "GemMaterial_Skull": {
+        "path": "materials/GemMaterial_Skull.webp"
+      },
+      "GemMaterial_Topaz": {
+        "path": "materials/GemMaterial_Topaz.webp"
+      },
+      "Incense_I_00": {
+        "path": "materials/Incense_I_00.webp"
+      },
+      "LTE_Hibernal_Cloak": {
+        "path": "materials/LTE_Hibernal_Cloak.webp"
+      },
+      "LTE_Hibernal_Heirloom": {
+        "path": "materials/LTE_Hibernal_Heirloom.webp"
+      },
+      "LTE_Hibernal_Proof": {
+        "path": "materials/LTE_Hibernal_Proof.webp"
+      },
+      "LTE_Hibernal_SkullShard": {
+        "path": "materials/LTE_Hibernal_SkullShard.webp"
+      },
+      "LegendaryAmuletCache_Amethyst": {
+        "path": "materials/LegendaryAmuletCache_Amethyst.webp"
+      },
+      "LegendaryAmuletCache_Diamond": {
+        "path": "materials/LegendaryAmuletCache_Diamond.webp"
+      },
+      "LegendaryAmuletCache_Emerald": {
+        "path": "materials/LegendaryAmuletCache_Emerald.webp"
+      },
+      "LegendaryAmuletCache_Ruby": {
+        "path": "materials/LegendaryAmuletCache_Ruby.webp"
+      },
+      "LegendaryAmuletCache_Sapphire": {
+        "path": "materials/LegendaryAmuletCache_Sapphire.webp"
+      },
+      "LegendaryAmuletCache_Skull": {
+        "path": "materials/LegendaryAmuletCache_Skull.webp"
+      },
+      "LegendaryAmuletCache_Topaz": {
+        "path": "materials/LegendaryAmuletCache_Topaz.webp"
+      },
+      "LegendaryRingCache_Amethyst": {
+        "path": "materials/LegendaryRingCache_Amethyst.webp"
+      },
+      "LegendaryRingCache_Diamond": {
+        "path": "materials/LegendaryRingCache_Diamond.webp"
+      },
+      "LegendaryRingCache_Emerald": {
+        "path": "materials/LegendaryRingCache_Emerald.webp"
+      },
+      "LegendaryRingCache_Ruby": {
+        "path": "materials/LegendaryRingCache_Ruby.webp"
+      },
+      "LegendaryRingCache_Sapphire": {
+        "path": "materials/LegendaryRingCache_Sapphire.webp"
+      },
+      "LegendaryRingCache_Skull": {
+        "path": "materials/LegendaryRingCache_Skull.webp"
+      },
+      "LegendaryRingCache_Topaz": {
+        "path": "materials/LegendaryRingCache_Topaz.webp"
+      },
+      "OWCSMP_Cache": {
+        "path": "materials/OWCSMP_Cache.webp"
+      },
+      "OWCSMP_Hand": {
+        "path": "materials/OWCSMP_Hand.webp"
+      },
+      "OWCSMP_Note": {
+        "path": "materials/OWCSMP_Note.webp"
+      },
+      "Raid_Khazra_Currency": {
+        "path": "materials/Raid_Khazra_Currency.webp"
+      },
+      "S01_CraftingMaterial_MalignantDust_Blue": {
+        "path": "materials/S01_CraftingMaterial_MalignantDust_Blue.webp"
+      },
+      "S01_CraftingMaterial_MalignantDust_Orange": {
+        "path": "materials/S01_CraftingMaterial_MalignantDust_Orange.webp"
+      },
+      "S01_CraftingMaterial_MalignantDust_Pink": {
+        "path": "materials/S01_CraftingMaterial_MalignantDust_Pink.webp"
+      },
+      "S01_Crafting_Cache_RandomHeart": {
+        "path": "materials/S01_Crafting_Cache_RandomHeart.webp"
+      },
+      "S01_Crafting_Cache_RandomKey": {
+        "path": "materials/S01_Crafting_Cache_RandomKey.webp"
+      },
+      "S01_MalignantOrb_Defensive": {
+        "path": "materials/S01_MalignantOrb_Defensive.webp"
+      },
+      "S01_MalignantOrb_Offensive": {
+        "path": "materials/S01_MalignantOrb_Offensive.webp"
+      },
+      "S01_MalignantOrb_Utility": {
+        "path": "materials/S01_MalignantOrb_Utility.webp"
+      },
+      "S01_Malignant_Key_Defensive": {
+        "path": "materials/S01_Malignant_Key_Defensive.webp"
+      },
+      "S01_Malignant_Key_Offensive": {
+        "path": "materials/S01_Malignant_Key_Offensive.webp"
+      },
+      "S01_Malignant_Key_Utility": {
+        "path": "materials/S01_Malignant_Key_Utility.webp"
+      },
+      "S01_Malignant_Key_Varshan": {
+        "path": "materials/S01_Malignant_Key_Varshan.webp"
+      },
+      "S01_Malignant_Key_Varshan_T3": {
+        "path": "materials/S01_Malignant_Key_Varshan_T3.webp"
+      },
+      "S01_Malignant_Key_Varshan_T4": {
+        "path": "materials/S01_Malignant_Key_Varshan_T4.webp"
+      },
+      "S02_DungeonSigil_AncientDark_Vampiric": {
+        "path": "materials/S02_DungeonSigil_AncientDark_Vampiric.webp"
+      },
+      "S03_Activity_Gather_Item": {
+        "path": "materials/S03_Activity_Gather_Item.webp"
+      },
+      "S03_UnearthedMachinations_FireComponent": {
+        "path": "materials/S03_UnearthedMachinations_FireComponent.webp"
+      },
+      "S03_UnearthedMachinations_LightningComponent": {
+        "path": "materials/S03_UnearthedMachinations_LightningComponent.webp"
+      },
+      "S03_VaultBonusWing_Key": {
+        "path": "materials/S03_VaultBonusWing_Key.webp"
+      },
+      "S07_Boss_Head": {
+        "path": "materials/S07_Boss_Head.webp"
+      },
+      "S07_Vendor_Cache_WitchCurrency": {
+        "path": "materials/S07_Vendor_Cache_WitchCurrency.webp"
+      },
+      "S07_Vendor_Reputation_Scroll": {
+        "path": "materials/S07_Vendor_Reputation_Scroll.webp"
+      },
+      "S07_Witch_PowerCurrency": {
+        "path": "materials/S07_Witch_PowerCurrency.webp"
+      },
+      "S09_Horadric_Currency": {
+        "path": "materials/S09_Horadric_Currency.webp"
+      },
+      "S11_CorruptedEssence_Andariel_Purified": {
+        "path": "materials/S11_CorruptedEssence_Andariel_Purified.webp"
+      },
+      "S11_CorruptedEssence_Azmodan_Purified": {
+        "path": "materials/S11_CorruptedEssence_Azmodan_Purified.webp"
+      },
+      "S11_CorruptedEssence_Belial_Purified": {
+        "path": "materials/S11_CorruptedEssence_Belial_Purified.webp"
+      },
+      "S11_CorruptedEssence_Duriel_Purified": {
+        "path": "materials/S11_CorruptedEssence_Duriel_Purified.webp"
+      },
+      "S11_Tempering_TemperResetCurrency": {
+        "path": "materials/S11_Tempering_TemperResetCurrency.webp"
+      },
+      "S11_Undercity_TributeKeySigil_Andariel_1": {
+        "path": "materials/S11_Undercity_TributeKeySigil_Andariel_1.webp"
+      },
+      "S11_Undercity_TributeKeySigil_Andariel_2": {
+        "path": "materials/S11_Undercity_TributeKeySigil_Andariel_2.webp"
+      },
+      "S11_Undercity_TributeKeySigil_Andariel_3": {
+        "path": "materials/S11_Undercity_TributeKeySigil_Andariel_3.webp"
+      },
+      "S14_Seasonal_Currency": {
+        "path": "materials/S14_Seasonal_Currency.webp"
+      },
+      "S15_SoulSplinter_TriadA_01": {
+        "path": "materials/S15_SoulSplinter_TriadA_01.webp"
+      },
+      "S15_SoulSplinter_TriadB_01": {
+        "path": "materials/S15_SoulSplinter_TriadB_01.webp"
+      },
+      "S15_SoulSplinter_TriadC_01": {
+        "path": "materials/S15_SoulSplinter_TriadC_01.webp"
+      },
+      "SMP_Bardiche": {
+        "path": "materials/SMP_Bardiche.webp"
+      },
+      "SMP_FlippableCoin": {
+        "path": "materials/SMP_FlippableCoin.webp"
+      },
+      "Secret_Cache_Animals": {
+        "path": "materials/Secret_Cache_Animals.webp"
+      },
+      "Secret_Cache_Coins": {
+        "path": "materials/Secret_Cache_Coins.webp"
+      },
+      "Undercity_Crafted_Sigil": {
+        "path": "materials/Undercity_Crafted_Sigil.webp"
+      },
+      "WOTD_VarshanSummon_Head": {
+        "path": "materials/WOTD_VarshanSummon_Head.webp"
+      },
+      "WOTD_VarshanSummon_LowerBody": {
+        "path": "materials/WOTD_VarshanSummon_LowerBody.webp"
+      },
+      "WOTD_VarshanSummon_Malignant": {
+        "path": "materials/WOTD_VarshanSummon_Malignant.webp"
+      },
+      "WOTD_VarshanSummon_UpperBody": {
+        "path": "materials/WOTD_VarshanSummon_UpperBody.webp"
+      },
+      "Warplans_CursedRituals_ChoronsBlood": {
+        "path": "materials/Warplans_CursedRituals_ChoronsBlood.webp"
+      },
+      "Warplans_CursedRituals_ChoronsFlesh": {
+        "path": "materials/Warplans_CursedRituals_ChoronsFlesh.webp"
+      },
+      "Warplans_CursedRituals_ChoronsTears": {
+        "path": "materials/Warplans_CursedRituals_ChoronsTears.webp"
+      },
+      "Warplans_Undercity_TributeKeySigil_AncestralItems_MoreBargains": {
+        "path": "materials/Warplans_Undercity_TributeKeySigil_AncestralItems_MoreBargains.webp"
+      },
+      "World_SecretCellar_Trinket": {
+        "path": "materials/World_SecretCellar_Trinket.webp"
+      },
+      "X1_Consumable_GoblinInABottle": {
+        "path": "materials/X1_Consumable_GoblinInABottle.webp"
+      },
+      "X1_Consumable_PortableAnvil": {
+        "path": "materials/X1_Consumable_PortableAnvil.webp"
+      },
+      "X1_Consumable_PotionPotion": {
+        "path": "materials/X1_Consumable_PotionPotion.webp"
+      },
+      "X1_Consumable_QuenchingOil": {
+        "path": "materials/X1_Consumable_QuenchingOil.webp"
+      },
+      "X1_Consumable_RevivalPotion": {
+        "path": "materials/X1_Consumable_RevivalPotion.webp"
+      },
+      "X1_Raid_CosmeticArmor_Tier1_Chest_Transmog": {
+        "path": "materials/X1_Raid_CosmeticArmor_Tier1_Chest_Transmog.webp"
+      },
+      "X1_Raid_CosmeticArmor_Tier1_Pants_Transmog": {
+        "path": "materials/X1_Raid_CosmeticArmor_Tier1_Pants_Transmog.webp"
+      },
+      "X1_Raid_CosmeticWeapon_1HDagger_Transmog": {
+        "path": "materials/X1_Raid_CosmeticWeapon_1HDagger_Transmog.webp"
+      },
+      "X1_Raid_CosmeticWeapon_1HMace_Transmog": {
+        "path": "materials/X1_Raid_CosmeticWeapon_1HMace_Transmog.webp"
+      },
+      "X1_Raid_CosmeticWeapon_2HPolearm_Transmog": {
+        "path": "materials/X1_Raid_CosmeticWeapon_2HPolearm_Transmog.webp"
+      },
+      "X1_Raid_CosmeticWeapon_OffhandFocus_Transmog": {
+        "path": "materials/X1_Raid_CosmeticWeapon_OffhandFocus_Transmog.webp"
+      },
+      "X1_Raid_VendorCache_CraftingMaterials": {
+        "path": "materials/X1_Raid_VendorCache_CraftingMaterials.webp"
+      },
+      "X1_Raid_VendorCache_Gear": {
+        "path": "materials/X1_Raid_VendorCache_Gear.webp"
+      },
+      "X1_Raid_VendorCache_Gems": {
+        "path": "materials/X1_Raid_VendorCache_Gems.webp"
+      },
+      "X1_Undercity_TributeKeySigil_BossMaterials": {
+        "path": "materials/X1_Undercity_TributeKeySigil_BossMaterials.webp"
+      },
+      "X1_Undercity_TributeKeySigil_ClassUniques": {
+        "path": "materials/X1_Undercity_TributeKeySigil_ClassUniques.webp"
+      },
+      "X1_Undercity_TributeKeySigil_GreaterAffixes_Party": {
+        "path": "materials/X1_Undercity_TributeKeySigil_GreaterAffixes_Party.webp"
+      },
+      "X1_Undercity_TributeKeySigil_GreaterAffixes_Solo": {
+        "path": "materials/X1_Undercity_TributeKeySigil_GreaterAffixes_Solo.webp"
+      },
+      "X1_Undercity_TributeKeySigil_MasterworkingMaterials": {
+        "path": "materials/X1_Undercity_TributeKeySigil_MasterworkingMaterials.webp"
+      },
+      "X1_Undercity_TributeKeySigil_MoreGenericLoot": {
+        "path": "materials/X1_Undercity_TributeKeySigil_MoreGenericLoot.webp"
+      },
+      "X1_Undercity_TributeKeySigil_MythicUniques_Party": {
+        "path": "materials/X1_Undercity_TributeKeySigil_MythicUniques_Party.webp"
+      },
+      "X1_Undercity_TributeKeySigil_Runes": {
+        "path": "materials/X1_Undercity_TributeKeySigil_Runes.webp"
+      },
+      "X1_Undercity_TributeKeySigil_Runes_MagicOnly": {
+        "path": "materials/X1_Undercity_TributeKeySigil_Runes_MagicOnly.webp"
+      },
+      "X1_Undercity_TributeKeySigil_Talisman": {
+        "path": "materials/X1_Undercity_TributeKeySigil_Talisman.webp"
+      },
+      "X1_Undercity_TributeKeySigil_XPMotes": {
+        "path": "materials/X1_Undercity_TributeKeySigil_XPMotes.webp"
+      },
+      "X2_Fish_Junk_CowBell": {
+        "path": "materials/X2_Fish_Junk_CowBell.webp"
+      },
+      "X2_Fish_Junk_LostAmulet": {
+        "path": "materials/X2_Fish_Junk_LostAmulet.webp"
+      },
+      "X2_Fish_Junk_LostChalice": {
+        "path": "materials/X2_Fish_Junk_LostChalice.webp"
+      },
+      "X2_Fish_Junk_LostKey": {
+        "path": "materials/X2_Fish_Junk_LostKey.webp"
+      },
+      "X2_Fish_Junk_LostRing": {
+        "path": "materials/X2_Fish_Junk_LostRing.webp"
+      },
+      "X2_Fish_Junk_LostTrinkets": {
+        "path": "materials/X2_Fish_Junk_LostTrinkets.webp"
+      },
+      "X2_Fish_Junk_WornNet": {
+        "path": "materials/X2_Fish_Junk_WornNet.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_A": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_A.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_B": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_B.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_C": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_C.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_D": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_D.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_E": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_E.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_F": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_F.webp"
+      },
+      "X2_HoradricCube_CraftingMaterial_G": {
+        "path": "materials/X2_HoradricCube_CraftingMaterial_G.webp"
+      },
+      "X2_HoradricCube_MagicalJunkCache": {
+        "path": "materials/X2_HoradricCube_MagicalJunkCache.webp"
+      },
+      "X2_HoradricCube_TuningStone_1": {
+        "path": "materials/X2_HoradricCube_TuningStone_1.webp"
+      },
+      "X2_HoradricCube_TuningStone_2": {
+        "path": "materials/X2_HoradricCube_TuningStone_2.webp"
+      },
+      "X2_HoradricCube_TuningStone_3": {
+        "path": "materials/X2_HoradricCube_TuningStone_3.webp"
+      },
+      "X2_HoradricCube_TuningStone_4": {
+        "path": "materials/X2_HoradricCube_TuningStone_4.webp"
+      },
+      "X2_HoradricCube_TuningStone_5": {
+        "path": "materials/X2_HoradricCube_TuningStone_5.webp"
+      },
+      "X2_HoradricCube_TuningStone_6": {
+        "path": "materials/X2_HoradricCube_TuningStone_6.webp"
+      },
+      "X2_HoradricCube_TuningStone_7": {
+        "path": "materials/X2_HoradricCube_TuningStone_7.webp"
+      },
+      "X2_HoradricCube_TuningStone_8": {
+        "path": "materials/X2_HoradricCube_TuningStone_8.webp"
+      },
+      "X2_Talisman_CraftingMaterial_HoradricResin": {
+        "path": "materials/X2_Talisman_CraftingMaterial_HoradricResin.webp"
+      },
+      "X2_Undercity_TributeKeySigil_CraftingMaterials_Cube": {
+        "path": "materials/X2_Undercity_TributeKeySigil_CraftingMaterials_Cube.webp"
+      },
+      "X2_Undercity_TributeKeySigil_CraftingMaterials_Cube_Greater": {
+        "path": "materials/X2_Undercity_TributeKeySigil_CraftingMaterials_Cube_Greater.webp"
+      },
+      "X2_Undercity_TributeKeySigil_CraftingMaterials_Cube_Lesser": {
+        "path": "materials/X2_Undercity_TributeKeySigil_CraftingMaterials_Cube_Lesser.webp"
+      },
+      "X2_Undercity_TributeKeySigil_CraftingMaterials_Masterworking_Greater": {
+        "path": "materials/X2_Undercity_TributeKeySigil_CraftingMaterials_Masterworking_Greater.webp"
+      },
+      "X2_Undercity_TributeKeySigil_Runes_Greater": {
+        "path": "materials/X2_Undercity_TributeKeySigil_Runes_Greater.webp"
+      },
+      "X2_Undercity_TributeKeySigil_Talisman_Greater": {
+        "path": "materials/X2_Undercity_TributeKeySigil_Talisman_Greater.webp"
+      },
+      "X2_Undercity_TributeKeySigil_Talisman_Lesser": {
+        "path": "materials/X2_Undercity_TributeKeySigil_Talisman_Lesser.webp"
       }
     },
     "mercenaries": {
@@ -13797,6 +14383,92 @@
       },
       "spiritborn_jaguar_sun_passive": {
         "missing": true
+      }
+    },
+    "skilltree": {
+      "Skill_Mercenary_Core": {
+        "path": "skilltree/Skill_Mercenary_Core.webp"
+      },
+      "Skill_Mercenary_Iconic": {
+        "path": "skilltree/Skill_Mercenary_Iconic.webp"
+      },
+      "Skill_Mercenary_Perk": {
+        "path": "skilltree/Skill_Mercenary_Perk.webp"
+      },
+      "Skill_Primary_Agility": {
+        "path": "skilltree/Skill_Primary_Agility.webp"
+      },
+      "Skill_Primary_Archfiend": {
+        "path": "skilltree/Skill_Primary_Archfiend.webp"
+      },
+      "Skill_Primary_Aura": {
+        "path": "skilltree/Skill_Primary_Aura.webp"
+      },
+      "Skill_Primary_Basic": {
+        "path": "skilltree/Skill_Primary_Basic.webp"
+      },
+      "Skill_Primary_Brawling": {
+        "path": "skilltree/Skill_Primary_Brawling.webp"
+      },
+      "Skill_Primary_Companion": {
+        "path": "skilltree/Skill_Primary_Companion.webp"
+      },
+      "Skill_Primary_Conjuration": {
+        "path": "skilltree/Skill_Primary_Conjuration.webp"
+      },
+      "Skill_Primary_Core": {
+        "path": "skilltree/Skill_Primary_Core.webp"
+      },
+      "Skill_Primary_Corpse": {
+        "path": "skilltree/Skill_Primary_Corpse.webp"
+      },
+      "Skill_Primary_Curse": {
+        "path": "skilltree/Skill_Primary_Curse.webp"
+      },
+      "Skill_Primary_Defensive": {
+        "path": "skilltree/Skill_Primary_Defensive.webp"
+      },
+      "Skill_Primary_Focus": {
+        "path": "skilltree/Skill_Primary_Focus.webp"
+      },
+      "Skill_Primary_Imbuements": {
+        "path": "skilltree/Skill_Primary_Imbuements.webp"
+      },
+      "Skill_Primary_Justice": {
+        "path": "skilltree/Skill_Primary_Justice.webp"
+      },
+      "Skill_Primary_Macabre": {
+        "path": "skilltree/Skill_Primary_Macabre.webp"
+      },
+      "Skill_Primary_Mastery": {
+        "path": "skilltree/Skill_Primary_Mastery.webp"
+      },
+      "Skill_Primary_Minion": {
+        "missing": true
+      },
+      "Skill_Primary_Potency": {
+        "path": "skilltree/Skill_Primary_Potency.webp"
+      },
+      "Skill_Primary_Sigil": {
+        "path": "skilltree/Skill_Primary_Sigil.webp"
+      },
+      "Skill_Primary_SoulShard": {
+        "path": "skilltree/Skill_Primary_SoulShard.webp"
+      },
+      "Skill_Primary_Subterfuge": {
+        "path": "skilltree/Skill_Primary_Subterfuge.webp"
+      },
+      "Skill_Primary_Ultimate": {
+        "path": "skilltree/Skill_Primary_Ultimate.webp"
+      },
+      "Skill_Primary_Valor": {
+        "path": "skilltree/Skill_Primary_Valor.webp"
+      },
+      "Skill_Primary_Weapon_Mastery": {
+        "path": "skilltree/Skill_Primary_Weapon_Mastery.webp"
+      },
+      "Skill_Primary_Wrath": {
+        "path": "skilltree/Skill_Primary_Wrath.webp"
       }
     },
     "socketables": {

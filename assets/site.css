@@ -2104,6 +2104,241 @@ a.build-card { text-decoration: none; }
 .dcard .db { font-size: 0.85rem; color: var(--fg-soft); }
 .codex-intro .prose { margin-top: var(--s-4); }
 
+/* ---- runewords (spec 2026-09-20, feature 1) -----------------------------
+   The rune sequence (a row of rune plates, ringed by kind: Ritual in
+   --accent, Invocation in --accent-2 -- rings, not blooms), the base groups,
+   the affix list in the tooltip's row shape, the seasonal chip on
+   --accent-2-soft, and the two rune-upgrade rails. No new colour: every value
+   is a token already defined in all three theme blocks; sizes sit on the
+   --s-* / --fs-* ramps, the icon steps are 2.5rem / 2rem / 1.25rem. */
+.rw-seq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--s-1);
+}
+.rw-seq.sm { margin-top: var(--s-1); align-items: center; }
+.rw-seq.sm .icon { --icon-size: 1.25rem; }
+.rw-seq .rw-rune {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-micro);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--r-sm);
+}
+.rw-seq .rw-rune .icon { --icon-size: 2.5rem; }
+.rw-seq.sm .rw-rune .icon { --icon-size: 1.25rem; }
+.rw-seq .rw-rune.ritual .icon { box-shadow: 0 0 0 2px var(--accent); }
+.rw-seq .rw-rune.invocation .icon { box-shadow: 0 0 0 2px var(--accent-2); }
+.rw-seq.sm .rw-rune.ritual .icon,
+.rw-seq.sm .rw-rune.invocation .icon { box-shadow: 0 0 0 1px currentColor; }
+.rw-seq.sm .rw-rune.ritual { color: var(--accent); }
+.rw-seq.sm .rw-rune.invocation { color: var(--accent-2); }
+.rw-rnm {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+a.rw-rune:hover .rw-rnm, a.rw-rune:focus-visible .rw-rnm { color: var(--accent); }
+/* the connector between two runes: a hairline each side of a "+" */
+.rw-plus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: var(--s-4);
+  height: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-dim);
+  user-select: none;
+}
+.rw-plus::before, .rw-plus::after {
+  content: "";
+  height: 1px;
+  background: var(--line-strong);
+}
+.rw-op {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+}
+
+.rw-bases {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-2);
+}
+.rw-grp {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.rw-grp:not(:first-child) { margin-left: var(--s-2); }
+.rw-bases + .cx-text { margin-top: var(--s-2); }
+
+.rw-aflist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.94rem;
+  color: var(--fg-soft);
+}
+.rw-af {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-1);
+}
+.rw-af:last-child { margin-bottom: 0; }
+.rw-af .rw-mk {
+  flex: 0 0 auto;
+  width: var(--s-4);
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  color: var(--fg-dim);
+}
+.rw-af.implicit .rw-mk { color: var(--accent); }
+.rw-af .rw-ln { min-width: 0; overflow-wrap: anywhere; }
+/* the resolved numbers in a unique-power line, the amber effect_values() tint */
+.rw-power .tt-sv { color: var(--accent-2); font-weight: 500; }
+.rw-made b { font-weight: 600; color: var(--fg); }
+.cx-text.dim { margin-top: var(--s-1); font-size: var(--fs-sm); color: var(--fg-dim); }
+
+.chip.season {
+  color: var(--accent-2);
+  border-color: color-mix(in srgb, var(--accent-2) 55%, transparent);
+  background: var(--accent-2-soft);
+}
+
+/* a rune-upgrade panel's "Put in" / "Gem" / "Get" rows */
+.rw-io { display: flex; align-items: center; gap: var(--s-2); }
+.rw-io .icon { --icon-size: 1.9rem; }
+.rw-io a { color: var(--fg); }
+
+/* ---- the two rune-upgrade rails: rendered once in the intro, cloned into
+   a rune-upgrade entry's panel with its step .on. Each rail scrolls inside
+   its own box; steps never shrink or wrap. */
+.rw-chains { margin-top: var(--s-7); }
+.rw-chain { display: grid; gap: var(--s-4); }
+.rw-rail {
+  display: flex;
+  align-items: flex-start;
+  margin: 0;
+  padding: var(--s-1) 0;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+.rw-step {
+  display: flex;
+  align-items: flex-start;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+.rw-plate {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-micro);
+  padding: var(--s-1);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+}
+.rw-plate .icon { --icon-size: 2.25rem; }
+.rw-nm {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+/* the arrow segment: --s-7 wide; the line sits on the icon's centre line
+   (plate padding + border + half the icon), the quantity above it, the gem
+   under it, a chevron head at the end */
+.rw-arrow {
+  --rw-line: calc(var(--s-1) + 1px + 1.125rem);
+  position: relative;
+  flex: 0 0 var(--s-7);
+  width: var(--s-7);
+  align-self: stretch;
+  min-height: calc(var(--rw-line) + var(--s-6) + var(--s-2));
+}
+.rw-arrow::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 3px;
+  top: var(--rw-line);
+  height: 1px;
+  background: var(--line-strong);
+}
+.rw-arrow::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: calc(var(--rw-line) - 3px);
+  width: 6px;
+  height: 6px;
+  border-top: 1px solid var(--fg-dim);
+  border-right: 1px solid var(--fg-dim);
+  transform: rotate(45deg);
+}
+.rw-qty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--rw-line) - var(--s-4));
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  line-height: 1;
+  color: var(--fg-dim);
+}
+.rw-gem {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--rw-line) + var(--s-1));
+  transform: translateX(-50%);
+}
+.rw-gem .icon { --icon-size: 1.25rem; }
+/* the current step, in a cloned copy only: the selected-pill treatment */
+.rw-step.on .rw-plate {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 2px var(--accent), var(--e-1);
+}
+.rw-step.on .rw-nm { color: var(--accent); }
+.rw-step.on .rw-arrow::before { background: var(--accent); }
+.rw-step.on .rw-arrow::after { border-color: var(--accent); }
+.rw-step.on .rw-qty { color: var(--accent); }
+.codex-detail .rw-chain { margin-top: var(--s-1); }
+
+@media (max-width: 56rem) {
+  .rw-seq .rw-rune .icon { --icon-size: 2rem; }
+  .rw-plus { height: 2rem; }
+  /* a rail that scrolls says so: a 24px fade at both edges, with matching
+     inner padding so the first and last plates sit clear of the fade */
+  .rw-rail {
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  }
+}
+
 /* ------------------------------ responsive ------------------------------ */
 @media (max-width: 44rem) {
   .tier-row { grid-template-columns: 2.8rem 1fr; }

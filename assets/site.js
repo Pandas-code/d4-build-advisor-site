@@ -1073,8 +1073,12 @@
     function prepare(entry, position, shardIndex) {
       var text = [entry.name, entry.kind].concat(entry.chips || []);
       (entry.detail || []).forEach(function (pair) { text.push(pair[1]); });
+      /* a runeword's keys: its rune names in order, as one word, and the
+         word "runeword" -- so "jah ith ber", "jahithber" and "runeword
+         focus" all hit (spec 2026-09-20, 1.2) */
+      entry.keys = (entry.keys || []).map(function (k) { return String(k).toLowerCase(); });
       entry.lname = String(entry.name || "").toLowerCase();
-      entry.hay = text.join(" \u2014 ").toLowerCase();
+      entry.hay = text.concat(entry.keys).join(" \u2014 ").toLowerCase();
       entry.pos = position;
       entry.di = shardIndex;
       entries.push(entry);
@@ -1154,6 +1158,8 @@
        the rendered ones, and still nothing but textContent. */
     var CARD_POWER = "Power";    /* build_site.py: CARD_POWER_LABEL */
     var CARD_FLAVOR = "Flavor";  /* build_site.py: CARD_FLAVOR_LABEL */
+    var CARD_AFFIX = "Affix";    /* build_site.py: CARD_AFFIX_LABEL (runewords) */
+    var CARD_IMPLICIT = "Implicit"; /* build_site.py: CARD_IMPLICIT_LABEL */
     var RARITY_LABEL = {
       common: "Common", magic: "Magic", rare: "Rare", legendary: "Legendary",
       set: "Set", unique: "Unique", mythic: "Mythic Unique"
@@ -1194,12 +1200,18 @@
       card.appendChild(plate);
 
       line(card, "tt-name", entry.name, true);
-      line(card, "tt-rarity",
-           [RARITY_LABEL[rarity] || titleCase(rarity), spec.type || ""]
-             .filter(function (part) { return !!part; }).join(" "));
+      /* a runeword with several bases is one card, not all of them: the
+         rarity line says which base it stands for */
+      var rarityLine = [RARITY_LABEL[rarity] || titleCase(rarity), spec.type || ""]
+        .filter(function (part) { return !!part; }).join(" ");
+      if (spec.bases > 1) { rarityLine += " \u00b7 1 of " + spec.bases + " bases"; }
+      line(card, "tt-rarity", rarityLine);
 
-      /* the same shape the generator's item_card() writes: the effect as
-         bullets, then the flavour, then the foot line (level, class) */
+      /* the same shape the generator's item_card() writes: the affix rows,
+         the effect as bullets, then the flavour, then the foot line (level,
+         class). Affix rows exist only on a runeword product's entry. */
+      var affixes = document.createElement("ul");
+      affixes.className = "tt-affixes";
       var powers = document.createElement("div");
       powers.className = "tt-unique";
       var effects = document.createElement("ul");
@@ -1209,7 +1221,25 @@
       (entry.detail || []).forEach(function (pair) {
         if (pair[0] === CARD_POWER) { line(effects, "tt-power", pair[1], true, "li"); }
         else if (pair[0] === CARD_FLAVOR && flavor === null) { flavor = pair[1]; }
+        else if (pair[0] === CARD_AFFIX || pair[0] === CARD_IMPLICIT) {
+          var row = document.createElement("li");
+          row.className = "tt-af unrolled";
+          var mark = document.createElement("span");
+          mark.className = "tt-mk";
+          mark.setAttribute("aria-hidden", "true");
+          mark.textContent = pair[0] === CARD_IMPLICIT ? "\u25c7" : "\u25cb";
+          row.appendChild(mark);
+          if (pair[0] === CARD_IMPLICIT) {
+            var vh = document.createElement("span");
+            vh.className = "vh";
+            vh.textContent = "Implicit: ";
+            row.appendChild(vh);
+          }
+          withSlots(line(row, "tt-line", "", false, "span"), pair[1]);
+          affixes.appendChild(row);
+        }
       });
+      if (affixes.childNodes.length) { card.appendChild(affixes); }
       if (effects.childNodes.length) { card.appendChild(powers); }
       if (flavor) { line(card, "tt-flavor", flavor); }
 
@@ -1243,15 +1273,23 @@
 
       var meta = document.createElement("span");
       meta.className = "cx-meta";
+      /* a runeword's meta line names its level (or a step's season) where
+         every other entry names its classes -- a runeword can be equippable
+         by all eight, and the panel's chips carry them */
       meta.textContent = [entry.domain, entry.kind]
-        .concat(entry.classes || []).join(" \u00b7 ");
+        .concat(entry.meta ? [entry.meta] : (entry.classes || [])).join(" \u00b7 ");
       body.appendChild(meta);
+      /* the rune sequence lives in the body column, not the blurb: under
+         56rem the blurb is hidden and the sequence must survive on a phone */
+      if (entry.rw) { body.appendChild(seqNode(entry, true)); }
       row.appendChild(body);
 
-      if (entry.detail && entry.detail.length) {
+      var blurbText = entry.blurb || (entry.detail && entry.detail.length
+        ? String(entry.detail[0][1]) : "");
+      if (blurbText) {
         var blurb = document.createElement("span");
         blurb.className = "cx-blurb";
-        withSlots(blurb, String(entry.detail[0][1]).replace(/\s*\n+\s*/g, " "));
+        withSlots(blurb, blurbText.replace(/\s*\n+\s*/g, " "));
         row.appendChild(blurb);
       }
 
@@ -1271,6 +1309,260 @@
       return row;
     }
 
+    /* ---- runewords (spec 2026-09-20, feature 1) -------------------------
+       A runeword entry carries `rw`: its rune sequence (ids, names, kinds,
+       icons), its bases grouped, the two-handed flag, the Ancestral flag; a
+       rune-upgrade entry carries `rw.upgrade` (input, gem, output, chain).
+       Everything below is createElement + textContent; the one piece of
+       markup that is not built here, the chain diagram, is cloned from the
+       generator's own rendering in the page. */
+    var chainSource = document.querySelector("[data-rw-chain]");
+
+    function classChip(cls) {
+      var chip = chipNode(cls, "cls");
+      chip.setAttribute("style", "--cls: var(--c-" + cls + ", var(--c-unknown));");
+      return chip;
+    }
+
+    function opNode(text) {
+      var op = document.createElement("span");
+      op.className = "rw-op";
+      op.textContent = text;
+      return op;
+    }
+
+    /* the rune sequence: in a result row, icons only, in recipe order; in
+       the panel, each rune a link to its Socketables entry with its name
+       under it and a "+" connector between. Duplicates are drawn twice,
+       because that is what goes in the cube. */
+    function seqNode(entry, small) {
+      var rw = entry.rw || {};
+      var box = document.createElement(small ? "span" : "div");
+      box.className = small ? "rw-seq sm" : "rw-seq";
+      if (rw.upgrade) {
+        var up = rw.upgrade;
+        box.appendChild(runeNode(up.input, small, false));
+        if (up.input.quantity) { box.appendChild(opNode("\u00d7" + up.input.quantity)); }
+        if (up.gem) {
+          box.appendChild(opNode("+"));
+          box.appendChild(runeNode(up.gem, small, false));
+        }
+        box.appendChild(opNode("\u2192"));
+        box.appendChild(runeNode(up.output, small, !small));
+        return box;
+      }
+      (rw.seq || []).forEach(function (rune, i) {
+        if (i && !small) {
+          var plus = document.createElement("span");
+          plus.className = "rw-plus";
+          plus.setAttribute("aria-hidden", "true");
+          plus.textContent = "+";
+          box.appendChild(plus);
+        }
+        box.appendChild(runeNode(rune, small, !small));
+      });
+      return box;
+    }
+
+    function runeNode(ref, small, link) {
+      var node = document.createElement(link ? "a" : "span");
+      node.className = "rw-rune" + (ref.kind ? " " + ref.kind : "");
+      if (link) { node.setAttribute("href", "#socketables/" + encodeURIComponent(ref.id)); }
+      node.appendChild(iconNode({ icon: ref.icon, name: ref.name }, ""));
+      if (small) {
+        node.setAttribute("title", ref.name);
+        var vh = document.createElement("span");
+        vh.className = "vh";
+        vh.textContent = ref.name;
+        node.appendChild(vh);
+      } else {
+        var nm = document.createElement("span");
+        nm.className = "rw-rnm";
+        nm.textContent = ref.name;
+        node.appendChild(nm);
+      }
+      return node;
+    }
+
+    /* the amber tint on every resolved number of a power line -- the
+       generator's effect_values(), same expression, same class */
+    var VALUE_RE = /(^|[^\w{])(\[[^\[\]{}]*\d[^\[\]{}]*\]|[+x]?\d[\d,]*(?:\.\d+)?%?(?:\s*[-\u2013]\s*\d[\d,]*(?:\.\d+)?%?)?)(?![\w}])/g;
+    function withValues(target, text) {
+      var str = String(text == null ? "" : text);
+      var last = 0;
+      var match;
+      VALUE_RE.lastIndex = 0;
+      while ((match = VALUE_RE.exec(str)) !== null) {
+        var start = match.index + match[1].length;
+        if (start > last) { withSlots(target, str.slice(last, start)); }
+        var sv = document.createElement("span");
+        sv.className = "tt-sv";
+        sv.textContent = match[2];
+        target.appendChild(sv);
+        last = VALUE_RE.lastIndex;
+      }
+      if (last < str.length) { withSlots(target, str.slice(last)); }
+      return target;
+    }
+
+    function lineBlock(frag, label) {
+      var block = document.createElement("div");
+      block.className = "cx-line";
+      var lab = document.createElement("span");
+      lab.className = "cx-label";
+      lab.textContent = label;
+      block.appendChild(lab);
+      frag.appendChild(block);
+      return block;
+    }
+
+    function ioRow(block, ref, text, link) {
+      var row = document.createElement("div");
+      row.className = "cx-text rw-io";
+      row.appendChild(iconNode({ icon: ref.icon, name: ref.name }, ""));
+      var name = document.createElement(link ? "a" : "span");
+      if (link) { name.setAttribute("href", "#socketables/" + encodeURIComponent(ref.id)); }
+      name.textContent = text;
+      row.appendChild(name);
+      block.appendChild(row);
+    }
+
+    /* the "How it is made" sentence, its "???" (the crafting list's own
+       hidden-recipe label) set in bold */
+    function madeText(block, text) {
+      var p = document.createElement("div");
+      p.className = "cx-text rw-made";
+      var parts = String(text).split("???");
+      parts.forEach(function (part, i) {
+        if (i) {
+          var b = document.createElement("b");
+          b.textContent = "???";
+          p.appendChild(b);
+        }
+        p.appendChild(document.createTextNode(part));
+      });
+      block.appendChild(p);
+      return p;
+    }
+
+    /* the chain diagram, cloned from the page's own rendering with this
+       entry's step marked current */
+    function chainClone(entry) {
+      if (!chainSource) { return null; }
+      var copy = chainSource.cloneNode(true);
+      copy.removeAttribute("data-rw-chain");
+      var marked = 0;
+      all("[data-recipe]", copy).forEach(function (step) {
+        var on = step.getAttribute("data-recipe") === entry.id;
+        step.classList.toggle("on", on);
+        if (on) { marked++; }
+      });
+      return marked ? copy : null;
+    }
+
+    function runewordDetail(entry, frag) {
+      var rw = entry.rw || {};
+      var block = null;
+      var affixBlock = null;
+      (entry.detail || []).forEach(function (pair) {
+        var label = pair[0];
+        var text = pair[1];
+        if (label === CARD_AFFIX || label === CARD_IMPLICIT) {
+          if (!affixBlock) {
+            affixBlock = lineBlock(frag, rw.doubled
+              ? "Affixes \u00b7 two-handed, shown doubled" : "Affixes");
+            var list = document.createElement("ul");
+            list.className = "rw-aflist";
+            affixBlock.appendChild(list);
+          }
+          var li = document.createElement("li");
+          li.className = "rw-af" + (label === CARD_IMPLICIT ? " implicit" : "");
+          var mk = document.createElement("span");
+          mk.className = "rw-mk";
+          mk.setAttribute("aria-hidden", "true");
+          mk.textContent = label === CARD_IMPLICIT ? "\u25c7" : "\u25cb";
+          li.appendChild(mk);
+          if (label === CARD_IMPLICIT) {
+            var vh = document.createElement("span");
+            vh.className = "vh";
+            vh.textContent = "Implicit: ";
+            li.appendChild(vh);
+          }
+          var ln = document.createElement("span");
+          ln.className = "rw-ln";
+          withSlots(ln, text);
+          li.appendChild(ln);
+          affixBlock.lastChild.appendChild(li);
+          block = affixBlock;
+          return;
+        }
+        if (label === "Recipe source") {
+          /* the dim provenance line under "How it is made" */
+          var src = document.createElement("div");
+          src.className = "cx-text dim";
+          src.textContent = text;
+          (block || lineBlock(frag, label)).appendChild(src);
+          return;
+        }
+        if (label === "Runes, in order" && rw.seq) {
+          block = lineBlock(frag, label);
+          block.appendChild(seqNode(entry, false));
+          return;
+        }
+        if (label === "Bases" && rw.bases) {
+          block = lineBlock(frag, label);
+          var bases = document.createElement("div");
+          bases.className = "rw-bases";
+          rw.bases.forEach(function (group) {
+            var grp = document.createElement("span");
+            grp.className = "rw-grp";
+            grp.textContent = group.group;
+            bases.appendChild(grp);
+            (group.names || []).forEach(function (name) { bases.appendChild(chipNode(name)); });
+          });
+          block.appendChild(bases);
+          if (rw.ancestral) {
+            line(block, "cx-text", "Also accepts the Ancestral version of each base "
+              + "\u2014 the same recipe.", false, "div");
+          }
+          return;
+        }
+        if (label === CARD_POWER) {
+          block = lineBlock(frag, "Unique power");
+          withValues(line(block, "cx-text rw-power", "", false, "div"), text);
+          return;
+        }
+        if (label === "How it is made") {
+          block = lineBlock(frag, label);
+          madeText(block, text);
+          return;
+        }
+        var up = rw.upgrade;
+        if (up && label === "Put in") {
+          block = lineBlock(frag, label);
+          ioRow(block, up.input, text, false);
+          return;
+        }
+        if (up && label === "Gem" && up.gem) {
+          block = lineBlock(frag, label);
+          ioRow(block, up.gem, text, false);
+          return;
+        }
+        if (up && label === "Get") {
+          block = lineBlock(frag, label);
+          ioRow(block, up.output, text, true);
+          var chain = chainClone(entry);
+          if (chain) {
+            block = lineBlock(frag, "Chain");
+            block.appendChild(chain);
+          }
+          return;
+        }
+        block = lineBlock(frag, label);
+        withSlots(line(block, "cx-text", "", false, "div"), text);
+      });
+    }
+
     function detailNode(entry) {
       var frag = document.createDocumentFragment();
       var head = document.createElement("div");
@@ -1284,13 +1576,22 @@
       var chips = document.createElement("div");
       chips.className = "chips";
       chips.appendChild(chipNode(entry.domain, "dom"));
-      if (entry.kind) { chips.appendChild(chipNode(entry.kind)); }
-      (entry.classes || []).forEach(function (cls) {
-        var chip = chipNode(cls, "cls");
-        chip.setAttribute("style", "--cls: var(--c-" + cls + ", var(--c-unknown));");
-        chips.appendChild(chip);
-      });
-      (entry.chips || []).forEach(function (text) { chips.appendChild(chipNode(text)); });
+      if (entry.rw) {
+        /* a runeword: dom, "unique" in the unique tint, "level N", then a
+           class chip per class; a step: dom, "Season 15", chain, gem */
+        (entry.chips || []).forEach(function (text) {
+          var extra = text === "unique" ? "r-unique"
+            : /^season \d+$/i.test(text) ? "season" : "";
+          chips.appendChild(chipNode(text, extra));
+        });
+        if (entry.kind === "runeword") {
+          (entry.classes || []).forEach(function (cls) { chips.appendChild(classChip(cls)); });
+        }
+      } else {
+        if (entry.kind) { chips.appendChild(chipNode(entry.kind)); }
+        (entry.classes || []).forEach(function (cls) { chips.appendChild(classChip(cls)); });
+        (entry.chips || []).forEach(function (text) { chips.appendChild(chipNode(text)); });
+      }
       titles.appendChild(chips);
       head.appendChild(titles);
 
@@ -1302,19 +1603,17 @@
       head.appendChild(close);
       frag.appendChild(head);
 
-      (entry.detail || []).forEach(function (pair) {
-        var block = document.createElement("div");
-        block.className = "cx-line";
-        var label = document.createElement("span");
-        label.className = "cx-label";
-        label.textContent = pair[0];
-        block.appendChild(label);
-        var text = document.createElement("div");
-        text.className = "cx-text";
-        withSlots(text, pair[1]);
-        block.appendChild(text);
-        frag.appendChild(block);
-      });
+      if (entry.rw) {
+        runewordDetail(entry, frag);
+      } else {
+        (entry.detail || []).forEach(function (pair) {
+          var block = lineBlock(frag, pair[0]);
+          var text = document.createElement("div");
+          text.className = "cx-text";
+          withSlots(text, pair[1]);
+          block.appendChild(text);
+        });
+      }
 
       var foot = document.createElement("p");
       foot.className = "cx-id";
@@ -1339,17 +1638,37 @@
       }
     }
 
+    /* a rune name is as good as part of a runeword's own name: "jah" opens
+       Enigma the way "enig" does, one rank under a name match */
+    function keyed(entry, token) {
+      var keys = entry.keys || [];
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf(token) === 0) { return true; }
+      }
+      return false;
+    }
+
     function matches(entry, tokens, domain, cls) {
       if (domain && entry.domain !== domain) { return -1; }
       if (cls && (entry.classes || []).indexOf(cls) < 0) { return -1; }
-      if (!tokens.length) { return 2; }
-      var rank = 2;
+      if (!tokens.length) { return 3; }
+      /* 0: the whole query is this entry's own keys -- "jah ith ber" is
+            Enigma's recipe, typed -- which beats a name that merely starts
+            with one of the runes ("Ber -> Jah");
+         1: the name starts with a token; 2: the name (or a rune key)
+            contains one; 3: it is somewhere in the entry's text.
+         Every token must land somewhere or the entry is out (-1). */
+      var rank = 3;
       for (var i = 0; i < tokens.length; i++) {
         var token = tokens[i];
-        if (entry.lname.indexOf(token) === 0) { rank = Math.min(rank, 0); }
-        else if (entry.lname.indexOf(token) >= 0) { rank = Math.min(rank, 1); }
-        else if (entry.hay.indexOf(token) >= 0) { rank = Math.min(rank, 2); }
+        if (entry.lname.indexOf(token) === 0) { rank = Math.min(rank, 1); }
+        else if (entry.lname.indexOf(token) >= 0) { rank = Math.min(rank, 2); }
+        else if (keyed(entry, token)) { rank = Math.min(rank, 2); }
+        else if (entry.hay.indexOf(token) >= 0) { rank = Math.min(rank, 3); }
         else { return -1; }
+      }
+      if (entry.keys.length && tokens.every(function (t) { return entry.keys.indexOf(t) >= 0; })) {
+        return 0;
       }
       return rank;
     }
