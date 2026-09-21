@@ -6521,9 +6521,10 @@ html:has(.build-page), body:has(.build-page) {
 }
 .retired-note > summary {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0 var(--s-1);
+  max-width: 100%;
   min-height: var(--tap);
   padding: var(--s-1) var(--s-2);
   margin-left: calc(var(--s-2) * -1);
@@ -6533,8 +6534,12 @@ html:has(.build-page), body:has(.build-page) {
   transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
 .retired-note > summary::-webkit-details-marker { display: none; }
+/* the text is one item that wraps inside itself; the chevron is a fixed
+   item beside it, so at 400px it never drops onto a line of its own */
+.retired-note .rn-text { min-width: 0; }
 .retired-note > summary::after {
   content: "";
+  flex: none;
   width: 0.4em;
   height: 0.4em;
   margin-left: var(--s-1);

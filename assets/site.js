@@ -2255,7 +2255,8 @@
         } else if (!hits.length) {
           status.textContent = "Nothing matches" + loading;
         } else {
-          status.textContent = "Showing " + shown + " of " + hits.length
+          status.textContent = "Showing " + shown.toLocaleString("en-US") + " of "
+            + hits.length.toLocaleString("en-US")
             + (hits.length === 1 ? " entry" : " entries") + loading;
         }
       }
